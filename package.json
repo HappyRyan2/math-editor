@@ -1,13 +1,18 @@
 {
-	"type": "module",
 	"dependencies": {
 		"@types/chai": "^4.3.6",
+		"@types/electron": "^1.6.10",
 		"@types/mocha": "^10.0.1",
 		"@typescript-eslint/eslint-plugin": "^6.6.0",
 		"chai": "^4.3.8",
+		"electron": "16.0.4",
 		"eslint": "^8.49.0",
 		"mocha": "^10.2.0",
 		"typescript": "^5.2.2",
 		"typescript-eslint": "^0.0.1-alpha.0"
-	}
+	},
+	"scripts": {
+		"start": "electron ."
+	},
+	"main": "compiled/main.js"
 }
