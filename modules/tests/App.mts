@@ -1,7 +1,17 @@
-import { describe, it } from "mocha";
+import { describe, it, beforeEach } from "mocha";
 import { assert } from "chai";
 import { App } from "../App.mjs";
 import { Line } from "../Line.mjs";
+import { JSDOM } from "jsdom";
+
+beforeEach(() => {
+	const dom = new JSDOM(
+		"<html> <body> </body> </html>",
+		{ url: "http://localhost" },
+	);
+	global.document = dom.window.document;
+});
+  
 
 describe("App.render", () => {
 	it("renders the app correctly", () => {
