@@ -1,4 +1,4 @@
-import { MathComponent } from "./MathComponent.js";
+import { MathComponent } from "./MathComponent.mjs";
 
 export class Line {
 	components: MathComponent[];

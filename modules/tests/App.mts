@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import { assert } from "chai";
-import { App } from "../App.js";
-import { Line } from "../Line.js";
+import { App } from "../App.mjs";
+import { Line } from "../Line.mjs";
 
 describe("App.render", () => {
 	it("renders the app correctly", () => {

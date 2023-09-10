@@ -1,4 +1,4 @@
-import { Line } from "./Line.js";
+import { Line } from "./Line.mjs";
 
 export class App {
 	lines: Line[];
