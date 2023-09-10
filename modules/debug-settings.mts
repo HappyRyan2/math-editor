@@ -1,4 +1,4 @@
-import { app } from "./App.mjs";
+import { app } from "./app-initializer.mjs";
 import { Line } from "./Line.mjs";
 
 

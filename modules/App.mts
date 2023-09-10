@@ -26,7 +26,3 @@ export class App {
 		oldDiv.remove();
 	}
 }
-
-const app = new App();
-app.initialize();
-export { app };
