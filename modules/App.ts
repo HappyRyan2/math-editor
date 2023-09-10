@@ -12,4 +12,6 @@ class App {
 	}
 }
 
-new App().initialize();
+const app = new App();
+app.initialize();
+export { app };
