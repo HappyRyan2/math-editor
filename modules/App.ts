@@ -1,6 +1,6 @@
 import { Line } from "./Line.js";
 
-class App {
+export class App {
 	lines: Line[];
 
 	constructor() {
