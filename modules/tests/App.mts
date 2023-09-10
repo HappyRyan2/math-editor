@@ -27,6 +27,6 @@ describe("App.render", () => {
 		expected.appendChild(line2);
 		expected.id = "lines-container";
 
-		assert.deepEqual(app.render(), expected);
+		assert.equal(app.render().outerHTML, expected.outerHTML);
 	});
 });
