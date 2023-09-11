@@ -1,5 +1,6 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
+import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -21,6 +22,33 @@ export class Cursor {
 		span.innerHTML = "&ZeroWidthSpace;";
 		span.classList.add("cursor");
 		return span;
+	}
+
+	moveRight() {
+		const nextComponent = this.container.components[this.position];
+		if(nextComponent && nextComponent instanceof EnterableMathComponent) {
+			nextComponent.enterFromLeft(this);
+		}
+		else if(nextComponent) {
+			this.position ++;
+		}
+		else if(this.container.container instanceof EnterableMathComponent) {
+			this.position = this.container.container.container!.components.indexOf(this.container.container) + 1;
+			this.container = this.container.container.container!;
+		}
+	}
+	moveLeft() {
+		const previousComponent = this.container.components[this.position - 1];
+		if(previousComponent && previousComponent instanceof EnterableMathComponent) {
+			previousComponent.enterFromRight(this);
+		}
+		else if(previousComponent) {
+			this.position --;
+		}
+		else if(this.container.container instanceof EnterableMathComponent) {
+			this.position = this.container.container.container!.components.indexOf(this.container.container);
+			this.container = this.container.container.container!;
+		}
 	}
 
 	static cursorsBlinkOn: boolean = true;

@@ -41,6 +41,17 @@ export class App {
 				cursor.addComponent(new MathSymbol(event.key));
 			}
 		}
+		this.handleArrowKeys(event);
 		this.renderAndUpdate();
+	}
+	handleArrowKeys(event: KeyboardEvent) {
+		for(const cursor of this.cursors) {
+			if(event.code === "ArrowLeft") {
+				cursor.moveLeft();
+			}
+			else if(event.code === "ArrowRight") {
+				cursor.moveRight();
+			}
+		}
 	}
 }
