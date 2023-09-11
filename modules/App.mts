@@ -1,6 +1,6 @@
 import { Line } from "./Line.mjs";
 import { Cursor } from "./Cursor.mjs";
-import { Symbol } from "./math-components/Symbol.mjs";
+import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class App {
 	lines: Line[];
@@ -37,7 +37,7 @@ export class App {
 	handleKeyDown(event: KeyboardEvent) {
 		for(const cursor of this.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
-				cursor.addComponent(new Symbol(event.key));
+				cursor.addComponent(new MathSymbol(event.key));
 			}
 		}
 		this.renderAndUpdate();

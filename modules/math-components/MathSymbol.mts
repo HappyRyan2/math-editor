@@ -1,6 +1,6 @@
 import { MathComponent } from "../MathComponent.mjs";
 
-export class Symbol extends MathComponent {
+export class MathSymbol extends MathComponent {
 	symbol: string;
 
 	constructor(symbol: string) {
