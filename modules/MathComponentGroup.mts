@@ -1,5 +1,6 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
+import { App } from "./App.mjs";
 
 export class MathComponentGroup extends MathComponent {
 	components: MathComponent[];
@@ -9,10 +10,10 @@ export class MathComponentGroup extends MathComponent {
 		this.components = components;
 	}
 
-	render() {
+	render(app: App) {
 		const span = document.createElement("span");
-		for(const component of this.components) {
-			span.appendChild(component.render());
+		for(const component of this.componentsAndCursors(app.cursors)) {
+			span.appendChild(component.render(app));
 		}
 		return span;
 	}

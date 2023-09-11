@@ -20,7 +20,7 @@ export class App {
 		const div = document.createElement("div");
 		div.id = "lines-container";
 		for(const line of this.lines) {
-			div.appendChild(line.render());
+			div.appendChild(line.render(this));
 		}
 		return div;
 	}

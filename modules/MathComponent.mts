@@ -1,3 +1,5 @@
+import { App } from "./App.mjs";
+
 export abstract class MathComponent {
-	abstract render(): HTMLElement;
+	abstract render(app: App): HTMLElement;
 }

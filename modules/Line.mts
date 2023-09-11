@@ -1,5 +1,6 @@
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { MathComponent } from "./MathComponent.mjs";
+import { App } from "./App.mjs";
 
 export class Line {
 	componentsGroup: MathComponentGroup;
@@ -8,10 +9,10 @@ export class Line {
 		this.componentsGroup = (components instanceof MathComponentGroup) ? components : new MathComponentGroup(components);
 	}
 
-	render() {
+	render(app: App) {
 		const div = document.createElement("div");
 		div.classList.add("line");
-		div.appendChild(this.componentsGroup.render());
+		div.appendChild(this.componentsGroup.render(app));
 		return div;
 	}
 }

@@ -14,4 +14,10 @@ export class Cursor {
 		this.container.components.splice(this.position, 0, component);
 		this.position ++;
 	}
+
+	render() {
+		const span = document.createElement("span");
+		span.classList.add("cursor");
+		return span;
+	}
 }
