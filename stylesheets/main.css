@@ -11,6 +11,7 @@ body {
 }
 
 .line {
+	cursor: text;
 	user-select: none;
 	padding: 5px;
 }

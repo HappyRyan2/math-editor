@@ -1,0 +1,11 @@
+.cursor {
+	position: absolute;
+	width: 1px;
+	height: 15px;
+	box-sizing: border-box;
+	background-color: black;
+}
+
+.cursor:not(.blink-on) {
+	display: none;
+}

@@ -17,6 +17,7 @@ export class Cursor {
 
 	render() {
 		const span = document.createElement("span");
+		span.innerHTML = "&ZeroWidthSpace;";
 		span.classList.add("cursor");
 		return span;
 	}
