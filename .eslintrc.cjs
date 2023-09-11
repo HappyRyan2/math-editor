@@ -23,6 +23,7 @@ module.exports = {
 		"template-curly-spacing": ["error", "never"],
 		"func-style": ["error", "expression"],
 		"@typescript-eslint/no-var-requires": 0,
+		"no-trailing-spaces": ["error"],
 	},
 	"plugins": [
 		"@typescript-eslint",

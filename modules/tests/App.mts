@@ -11,7 +11,7 @@ beforeEach(() => {
 	);
 	global.document = dom.window.document;
 });
-  
+
 
 describe("App.render", () => {
 	it("renders the app correctly", () => {

@@ -13,7 +13,7 @@ export class App {
 
 	initialize() {
 		this.renderAndUpdate();
-		this.initializeListeners();	
+		this.initializeListeners();
 		Cursor.initialize();
 	}
 
