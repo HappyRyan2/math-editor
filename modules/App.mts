@@ -1,10 +1,14 @@
 import { Line } from "./Line.mjs";
+import { Cursor } from "./Cursor.mjs";
+import { Symbol } from "./math-components/Symbol.mjs";
 
 export class App {
 	lines: Line[];
+	cursors: Cursor[];
 
 	constructor() {
 		this.lines = [new Line([])];
+		this.cursors = [new Cursor(this.lines[0], null)];
 	}
 
 	initialize() {
@@ -31,6 +35,11 @@ export class App {
 	}
 
 	handleKeyDown(event: KeyboardEvent) {
-		return event; // TODO: write the method
+		for(const cursor of this.cursors) {
+			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
+				cursor.addComponent(new Symbol(event.key));
+			}
+		}
+		this.renderAndUpdate();
 	}
 }
