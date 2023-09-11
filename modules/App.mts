@@ -14,6 +14,7 @@ export class App {
 	initialize() {
 		this.renderAndUpdate();
 		this.initializeListeners();	
+		Cursor.initialize();
 	}
 
 	render() {

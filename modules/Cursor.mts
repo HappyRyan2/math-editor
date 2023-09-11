@@ -20,4 +20,27 @@ export class Cursor {
 		span.classList.add("cursor");
 		return span;
 	}
+
+	static cursorsBlinkOn: boolean = true;
+	static BLINKS_PER_SECOND = 2;
+	static updateCursors() {
+		for(const cursor of document.getElementsByClassName("cursor")) {
+			if(Cursor.cursorsBlinkOn) {
+				cursor.classList.add("blink-on");
+			}
+			else {
+				cursor.classList.remove("blink-on");
+			}
+		}
+	}
+	static toggleBlinking() {
+		Cursor.cursorsBlinkOn = !Cursor.cursorsBlinkOn;
+		Cursor.updateCursors();
+	}
+	static initialize() {
+		window.setInterval(() => {
+			console.log("toggling!");
+			Cursor.toggleBlinking();
+		}, 1000 / Cursor.BLINKS_PER_SECOND);
+	}
 }
