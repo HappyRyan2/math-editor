@@ -11,6 +11,7 @@ export class Cursor {
 	}
 
 	addComponent(component: MathComponent) {
+		component.container = this.container;
 		this.container.components.splice(this.position, 0, component);
 		this.position ++;
 	}

@@ -1,12 +1,14 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { App } from "./App.mjs";
+import { EnterableMathComponent } from "./EnterableMathComponent";
+import { Line } from "./Line.mjs";
 
-export class MathComponentGroup extends MathComponent {
+export class MathComponentGroup {
 	components: MathComponent[];
+	container?: EnterableMathComponent | Line;
 
 	constructor(components: MathComponent[]) {
-		super();
 		this.components = components;
 	}
 

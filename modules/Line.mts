@@ -7,6 +7,7 @@ export class Line {
 
 	constructor(components: MathComponentGroup | MathComponent[]) {
 		this.componentsGroup = (components instanceof MathComponentGroup) ? components : new MathComponentGroup(components);
+		this.componentsGroup.container = this;
 	}
 
 	render(app: App) {
