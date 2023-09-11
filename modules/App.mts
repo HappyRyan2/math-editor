@@ -36,6 +36,9 @@ export class App {
 	}
 
 	handleKeyDown(event: KeyboardEvent) {
+		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
+			Cursor.resetCursorBlink();
+		}
 		for(const cursor of this.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 				cursor.addComponent(new MathSymbol(event.key));
@@ -45,6 +48,9 @@ export class App {
 		this.renderAndUpdate();
 	}
 	handleArrowKeys(event: KeyboardEvent) {
+		if(event.code === "ArrowLeft" || event.code === "ArrowRight") {
+			Cursor.resetCursorBlink();
+		}
 		for(const cursor of this.cursors) {
 			if(event.code === "ArrowLeft") {
 				cursor.moveLeft();

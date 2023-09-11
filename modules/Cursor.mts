@@ -21,6 +21,9 @@ export class Cursor {
 		const span = document.createElement("span");
 		span.innerHTML = "&ZeroWidthSpace;";
 		span.classList.add("cursor");
+		if(Cursor.cursorsBlinkOn) {
+			span.classList.add("blink-on");
+		}
 		return span;
 	}
 
@@ -68,8 +71,15 @@ export class Cursor {
 		Cursor.updateCursors();
 	}
 	static initialize() {
-		window.setInterval(() => {
+		Cursor.intervalID = window.setInterval(() => {
 			Cursor.toggleBlinking();
 		}, 1000 / Cursor.BLINKS_PER_SECOND);
+	}
+	static intervalID: number;
+	static resetCursorBlink() {
+		Cursor.cursorsBlinkOn = true;
+		Cursor.updateCursors();
+		window.clearInterval(Cursor.intervalID);
+		Cursor.initialize();
 	}
 }
