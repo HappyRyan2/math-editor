@@ -1,18 +1,17 @@
+import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 
 export class Line {
-	components: MathComponent[];
+	componentsGroup: MathComponentGroup;
 
-	constructor(components: MathComponent[]) {
-		this.components = components;
+	constructor(components: MathComponentGroup | MathComponent[]) {
+		this.componentsGroup = (components instanceof MathComponentGroup) ? components : new MathComponentGroup(components);
 	}
 
 	render() {
 		const div = document.createElement("div");
 		div.classList.add("line");
-		for(const component of this.components) {
-			div.appendChild(component.render());
-		}
+		div.appendChild(this.componentsGroup.render());
 		return div;
 	}
 }

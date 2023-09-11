@@ -25,6 +25,8 @@ describe("App.render", () => {
 		line2.classList.add("line");
 		expected.appendChild(line1);
 		expected.appendChild(line2);
+		line1.appendChild(document.createElement("span"));
+		line2.appendChild(document.createElement("span"));
 		expected.id = "lines-container";
 
 		assert.equal(app.render().outerHTML, expected.outerHTML);
