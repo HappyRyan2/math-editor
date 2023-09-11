@@ -8,7 +8,8 @@ export class App {
 	}
 
 	initialize() {
-		this.renderAndUpdate();	
+		this.renderAndUpdate();
+		this.initializeListeners();	
 	}
 
 	render() {
@@ -19,10 +20,17 @@ export class App {
 		}
 		return div;
 	}
+	initializeListeners() {
+		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
+	}
 	renderAndUpdate() {
 		const newDiv = this.render();
 		const oldDiv = document.getElementById("lines-container")!;
 		oldDiv.insertAdjacentElement("afterend", newDiv);
 		oldDiv.remove();
+	}
+
+	handleKeyDown(event: KeyboardEvent) {
+		return event; // TODO: write the method
 	}
 }
