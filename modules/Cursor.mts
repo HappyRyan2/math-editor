@@ -3,16 +3,15 @@ import { MathComponentGroup } from "./MathComponentGroup.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
-	predecessor: MathComponent | null;
+	position: number;
 
-	constructor(container: MathComponentGroup, predecessor: MathComponent | null) {
+	constructor(container: MathComponentGroup, position: number) {
 		this.container = container;
-		this.predecessor = predecessor;
+		this.position = position;
 	}
 
 	addComponent(component: MathComponent) {
-		const index = (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
-		this.container.components.splice(index, 0, component);
-		this.predecessor = component;
+		this.container.components.splice(this.position, 0, component);
+		this.position ++;
 	}
 }
