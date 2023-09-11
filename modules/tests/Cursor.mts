@@ -13,6 +13,7 @@ describe("Cursor.addComponent", () => {
 			new Symbol("y"),
 			new Symbol("x"),
 		]);
+		assert.deepEqual(cursor.predecessor, new Symbol("y"));
 	});
 	it("correctly adds the component when the cursor is not at the beginning of the line", () => {
 		const line = new Line([new Symbol("x")]);
@@ -22,5 +23,6 @@ describe("Cursor.addComponent", () => {
 			new Symbol("x"),
 			new Symbol("y"),
 		]);
+		assert.deepEqual(cursor.predecessor, new Symbol("y"));
 	});
 });

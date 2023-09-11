@@ -14,5 +14,6 @@ export class Cursor {
 	addComponent(component: MathComponent) {
 		const index = (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
 		this.container.components.splice(index, 0, component);
+		this.predecessor = component;
 	}
 }
