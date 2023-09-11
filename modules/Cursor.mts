@@ -41,7 +41,6 @@ export class Cursor {
 	}
 	static initialize() {
 		window.setInterval(() => {
-			console.log("toggling!");
 			Cursor.toggleBlinking();
 		}, 1000 / Cursor.BLINKS_PER_SECOND);
 	}
