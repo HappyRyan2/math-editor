@@ -8,7 +8,7 @@ export class App {
 
 	constructor() {
 		this.lines = [new Line([])];
-		this.cursors = [new Cursor(this.lines[0].componentsGroup, 0)];
+		this.cursors = [new Cursor(this.lines[0].componentsGroup, null)];
 	}
 
 	initialize() {

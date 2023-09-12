@@ -4,17 +4,23 @@ import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
-	position: number;
+	predecessor: MathComponent | null;
 
-	constructor(container: MathComponentGroup, position: number) {
+	constructor(container: MathComponentGroup, predecessor: MathComponent | null) {
 		this.container = container;
-		this.position = position;
+		this.predecessor = predecessor;
 	}
 
 	addComponent(component: MathComponent) {
 		component.container = this.container;
-		this.container.components.splice(this.position, 0, component);
-		this.position ++;
+		this.container.components.splice(this.position(), 0, component);
+		this.predecessor = component;
+	}
+	position() {
+		return (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
+	}
+	nextComponent() {
+		return this.container.components[this.position()] ?? null;
 	}
 
 	render() {
@@ -28,28 +34,28 @@ export class Cursor {
 	}
 
 	moveRight() {
-		const nextComponent = this.container.components[this.position];
+		const nextComponent = this.nextComponent();
 		if(nextComponent && nextComponent instanceof EnterableMathComponent) {
 			nextComponent.enterFromLeft(this);
 		}
 		else if(nextComponent) {
-			this.position ++;
+			this.predecessor = nextComponent;
 		}
 		else if(this.container.container instanceof EnterableMathComponent) {
-			this.position = this.container.container.container!.components.indexOf(this.container.container) + 1;
+			this.predecessor = this.container.container;
 			this.container = this.container.container.container!;
 		}
 	}
 	moveLeft() {
-		const previousComponent = this.container.components[this.position - 1];
-		if(previousComponent && previousComponent instanceof EnterableMathComponent) {
-			previousComponent.enterFromRight(this);
+		if(this.predecessor && this.predecessor instanceof EnterableMathComponent) {
+			this.predecessor.enterFromRight(this);
 		}
-		else if(previousComponent) {
-			this.position --;
+		else if(this.predecessor) {
+			this.predecessor = this.container.components[this.position() - 2] ?? null;
 		}
 		else if(this.container.container instanceof EnterableMathComponent) {
-			this.position = this.container.container.container!.components.indexOf(this.container.container);
+			const index = this.container.container.container!.components.indexOf(this.container.container);
+			this.predecessor = this.container.container.container!.components[index - 1] ?? null;
 			this.container = this.container.container.container!;
 		}
 	}

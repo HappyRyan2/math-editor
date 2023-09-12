@@ -10,6 +10,9 @@ export class MathComponentGroup {
 
 	constructor(components: MathComponent[]) {
 		this.components = components;
+		for(const component of components) {
+			component.container = this;
+		}
 	}
 
 	render(app: App) {
@@ -20,10 +23,10 @@ export class MathComponentGroup {
 		return span;
 	}
 	componentsAndCursors(cursors: Cursor[]) {
-		cursors = cursors.filter(c => c.container === this).sort((a, b) => a.position - b.position);
+		cursors = cursors.filter(c => c.container === this).sort((a, b) => a.position() - b.position());
 		return [
-			...cursors.filter(c => c.position === 0),
-			...this.components.map((component, i) => [component, ...cursors.filter(c => c.position === i + 1)]),
+			...cursors.filter(c => c.predecessor == null),
+			...this.components.map(component => [component, ...cursors.filter(c => c.predecessor === component)]),
 		].flat();
 	}
 }
