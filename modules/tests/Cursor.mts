@@ -5,6 +5,7 @@ import { Cursor } from "../Cursor.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { Selection } from "../Selection.mjs";
 
 describe("Cursor.addComponent", () => {
 	it("correctly adds the component when the cursor is at the beginning of the line", () => {
@@ -115,3 +116,23 @@ describe("Cursor.addComponent", () => {
 		});
 	});
 }) ();
+describe("Cursor.selectionPosition", () => {
+	it("returns 'start' if the cursor is at the start of the selection", () => {
+		const symbol = new MathSymbol("A");
+		const line = new Line([symbol]);
+		const cursor = new Cursor(line.componentsGroup, null, new Selection(symbol, symbol));
+		assert.equal(cursor.selectionPosition(), "start");
+	});
+	it("returns 'end' if the cursor is at the end of the selection", () => {
+		const symbol = new MathSymbol("A");
+		const line = new Line([symbol]);
+		const cursor = new Cursor(line.componentsGroup, symbol, new Selection(symbol, symbol));
+		assert.equal(cursor.selectionPosition(), "end");
+	});
+	it("returns null if there is no selection", () => {
+		const symbol = new MathSymbol("A");
+		const line = new Line([symbol]);
+		const cursor = new Cursor(line.componentsGroup, symbol);
+		assert.equal(cursor.selectionPosition(), null);
+	});
+});

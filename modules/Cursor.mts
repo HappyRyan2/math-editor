@@ -36,6 +36,12 @@ export class Cursor {
 		return span;
 	}
 
+	selectionPosition() {
+		if(this.selection == null) { return null; }
+		if(this.nextComponent() === this.selection.start) { return "start"; }
+		return "end";
+	}
+
 	moveRight() {
 		const nextComponent = this.nextComponent();
 		if(nextComponent && nextComponent instanceof EnterableMathComponent) {
