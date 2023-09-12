@@ -36,6 +36,11 @@ export class App {
 	}
 
 	handleKeyDown(event: KeyboardEvent) {
+		this.handleCharacterKeys(event);
+		this.handleArrowKeys(event);
+		this.renderAndUpdate();
+	}
+	handleCharacterKeys(event: KeyboardEvent) {
 		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 			Cursor.resetCursorBlink();
 		}
@@ -44,8 +49,6 @@ export class App {
 				cursor.addComponent(new MathSymbol(event.key));
 			}
 		}
-		this.handleArrowKeys(event);
-		this.renderAndUpdate();
 	}
 	handleArrowKeys(event: KeyboardEvent) {
 		if(event.code === "ArrowLeft" || event.code === "ArrowRight") {
