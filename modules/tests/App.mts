@@ -25,8 +25,13 @@ describe("App.render", () => {
 		line2.classList.add("line");
 		expected.appendChild(line1);
 		expected.appendChild(line2);
-		line1.appendChild(document.createElement("span"));
-		line2.appendChild(document.createElement("span"));
+
+		const group1 = document.createElement("span");
+		const group2 = document.createElement("span");
+		group1.classList.add("math-component-group");
+		group2.classList.add("math-component-group");
+		line1.appendChild(group1);
+		line2.appendChild(group2);
 		expected.id = "lines-container";
 
 		assert.equal(app.render().outerHTML, expected.outerHTML);

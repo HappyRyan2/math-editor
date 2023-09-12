@@ -17,6 +17,7 @@ export class MathComponentGroup {
 
 	render(app: App) {
 		const span = document.createElement("span");
+		span.classList.add("math-component-group");
 		for(const component of this.componentsAndCursors(app.cursors)) {
 			span.appendChild(component.render(app));
 		}
