@@ -1,14 +1,17 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { Selection } from "./Selection.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
 	predecessor: MathComponent | null;
+	selection: Selection | null;
 
-	constructor(container: MathComponentGroup, predecessor: MathComponent | null) {
+	constructor(container: MathComponentGroup, predecessor: MathComponent | null, selection?: Selection) {
 		this.container = container;
 		this.predecessor = predecessor;
+		this.selection = selection ?? null;
 	}
 
 	addComponent(component: MathComponent) {
