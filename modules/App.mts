@@ -28,7 +28,7 @@ export class App {
 	}
 	renderAndUpdate() {
 		const newDiv = this.render();
-		const oldDiv = document.getElementById("lines-container")!;
+		const oldDiv = document.getElementById("document-container")!;
 		oldDiv.insertAdjacentElement("afterend", newDiv);
 		oldDiv.remove();
 	}
