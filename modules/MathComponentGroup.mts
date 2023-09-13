@@ -19,7 +19,11 @@ export class MathComponentGroup {
 		const span = document.createElement("span");
 		span.classList.add("math-component-group");
 		for(const component of this.componentsAndCursors(app.cursors)) {
-			span.appendChild(component.render(app));
+			const renderedComponent = component.render(app);
+			span.appendChild(renderedComponent);
+			if(component instanceof MathComponent && component.isSelected(app.cursors)) {
+				renderedComponent.classList.add("selected");
+			}
 		}
 		return span;
 	}

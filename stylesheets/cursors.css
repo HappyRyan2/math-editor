@@ -9,3 +9,7 @@
 .cursor:not(.blink-on) {
 	display: none;
 }
+
+.selected {
+	background-color: lightblue;
+}

@@ -160,4 +160,17 @@ export class Cursor {
 		window.clearInterval(Cursor.intervalID);
 		Cursor.initialize();
 	}
+
+	selectionContains(component: MathComponent) {
+		if(!this.container.components.includes(component)) {
+			return false;
+		}
+		if(this.selection == null) {
+			return false;
+		}
+		const startIndex = this.container.components.indexOf(this.selection.start);
+		const endIndex = this.container.components.indexOf(this.selection.end);
+		const index = this.container.components.indexOf(component);
+		return (startIndex <= index && index <= endIndex);
+	}
 }
