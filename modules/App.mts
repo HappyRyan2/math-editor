@@ -53,11 +53,17 @@ export class App {
 			Cursor.resetCursorBlink();
 		}
 		for(const cursor of this.cursors) {
-			if(event.code === "ArrowLeft") {
+			if(event.code === "ArrowLeft" && !event.shiftKey) {
 				cursor.moveLeft();
 			}
-			else if(event.code === "ArrowRight") {
+			else if(event.code === "ArrowRight" && !event.shiftKey) {
 				cursor.moveRight();
+			}
+			else if(event.code === "ArrowLeft" && event.shiftKey) {
+				cursor.selectLeft();
+			}
+			else if(event.code === "ArrowRight" && event.shiftKey) {
+				cursor.selectRight();
 			}
 		}
 	}
