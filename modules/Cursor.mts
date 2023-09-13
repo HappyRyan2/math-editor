@@ -22,8 +22,18 @@ export class Cursor {
 	position() {
 		return (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
 	}
-	nextComponent() {
+	nextComponent(): MathComponent | null {
 		return this.container.components[this.position()] ?? null;
+	}
+	moveBefore(component: MathComponent) {
+		const container = component.container!;
+		const index = container.components.indexOf(component);
+		this.predecessor = container.components[index - 1] ?? null;
+		this.container = container;
+	}
+	moveAfter(component: MathComponent) {
+		this.predecessor = component;
+		this.container = component.container!;
 	}
 
 	render() {
@@ -66,6 +76,59 @@ export class Cursor {
 			const index = this.container.container.container!.components.indexOf(this.container.container);
 			this.predecessor = this.container.container.container!.components[index - 1] ?? null;
 			this.container = this.container.container.container!;
+		}
+	}
+	selectRight() {
+		const nextComponent = this.nextComponent();
+		if(!nextComponent) {
+			const containingObject = this.container.container!;
+			if(containingObject instanceof EnterableMathComponent) {
+				this.moveAfter(containingObject);
+				this.selection = new Selection(containingObject, containingObject);
+			}
+		}
+		else if(this.selectionPosition() === "start") {
+			if(this.selection!.start === this.selection!.end) {
+				this.selection = null;
+			}
+			else {
+				this.selection!.start = this.container.components[this.position() + 1];
+			}
+			this.moveAfter(nextComponent);
+		}
+		else if(this.selectionPosition() === "end") {
+			this.selection!.end = nextComponent;
+			this.moveAfter(nextComponent);
+		}
+		else {
+			this.selection = new Selection(nextComponent, nextComponent);
+			this.moveAfter(nextComponent);
+		}
+	}
+	selectLeft() {
+		if(!this.predecessor) {
+			const containingObject = this.container.container!;
+			if(containingObject instanceof EnterableMathComponent) {
+				this.moveBefore(containingObject);
+				this.selection = new Selection(containingObject, containingObject);
+			}
+		}
+		else if(this.selectionPosition() === "start") {
+			this.selection!.start = this.predecessor;
+			this.moveBefore(this.predecessor);
+		}
+		else if(this.selectionPosition() === "end") {
+			if(this.selection!.start === this.selection!.end) {
+				this.selection = null;
+			}
+			else {
+				this.selection!.end = this.container.components[this.container.components.indexOf(this.predecessor) - 1];
+			}
+			this.moveBefore(this.predecessor);
+		}
+		else {
+			this.selection = new Selection(this.predecessor, this.predecessor);
+			this.moveBefore(this.predecessor);
 		}
 	}
 
