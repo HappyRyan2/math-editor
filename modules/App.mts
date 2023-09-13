@@ -1,14 +1,14 @@
-import { Line } from "./Line.mjs";
+import { MathDocument } from "./MathDocument.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class App {
-	lines: Line[];
+	document: MathDocument;
 	cursors: Cursor[];
 
 	constructor() {
-		this.lines = [new Line([])];
-		this.cursors = [new Cursor(this.lines[0].componentsGroup, null)];
+		this.document = new MathDocument([]);
+		this.cursors = [new Cursor(this.document.componentsGroup, null)];
 	}
 
 	initialize() {
@@ -19,10 +19,8 @@ export class App {
 
 	render() {
 		const div = document.createElement("div");
-		div.id = "lines-container";
-		for(const line of this.lines) {
-			div.appendChild(line.render(this));
-		}
+		div.id = "document-container";
+		div.appendChild(this.document.render(this));
 		return div;
 	}
 	initializeListeners() {

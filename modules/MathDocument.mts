@@ -2,7 +2,7 @@ import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { App } from "./App.mjs";
 
-export class Line {
+export class MathDocument {
 	componentsGroup: MathComponentGroup;
 
 	constructor(components: MathComponentGroup | MathComponent[]) {
@@ -12,7 +12,7 @@ export class Line {
 
 	render(app: App) {
 		const div = document.createElement("div");
-		div.classList.add("line");
+		div.id = "math-document";
 		div.appendChild(this.componentsGroup.render(app));
 		return div;
 	}

@@ -2,11 +2,11 @@ import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { App } from "./App.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
-import { Line } from "./Line.mjs";
+import { MathDocument } from "./MathDocument.mjs";
 
 export class MathComponentGroup {
 	components: MathComponent[];
-	container?: EnterableMathComponent | Line;
+	container?: EnterableMathComponent | MathDocument;
 
 	constructor(components: MathComponent[]) {
 		this.components = components;
