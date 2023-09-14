@@ -10,9 +10,7 @@ export class Fraction extends EnterableMathComponent {
 	constructor(numerator: MathComponentGroup, denominator: MathComponentGroup) {
 		super();
 		this.numerator = numerator;
-		this.numerator.container = this;
 		this.denominator = denominator;
-		this.denominator.container = this;
 	}
 
 	render(app: App): HTMLElement {

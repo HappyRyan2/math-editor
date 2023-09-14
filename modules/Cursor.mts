@@ -83,9 +83,12 @@ export class Cursor {
 		else if(nextComponent) {
 			this.predecessor = nextComponent;
 		}
-		else if(this.container.container instanceof EnterableMathComponent) {
-			this.predecessor = this.container.container;
-			this.container = doc.containingGroupOf(doc.containingComponentOf(this.container) as MathComponent);
+		else {
+			const containingComponent = doc.containingComponentOf(this.container);
+			if(containingComponent instanceof EnterableMathComponent) {
+				this.predecessor = containingComponent;
+				this.container = doc.containingGroupOf(containingComponent);
+			}
 		}
 	}
 	moveLeft(doc: MathDocument) {
@@ -99,18 +102,20 @@ export class Cursor {
 		else if(this.predecessor) {
 			this.predecessor = this.container.components[this.position() - 2] ?? null;
 		}
-		else if(this.container.container instanceof EnterableMathComponent) {
-			const containingComponent = doc.containingComponentOf(this.container) as MathComponent;
-			const containingGroup = doc.containingGroupOf(containingComponent);
-			const index = containingGroup.components.indexOf(this.container.container);
-			this.predecessor = containingGroup.components[index - 1] ?? null;
-			this.container = containingGroup;
+		else {
+			const containingComponent = doc.containingComponentOf(this.container);
+			if(containingComponent instanceof EnterableMathComponent) {
+				const containingGroup = doc.containingGroupOf(containingComponent);
+				const index = containingGroup.components.indexOf(containingComponent);
+				this.predecessor = containingGroup.components[index - 1] ?? null;
+				this.container = containingGroup;
+			}
 		}
 	}
 	selectRight(doc: MathDocument) {
 		const nextComponent = this.nextComponent();
 		if(!nextComponent) {
-			const containingObject = this.container.container!;
+			const containingObject = doc.containingComponentOf(this.container);
 			if(containingObject instanceof EnterableMathComponent) {
 				this.moveAfter(containingObject, doc);
 				this.selection = new Selection(containingObject, containingObject);
@@ -136,7 +141,7 @@ export class Cursor {
 	}
 	selectLeft(doc: MathDocument) {
 		if(!this.predecessor) {
-			const containingObject = this.container.container!;
+			const containingObject = doc.containingComponentOf(this.container);
 			if(containingObject instanceof EnterableMathComponent) {
 				this.moveBefore(containingObject, doc);
 				this.selection = new Selection(containingObject, containingObject);

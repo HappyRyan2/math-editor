@@ -8,7 +8,6 @@ export class EnterableComponentMock extends EnterableMathComponent {
 	constructor(componentsGroup?: MathComponentGroup) {
 		super();
 		this.componentsGroup = componentsGroup ?? new MathComponentGroup([]);
-		this.componentsGroup.container = this;
 	}
 	enterFromLeft(): void {
 		this.enteredFromLeft = true;

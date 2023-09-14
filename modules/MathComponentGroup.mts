@@ -6,7 +6,6 @@ import { MathDocument } from "./MathDocument.mjs";
 
 export class MathComponentGroup {
 	components: MathComponent[];
-	container?: EnterableMathComponent | MathDocument;
 
 	constructor(components: MathComponent[]) {
 		this.components = components;

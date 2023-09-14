@@ -11,7 +11,7 @@ export class LineBreak extends MathComponent {
 	}
 
 	static addLineBreak(cursor: Cursor, doc: MathDocument) {
-		if(cursor.container.container instanceof MathDocument) {
+		if(cursor.container === doc.componentsGroup) {
 			if(cursor.selection == null) {
 				cursor.addComponent(new LineBreak());
 			}
@@ -20,7 +20,7 @@ export class LineBreak extends MathComponent {
 			}
 		}
 		else {
-			const ancestor = cursor.container.container!.lastComponentAncestor(doc);
+			const ancestor = (doc.containingComponentOf(cursor.container) as MathComponent).lastComponentAncestor(doc);
 			const lineBreak = new LineBreak();
 			doc.componentsGroup.components.splice(
 				doc.componentsGroup.components.indexOf(ancestor) + 1,
