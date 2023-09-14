@@ -27,6 +27,7 @@ export class App {
 	}
 	initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
+		document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
 	}
 	renderAndUpdate(div: HTMLDivElement = this.render()) {
 		const oldDiv = document.getElementById("document-container")!;
@@ -84,5 +85,11 @@ export class App {
 				cursor.deletePrevious(this.document);
 			}
 		}
+	}
+
+	handleMouseDown(event: MouseEvent) {
+		this.cursors = [Cursor.fromClick(this, event)];
+		Cursor.resetCursorBlink();
+		this.renderAndUpdate();
 	}
 }

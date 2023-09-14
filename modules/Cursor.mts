@@ -3,6 +3,7 @@ import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
+import { App } from "./App.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -220,5 +221,32 @@ export class Cursor {
 		else if(this.container != doc.componentsGroup) {
 			this.moveLeft(doc);
 		}
+	}
+
+	static fromClick(app: App, event: MouseEvent) {
+		const [rendered, mapping] = app.renderWithMapping();
+		app.renderAndUpdate(rendered);
+		let minDistY = Infinity;
+		let minDistX = Infinity;
+		let minValue: [MathComponent, "left" | "right"];
+		for(const component of mapping.keys()) {
+			const box = mapping.get(component)!.getBoundingClientRect();
+			for(const direction of ["left", "right"] as const) {
+				const distX = Math.abs(box[direction] - event.clientX);
+				const distY = Math.abs((box.top + box.bottom) / 2 - event.clientY);
+				if(distY < minDistY || (distY === minDistY && distX < minDistX)) {
+					minDistX = distX;
+					minDistY = distY;
+					minValue = [component, direction];
+				}
+			}
+		}
+		const [closest, direction] = minValue!;
+		const cursor = new Cursor(app.document.componentsGroup, null);
+		if(direction === "left") {
+			cursor.moveBefore(closest, app.document);
+		}
+		else { cursor.moveAfter(closest, app.document); }
+		return cursor;
 	}
 }
