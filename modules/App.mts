@@ -1,6 +1,7 @@
 import { MathDocument } from "./MathDocument.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
+import { LineBreak } from "./LineBreak.mjs";
 
 export class App {
 	document: MathDocument;
@@ -36,6 +37,7 @@ export class App {
 	handleKeyDown(event: KeyboardEvent) {
 		this.handleCharacterKeys(event);
 		this.handleArrowKeys(event);
+		this.handleSpecialKeys(event);
 		this.renderAndUpdate();
 	}
 	handleCharacterKeys(event: KeyboardEvent) {
@@ -64,6 +66,13 @@ export class App {
 			}
 			else if(event.code === "ArrowRight" && event.shiftKey) {
 				cursor.selectRight();
+			}
+		}
+	}
+	handleSpecialKeys(event: KeyboardEvent) {
+		if(event.code === "Enter") {
+			for(const cursor of this.cursors) {
+				LineBreak.addLineBreak(cursor);
 			}
 		}
 	}
