@@ -10,10 +10,10 @@ export class MathDocument {
 		this.componentsGroup = (components instanceof MathComponentGroup) ? components : new MathComponentGroup(components);
 	}
 
-	render(app: App) {
+	render(app: App, renderedComponents = this.componentsGroup.render(app)) {
 		const div = document.createElement("div");
 		div.id = "math-document";
-		div.append(...this.componentsGroup.render(app).children);
+		div.append(...renderedComponents.children);
 		this.insertLineBreaks(div);
 		return div;
 	}

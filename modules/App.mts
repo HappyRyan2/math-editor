@@ -18,10 +18,10 @@ export class App {
 		Cursor.initialize();
 	}
 
-	render() {
+	render(renderedDoc = this.document.render(this)) {
 		const div = document.createElement("div");
 		div.id = "document-container";
-		div.appendChild(this.document.render(this));
+		div.appendChild(renderedDoc);
 		return div;
 	}
 	initializeListeners() {
