@@ -48,14 +48,21 @@ export class MathDocument {
 		yield* this.componentsGroup.components;
 	}
 
-	containingComponentOf(component: MathComponent) {
-		if(this.componentsGroup.components.includes(component)) { return this; }
-		for(const descendant of this.descendants()) {
-			if(descendant instanceof EnterableMathComponent && [...descendant].includes(component)) {
-				return descendant;
-			}
+	containingComponentOf(componentOrGroup: MathComponent | MathComponentGroup) {
+		if(componentOrGroup instanceof MathComponent && this.componentsGroup.components.includes(componentOrGroup)) {
+			return this;
 		}
-		throw new Error("Did not find the component in the provided tree.");
+		if(componentOrGroup === this.componentsGroup) {
+			return this;
+		}
+		for(const descendant of this.descendants()) {
+			if(
+				descendant instanceof EnterableMathComponent && (
+					(componentOrGroup instanceof MathComponent && [...descendant].includes(componentOrGroup))
+					|| (componentOrGroup instanceof MathComponentGroup && descendant.groups().includes(componentOrGroup)
+					))) { return descendant; }
+		}
+		throw new Error("Did not find the component or group in the provided tree.");
 	}
 	containingGroupOf(component: MathComponent) {
 		const container = this.containingComponentOf(component);

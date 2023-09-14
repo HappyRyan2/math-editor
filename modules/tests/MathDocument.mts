@@ -20,4 +20,15 @@ describe("MathDocument.containingComponent", () => {
 		]);
 		assert.equal(doc.containingComponentOf(component), container);
 	});
+	it("returns the MathDocument if the group is the MathDocument's group", () => {
+		const doc = new MathDocument([]);
+		assert.equal(doc.containingComponentOf(doc.componentsGroup), doc);
+	});
+	it("returns the container if the group is not top-level", () => {
+		let mock: EnterableComponentMock;
+		const doc = new MathDocument([
+			mock = new EnterableComponentMock(),
+		]);
+		assert.equal(doc.containingComponentOf(mock.componentsGroup), mock);
+	});
 });
