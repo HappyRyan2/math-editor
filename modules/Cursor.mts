@@ -19,6 +19,19 @@ export class Cursor {
 		this.container.components.splice(this.position(), 0, component);
 		this.predecessor = component;
 	}
+	replaceSelectionWith(...components: MathComponent[]) {
+		if(!this.selection) {
+			throw new Error("Cannot call replaceSelectionWith on a cursor with an empty selection.");
+		}
+		const previousComponent = this.container.components[this.container.components.indexOf(this.selection.start) - 1] ?? null;
+		this.container.components.splice(
+			this.container.components.indexOf(this.selection.start),
+			this.numSelected(),
+			...components,
+		);
+		this.predecessor = components[components.length - 1] ?? previousComponent;
+		this.selection = null;
+	}
 	position() {
 		return (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
 	}
@@ -50,6 +63,12 @@ export class Cursor {
 		if(this.selection == null) { return null; }
 		if(this.nextComponent() === this.selection.start) { return "start"; }
 		return "end";
+	}
+	numSelected() {
+		if(this.selection == null) { return 0; }
+		const startIndex = this.container.components.indexOf(this.selection.start);
+		const endIndex = this.container.components.indexOf(this.selection.end);
+		return (endIndex - startIndex + 1);
 	}
 
 	moveRight() {
