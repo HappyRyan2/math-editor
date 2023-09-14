@@ -75,5 +75,10 @@ export class App {
 				LineBreak.addLineBreak(cursor, this.document);
 			}
 		}
+		else if(event.code === "Backspace") {
+			for(const cursor of this.cursors) {
+				cursor.deletePrevious(this.document);
+			}
+		}
 	}
 }
