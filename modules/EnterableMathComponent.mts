@@ -7,4 +7,15 @@ export abstract class EnterableMathComponent extends MathComponent {
 	abstract enterFromLeft(cursor: Cursor): void;
 	abstract enterFromRight(cursor: Cursor): void;
 	abstract groups(): MathComponentGroup[];
+
+	*descendants(): Generator<MathComponent, void, unknown> {
+		for(const group of this.groups()) {
+			for(const component of group.components) {
+				yield component;
+				if(component instanceof EnterableMathComponent) {
+					yield* component.descendants();
+				}
+			}
+		}
+	}
 }

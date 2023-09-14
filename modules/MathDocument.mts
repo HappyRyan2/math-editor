@@ -1,6 +1,7 @@
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { App } from "./App.mjs";
+import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 
 export class MathDocument {
 	componentsGroup: MathComponentGroup;
@@ -32,6 +33,15 @@ export class MathDocument {
 			lineElement.classList.add("line");
 			lineElement.append(...line);
 			renderedDocument.appendChild(lineElement);
+		}
+	}
+
+	*descendants(): Generator<MathComponent, void, unknown> {
+		for(const component of this.componentsGroup.components) {
+			yield component;
+			if(component instanceof EnterableMathComponent) {
+				yield* component.descendants();
+			}
 		}
 	}
 }
