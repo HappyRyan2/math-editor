@@ -53,6 +53,10 @@ export class Cursor {
 	}
 
 	moveRight() {
+		if(this.selection != null) {
+			this.selection = null;
+			return;
+		}
 		const nextComponent = this.nextComponent();
 		if(nextComponent && nextComponent instanceof EnterableMathComponent) {
 			nextComponent.enterFromLeft(this);
@@ -66,6 +70,10 @@ export class Cursor {
 		}
 	}
 	moveLeft() {
+		if(this.selection != null) {
+			this.selection = null;
+			return;
+		}
 		if(this.predecessor && this.predecessor instanceof EnterableMathComponent) {
 			this.predecessor.enterFromRight(this);
 		}
