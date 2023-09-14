@@ -13,7 +13,25 @@ export class MathDocument {
 	render(app: App) {
 		const div = document.createElement("div");
 		div.id = "math-document";
-		div.appendChild(this.componentsGroup.render(app));
+		div.append(...this.componentsGroup.render(app).children);
+		this.insertLineBreaks(div);
 		return div;
+	}
+	insertLineBreaks(renderedDocument: Element) {
+		const lines: HTMLElement[][] = [[]];
+		while(renderedDocument.children.length > 0) {
+			const element = renderedDocument.children[0];
+			element.remove();
+			lines[lines.length - 1].push(element as HTMLElement);
+			if(element.classList.contains("line-break")) {
+				lines.push([]);
+			}
+		}
+		for(const line of lines) {
+			const lineElement = document.createElement("div");
+			lineElement.classList.add("line");
+			lineElement.append(...line);
+			renderedDocument.appendChild(lineElement);
+		}
 	}
 }

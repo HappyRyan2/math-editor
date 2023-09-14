@@ -16,7 +16,7 @@ body {
 	padding: 5px;
 }
 
-.math-component-group {
+.math-component-group, .line {
 	height: max-content;
 	display: flex;
 	align-items: center;
