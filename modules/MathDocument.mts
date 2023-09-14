@@ -47,4 +47,26 @@ export class MathDocument {
 	*[Symbol.iterator]() {
 		yield* this.componentsGroup.components;
 	}
+
+	containingComponentOf(component: MathComponent) {
+		if(this.componentsGroup.components.includes(component)) { return this; }
+		for(const descendant of this.descendants()) {
+			if(descendant instanceof EnterableMathComponent && [...descendant].includes(component)) {
+				return descendant;
+			}
+		}
+		throw new Error("Did not find the component in the provided tree.");
+	}
+	containingGroupOf(component: MathComponent) {
+		const container = this.containingComponentOf(component);
+		if(container instanceof MathDocument) {
+			return container.componentsGroup;
+		}
+		for(const group of container.groups()) {
+			if(group.components.includes(component)) {
+				return group;
+			}
+		}
+		throw new Error("Unexpected: did not find the component in any of the groups of its container.");
+	}
 }
