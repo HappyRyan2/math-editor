@@ -27,10 +27,9 @@ export class App {
 	initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
 	}
-	renderAndUpdate() {
-		const newDiv = this.render();
+	renderAndUpdate(div: HTMLDivElement = this.render()) {
 		const oldDiv = document.getElementById("document-container")!;
-		oldDiv.insertAdjacentElement("afterend", newDiv);
+		oldDiv.insertAdjacentElement("afterend", div);
 		oldDiv.remove();
 	}
 
