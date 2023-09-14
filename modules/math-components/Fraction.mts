@@ -37,4 +37,7 @@ export class Fraction extends EnterableMathComponent {
 		cursor.container = this.numerator;
 		cursor.predecessor = (this.numerator.components[this.numerator.components.length - 1] ?? null);
 	}
+	groups() {
+		return [this.numerator, this.denominator];
+	}
 }

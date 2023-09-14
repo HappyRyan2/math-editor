@@ -19,4 +19,7 @@ export class EnterableComponentMock extends EnterableMathComponent {
 	render(): HTMLElement {
 		throw new Error("Not yet implemented");
 	}
+	groups() {
+		return [this.componentsGroup];
+	}
 }
