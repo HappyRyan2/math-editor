@@ -1,12 +1,14 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
+import { App } from "./App.mjs";
 
 export abstract class EnterableMathComponent extends MathComponent {
 	/* Represents a MathComponent that can contain the user's cursor (e.g. fractions, exponents, subscripts, etc.) */
 	abstract enterFromLeft(cursor: Cursor): void;
 	abstract enterFromRight(cursor: Cursor): void;
 	abstract groups(): MathComponentGroup[];
+	abstract render(app: App, ...renderedGroups: HTMLElement[]): HTMLElement;
 
 	*descendants(): Generator<MathComponent, void, unknown> {
 		for(const group of this.groups()) {
@@ -22,5 +24,18 @@ export abstract class EnterableMathComponent extends MathComponent {
 		for(const group of this.groups()) {
 			yield* group.components;
 		}
+	}
+	renderWithMapping(app: App): [HTMLElement, Map<MathComponent, HTMLElement>] {
+		const groupsAndMappings = this.groups().map(g => g.renderWithMapping(app));
+		const groups = groupsAndMappings.map((tuple) => tuple[0]);
+		const maps = groupsAndMappings.map(tuple => tuple[1]);
+		const result = this.render(app, ...groups);
+		const resultMap: Map<MathComponent, HTMLElement> = new Map();
+		for(const map of maps) {
+			for(const [key, value] of map.entries()) {
+				resultMap.set(key, value);
+			}
+		}
+		return [result, resultMap];
 	}
 }

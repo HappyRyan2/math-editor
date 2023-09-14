@@ -13,15 +13,13 @@ export class Fraction extends EnterableMathComponent {
 		this.denominator = denominator;
 	}
 
-	render(app: App): HTMLElement {
+	render(app: App, numerator: HTMLElement = this.numerator.render(app), denominator: HTMLElement = this.denominator.render(app)): HTMLElement {
 		const fraction = document.createElement("span");
 		fraction.classList.add("fraction");
 
-		const numerator = this.numerator.render(app);
 		numerator.classList.add("numerator");
 		fraction.appendChild(numerator);
 
-		const denominator = this.denominator.render(app);
 		denominator.classList.add("denominator");
 		fraction.appendChild(denominator);
 

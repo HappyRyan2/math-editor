@@ -17,6 +17,10 @@ export class MathDocument {
 		this.insertLineBreaks(div);
 		return div;
 	}
+	renderWithMapping(app: App): [HTMLDivElement, Map<MathComponent, HTMLElement>] {
+		const [renderedComponents, map] = this.componentsGroup.renderWithMapping(app);
+		return [this.render(app, renderedComponents), map];
+	}
 	insertLineBreaks(renderedDocument: Element) {
 		const lines: HTMLElement[][] = [[]];
 		while(renderedDocument.children.length > 0) {

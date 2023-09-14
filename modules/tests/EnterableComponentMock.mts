@@ -1,3 +1,4 @@
+import { App } from "../App.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 
@@ -15,8 +16,11 @@ export class EnterableComponentMock extends EnterableMathComponent {
 	enterFromRight(): void {
 		this.enteredFromRight = true;
 	}
-	render(): HTMLElement {
-		throw new Error("Not yet implemented");
+	render(app: App, renderedGroup: HTMLElement = this.componentsGroup.render(app)): HTMLElement {
+		const result = document.createElement("span");
+		result.classList.add("enterable-mock");
+		result.appendChild(renderedGroup);
+		return result;
 	}
 	groups() {
 		return [this.componentsGroup];
