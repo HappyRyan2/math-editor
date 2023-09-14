@@ -44,4 +44,7 @@ export class MathDocument {
 			}
 		}
 	}
+	*[Symbol.iterator]() {
+		yield* this.componentsGroup.components;
+	}
 }

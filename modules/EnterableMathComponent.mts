@@ -18,4 +18,9 @@ export abstract class EnterableMathComponent extends MathComponent {
 			}
 		}
 	}
+	*[Symbol.iterator](): Generator<MathComponent, void, undefined> {
+		for(const group of this.groups()) {
+			yield* group.components;
+		}
+	}
 }
