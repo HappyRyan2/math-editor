@@ -307,3 +307,49 @@ describe("Cursor.selectionPosition", () => {
 		assert.equal(cursor.selectionPosition(), null);
 	});
 });
+describe("Cursor.deletePrevious", () => {
+	it("deletes the previous component if there is one", () => {
+		let symbolA, symbolB: MathSymbol;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbolA);
+		cursor.deletePrevious(doc);
+
+		assert.deepEqual(doc.componentsGroup.components, [symbolB]);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("exits the containing component if there is no previous component", () => {
+		let mock: EnterableComponentMock;
+		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+		const cursor = new Cursor(mock.componentsGroup, null);
+		cursor.deletePrevious(doc);
+
+		assert.deepEqual(doc.componentsGroup.components, [mock]);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("deletes the selected components if the selection is nonempty", () => {
+		let symbolA, symbolB: MathSymbol;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB));
+		cursor.deletePrevious(doc);
+
+		assert.deepEqual(doc.componentsGroup.components, []);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("does nothing if the cursor is at the beginning of the document and there is no selection", () => {
+		const doc = new MathDocument([]);
+		const cursor = new Cursor(doc.componentsGroup, null);
+		cursor.deletePrevious(doc);
+
+		assert.deepEqual(doc.componentsGroup.components, []);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, null);
+	});
+});

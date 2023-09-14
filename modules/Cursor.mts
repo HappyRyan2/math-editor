@@ -207,4 +207,18 @@ export class Cursor {
 		const index = this.container.components.indexOf(component);
 		return (startIndex <= index && index <= endIndex);
 	}
+
+	deletePrevious(doc: MathDocument) {
+		if(this.selection != null) {
+			this.replaceSelectionWith(...[]);
+		}
+		else if(this.predecessor != null) {
+			const newPredecessor = this.container.components[this.position() - 2];
+			this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
+			this.predecessor = newPredecessor;
+		}
+		else if(this.container != doc.componentsGroup) {
+			this.moveLeft(doc);
+		}
+	}
 }
