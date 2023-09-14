@@ -12,7 +12,7 @@ describe("LineBreak.addLineBreak", () => {
 	it("adds a line break at the cursor's location and moves the cursor after the line break", () => {
 		const doc = new MathDocument([]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		LineBreak.addLineBreak(cursor);
+		LineBreak.addLineBreak(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.instanceOf(doc.componentsGroup.components[0], LineBreak);
@@ -26,7 +26,7 @@ describe("LineBreak.addLineBreak", () => {
 			])),
 		]);
 		const cursor = new Cursor(component2.componentsGroup, null);
-		LineBreak.addLineBreak(cursor);
+		LineBreak.addLineBreak(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 2);
 		assert.equal(doc.componentsGroup.components[0], component1);
@@ -37,7 +37,7 @@ describe("LineBreak.addLineBreak", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, symbol, new Selection(symbol, symbol));
-		LineBreak.addLineBreak(cursor);
+		LineBreak.addLineBreak(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.instanceOf(doc.componentsGroup.components[0], LineBreak);
@@ -51,7 +51,7 @@ describe("LineBreak.addLineBreak", () => {
 			])),
 		]);
 		const cursor = new Cursor(container.componentsGroup, symbol, new Selection(symbol, symbol));
-		LineBreak.addLineBreak(cursor);
+		LineBreak.addLineBreak(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 2);
 		assert.equal(doc.componentsGroup.components[0], container);

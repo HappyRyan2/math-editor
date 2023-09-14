@@ -7,8 +7,8 @@ export class Fraction extends EnterableMathComponent {
 	numerator: MathComponentGroup;
 	denominator: MathComponentGroup;
 
-	constructor(numerator: MathComponentGroup, denominator: MathComponentGroup, container?: MathComponentGroup) {
-		super(container);
+	constructor(numerator: MathComponentGroup, denominator: MathComponentGroup) {
+		super();
 		this.numerator = numerator;
 		this.numerator.container = this;
 		this.denominator = denominator;

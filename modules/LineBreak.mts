@@ -10,7 +10,7 @@ export class LineBreak extends MathComponent {
 		return result;
 	}
 
-	static addLineBreak(cursor: Cursor) {
+	static addLineBreak(cursor: Cursor, doc: MathDocument) {
 		if(cursor.container.container instanceof MathDocument) {
 			if(cursor.selection == null) {
 				cursor.addComponent(new LineBreak());
@@ -20,13 +20,13 @@ export class LineBreak extends MathComponent {
 			}
 		}
 		else {
-			const ancestor = cursor.container.container!.lastComponentAncestor();
+			const ancestor = cursor.container.container!.lastComponentAncestor(doc);
 			const lineBreak = new LineBreak();
-			ancestor.container!.components.splice(
-				ancestor.container!.components.indexOf(ancestor) + 1,
+			doc.componentsGroup.components.splice(
+				doc.componentsGroup.components.indexOf(ancestor) + 1,
 				0, lineBreak,
 			);
-			cursor.moveAfter(lineBreak);
+			cursor.moveAfter(lineBreak, doc);
 			cursor.selection = null;
 		}
 	}

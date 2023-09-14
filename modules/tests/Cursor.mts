@@ -13,8 +13,8 @@ describe("Cursor.addComponent", () => {
 		const cursor = new Cursor(doc.componentsGroup, null);
 		cursor.addComponent(new MathSymbol("y"));
 		assert.deepEqual(doc.componentsGroup.components, [
-			new MathSymbol("y", doc.componentsGroup),
-			new MathSymbol("x", doc.componentsGroup),
+			new MathSymbol("y"),
+			new MathSymbol("x"),
 		]);
 		assert.equal(cursor.predecessor, doc.componentsGroup.components[0]);
 	});
@@ -23,8 +23,8 @@ describe("Cursor.addComponent", () => {
 		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
 		cursor.addComponent(new MathSymbol("y"));
 		assert.deepEqual(doc.componentsGroup.components, [
-			new MathSymbol("x", doc.componentsGroup),
-			new MathSymbol("y", doc.componentsGroup),
+			new MathSymbol("x"),
+			new MathSymbol("y"),
 		]);
 		assert.equal(cursor.predecessor, doc.componentsGroup.components[1]);
 	});
@@ -35,7 +35,7 @@ describe("Cursor.moveRight", () => {
 		let symbol: MathSymbol;
 		const doc = new MathDocument([symbol = new MathSymbol("a")]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.moveRight();
+		cursor.moveRight(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
@@ -43,7 +43,7 @@ describe("Cursor.moveRight", () => {
 		let mock: EnterableComponentMock;
 		const doc = new MathDocument([mock = new EnterableComponentMock()]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.moveRight();
+		cursor.moveRight(doc);
 		assert.isTrue(mock.enteredFromLeft);
 		assert.isFalse(mock.enteredFromRight);
 	});
@@ -51,14 +51,14 @@ describe("Cursor.moveRight", () => {
 		let mock: EnterableComponentMock;
 		const doc = new MathDocument([mock = new EnterableComponentMock()]);
 		const cursor = new Cursor(mock.componentsGroup, null);
-		cursor.moveRight();
+		cursor.moveRight(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, mock);
 	});
 	it("does nothing when the cursor is at the end of the document", () => {
 		const doc = new MathDocument([]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.moveRight();
+		cursor.moveRight(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -67,7 +67,7 @@ describe("Cursor.moveLeft", () => {
 	it("moves past the previous component if the component is not enterable", () => {
 		const doc = new MathDocument([new MathSymbol("a")]);
 		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
-		cursor.moveLeft();
+		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -75,7 +75,7 @@ describe("Cursor.moveLeft", () => {
 		let mock: EnterableComponentMock;
 		const doc = new MathDocument([mock = new EnterableComponentMock()]);
 		const cursor = new Cursor(doc.componentsGroup, mock);
-		cursor.moveLeft();
+		cursor.moveLeft(doc);
 		assert.isTrue(mock.enteredFromRight);
 		assert.isFalse(mock.enteredFromLeft);
 	});
@@ -83,14 +83,14 @@ describe("Cursor.moveLeft", () => {
 		let mock: EnterableComponentMock;
 		const doc = new MathDocument([mock = new EnterableComponentMock()]);
 		const cursor = new Cursor(mock.componentsGroup, null);
-		cursor.moveLeft();
+		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
 	it("does nothing when the cursor is at the beginning of the doc", () => {
 		const doc = new MathDocument([]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.moveLeft();
+		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -100,7 +100,7 @@ describe("Cursor.selectRight", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.selectRight();
+		cursor.selectRight(doc);
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbol);
 		assert.equal(cursor.selection!.end, symbol);
@@ -112,7 +112,7 @@ describe("Cursor.selectRight", () => {
 		const symbolB = new MathSymbol("B");
 		const doc = new MathDocument([symbolA, symbolB]);
 		const cursor = new Cursor(doc.componentsGroup, symbolA, new Selection(symbolA, symbolA));
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolA);
@@ -124,7 +124,7 @@ describe("Cursor.selectRight", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, symbol);
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -134,7 +134,7 @@ describe("Cursor.selectRight", () => {
 		const symbolA = new MathSymbol("A");
 		const doc = new MathDocument([symbolA]);
 		const cursor = new Cursor(doc.componentsGroup, symbolA, new Selection(symbolA, symbolA));
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolA);
@@ -146,7 +146,7 @@ describe("Cursor.selectRight", () => {
 		const mock = new EnterableComponentMock();
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null);
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, mock);
@@ -159,7 +159,7 @@ describe("Cursor.selectRight", () => {
 		const mock = new EnterableComponentMock(new MathComponentGroup([symbol]));
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, symbol, new Selection(symbol, symbol));
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, mock);
@@ -171,7 +171,7 @@ describe("Cursor.selectRight", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbol, symbol));
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -182,7 +182,7 @@ describe("Cursor.selectRight", () => {
 		const symbolB = new MathSymbol("B");
 		const doc = new MathDocument([symbolA, symbolB]);
 		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB));
-		cursor.selectRight();
+		cursor.selectRight(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolB);
@@ -196,7 +196,7 @@ describe("Cursor.selectLeft", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, symbol);
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbol);
 		assert.equal(cursor.selection!.end, symbol);
@@ -208,7 +208,7 @@ describe("Cursor.selectLeft", () => {
 		const symbolB = new MathSymbol("B");
 		const doc = new MathDocument([symbolA, symbolB]);
 		const cursor = new Cursor(doc.componentsGroup, symbolA, new Selection(symbolB, symbolB));
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolA);
@@ -220,7 +220,7 @@ describe("Cursor.selectLeft", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -230,7 +230,7 @@ describe("Cursor.selectLeft", () => {
 		const symbolA = new MathSymbol("A");
 		const doc = new MathDocument([symbolA]);
 		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolA));
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolA);
@@ -242,7 +242,7 @@ describe("Cursor.selectLeft", () => {
 		const mock = new EnterableComponentMock();
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null);
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, mock);
@@ -255,7 +255,7 @@ describe("Cursor.selectLeft", () => {
 		const mock = new EnterableComponentMock(new MathComponentGroup([symbol]));
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null, new Selection(symbol, symbol));
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, mock);
@@ -267,7 +267,7 @@ describe("Cursor.selectLeft", () => {
 		const symbol = new MathSymbol("A");
 		const doc = new MathDocument([symbol]);
 		const cursor = new Cursor(doc.componentsGroup, symbol, new Selection(symbol, symbol));
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -278,7 +278,7 @@ describe("Cursor.selectLeft", () => {
 		const symbolB = new MathSymbol("B");
 		const doc = new MathDocument([symbolA, symbolB]);
 		const cursor = new Cursor(doc.componentsGroup, symbolB, new Selection(symbolA, symbolB));
-		cursor.selectLeft();
+		cursor.selectLeft(doc);
 
 		assert.isNotNull(cursor.selection);
 		assert.equal(cursor.selection!.start, symbolA);

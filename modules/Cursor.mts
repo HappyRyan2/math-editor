@@ -2,6 +2,7 @@ import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
+import { MathDocument } from "./MathDocument.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -15,7 +16,6 @@ export class Cursor {
 	}
 
 	addComponent(component: MathComponent) {
-		component.container = this.container;
 		this.container.components.splice(this.position(), 0, component);
 		this.predecessor = component;
 	}
@@ -38,15 +38,15 @@ export class Cursor {
 	nextComponent(): MathComponent | null {
 		return this.container.components[this.position()] ?? null;
 	}
-	moveBefore(component: MathComponent) {
-		const container = component.container!;
+	moveBefore(component: MathComponent, doc: MathDocument) {
+		const container = doc.containingGroupOf(component);
 		const index = container.components.indexOf(component);
 		this.predecessor = container.components[index - 1] ?? null;
 		this.container = container;
 	}
-	moveAfter(component: MathComponent) {
+	moveAfter(component: MathComponent, doc: MathDocument) {
 		this.predecessor = component;
-		this.container = component.container!;
+		this.container = doc.containingGroupOf(component);
 	}
 
 	render() {
@@ -71,7 +71,7 @@ export class Cursor {
 		return (endIndex - startIndex + 1);
 	}
 
-	moveRight() {
+	moveRight(doc: MathDocument) {
 		if(this.selection != null) {
 			this.selection = null;
 			return;
@@ -85,10 +85,10 @@ export class Cursor {
 		}
 		else if(this.container.container instanceof EnterableMathComponent) {
 			this.predecessor = this.container.container;
-			this.container = this.container.container.container!;
+			this.container = doc.containingGroupOf(doc.containingComponentOf(this.container) as MathComponent);
 		}
 	}
-	moveLeft() {
+	moveLeft(doc: MathDocument) {
 		if(this.selection != null) {
 			this.selection = null;
 			return;
@@ -100,17 +100,19 @@ export class Cursor {
 			this.predecessor = this.container.components[this.position() - 2] ?? null;
 		}
 		else if(this.container.container instanceof EnterableMathComponent) {
-			const index = this.container.container.container!.components.indexOf(this.container.container);
-			this.predecessor = this.container.container.container!.components[index - 1] ?? null;
-			this.container = this.container.container.container!;
+			const containingComponent = doc.containingComponentOf(this.container) as MathComponent;
+			const containingGroup = doc.containingGroupOf(containingComponent);
+			const index = containingGroup.components.indexOf(this.container.container);
+			this.predecessor = containingGroup.components[index - 1] ?? null;
+			this.container = containingGroup;
 		}
 	}
-	selectRight() {
+	selectRight(doc: MathDocument) {
 		const nextComponent = this.nextComponent();
 		if(!nextComponent) {
 			const containingObject = this.container.container!;
 			if(containingObject instanceof EnterableMathComponent) {
-				this.moveAfter(containingObject);
+				this.moveAfter(containingObject, doc);
 				this.selection = new Selection(containingObject, containingObject);
 			}
 		}
@@ -121,28 +123,28 @@ export class Cursor {
 			else {
 				this.selection!.start = this.container.components[this.position() + 1];
 			}
-			this.moveAfter(nextComponent);
+			this.moveAfter(nextComponent, doc);
 		}
 		else if(this.selectionPosition() === "end") {
 			this.selection!.end = nextComponent;
-			this.moveAfter(nextComponent);
+			this.moveAfter(nextComponent, doc);
 		}
 		else {
 			this.selection = new Selection(nextComponent, nextComponent);
-			this.moveAfter(nextComponent);
+			this.moveAfter(nextComponent, doc);
 		}
 	}
-	selectLeft() {
+	selectLeft(doc: MathDocument) {
 		if(!this.predecessor) {
 			const containingObject = this.container.container!;
 			if(containingObject instanceof EnterableMathComponent) {
-				this.moveBefore(containingObject);
+				this.moveBefore(containingObject, doc);
 				this.selection = new Selection(containingObject, containingObject);
 			}
 		}
 		else if(this.selectionPosition() === "start") {
 			this.selection!.start = this.predecessor;
-			this.moveBefore(this.predecessor);
+			this.moveBefore(this.predecessor, doc);
 		}
 		else if(this.selectionPosition() === "end") {
 			if(this.selection!.start === this.selection!.end) {
@@ -151,11 +153,11 @@ export class Cursor {
 			else {
 				this.selection!.end = this.container.components[this.container.components.indexOf(this.predecessor) - 1];
 			}
-			this.moveBefore(this.predecessor);
+			this.moveBefore(this.predecessor, doc);
 		}
 		else {
 			this.selection = new Selection(this.predecessor, this.predecessor);
-			this.moveBefore(this.predecessor);
+			this.moveBefore(this.predecessor, doc);
 		}
 	}
 

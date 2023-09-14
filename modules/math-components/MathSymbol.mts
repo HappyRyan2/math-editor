@@ -1,11 +1,10 @@
 import { MathComponent } from "../MathComponent.mjs";
-import { MathComponentGroup } from "../MathComponentGroup.mjs";
 
 export class MathSymbol extends MathComponent {
 	symbol: string;
 
-	constructor(symbol: string, container?: MathComponentGroup) {
-		super(container);
+	constructor(symbol: string) {
+		super();
 		this.symbol = symbol;
 	}
 

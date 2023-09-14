@@ -56,23 +56,23 @@ export class App {
 		}
 		for(const cursor of this.cursors) {
 			if(event.code === "ArrowLeft" && !event.shiftKey) {
-				cursor.moveLeft();
+				cursor.moveLeft(this.document);
 			}
 			else if(event.code === "ArrowRight" && !event.shiftKey) {
-				cursor.moveRight();
+				cursor.moveRight(this.document);
 			}
 			else if(event.code === "ArrowLeft" && event.shiftKey) {
-				cursor.selectLeft();
+				cursor.selectLeft(this.document);
 			}
 			else if(event.code === "ArrowRight" && event.shiftKey) {
-				cursor.selectRight();
+				cursor.selectRight(this.document);
 			}
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
 		if(event.code === "Enter") {
 			for(const cursor of this.cursors) {
-				LineBreak.addLineBreak(cursor);
+				LineBreak.addLineBreak(cursor, this.document);
 			}
 		}
 	}

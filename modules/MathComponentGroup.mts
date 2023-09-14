@@ -10,9 +10,6 @@ export class MathComponentGroup {
 
 	constructor(components: MathComponent[]) {
 		this.components = components;
-		for(const component of components) {
-			component.container = this;
-		}
 	}
 
 	render(app: App) {
