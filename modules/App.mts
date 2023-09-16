@@ -8,6 +8,9 @@ export class App {
 	document: MathDocument;
 	cursors: Cursor[];
 
+	lastMouseDownEvent: MouseEvent | null = null;
+	isMousePressed: boolean = false;
+
 	constructor() {
 		this.document = new MathDocument([]);
 		this.cursors = [new Cursor(this.document.componentsGroup, null)];
@@ -28,6 +31,8 @@ export class App {
 	initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
 		document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
+		document.addEventListener("mouseup", () => this.handleMouseUp());
+		document.addEventListener("mousemove", (event) => this.handleMouseMove(event));
 	}
 	renderAndUpdate(div: HTMLDivElement = this.render()) {
 		const oldDiv = document.getElementById("document-container")!;
@@ -87,9 +92,22 @@ export class App {
 		}
 	}
 
+	handleMouseUp() {
+		this.isMousePressed = false;
+	}
 	handleMouseDown(event: MouseEvent) {
+		this.lastMouseDownEvent = event;
+		this.isMousePressed = true;
+
 		this.cursors = [Cursor.fromClick(this, event)];
 		Cursor.resetCursorBlink();
 		this.renderAndUpdate();
+	}
+	handleMouseMove(event: MouseEvent) {
+		if(this.isMousePressed) {
+			this.cursors = [Cursor.fromDrag(this, this.lastMouseDownEvent!, event)];
+			Cursor.resetCursorBlink();
+			this.renderAndUpdate();
+		}
 	}
 }

@@ -249,6 +249,11 @@ export class Cursor {
 		else { cursor.moveAfter(closest, app.document); }
 		return cursor;
 	}
+	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
+		const cursor1 = Cursor.fromClick(app, dragEnd);
+		const cursor2 = Cursor.fromClick(app, dragStart);
+		return Cursor.selectBetween(cursor1, cursor2, app.document);
+	}
 	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | EnterableMathComponent, Cursor | EnterableMathComponent] {
 		const index1 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor1.container));
 		const index2 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor2.container));
