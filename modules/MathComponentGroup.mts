@@ -64,4 +64,11 @@ export class MathComponentGroup {
 			}
 		}
 	}
+	*groupDescendants() {
+		for(const component of this.components) {
+			if(component instanceof EnterableMathComponent) {
+				yield* component.groupDescendants();
+			}
+		}
+	}
 }
