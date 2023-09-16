@@ -249,4 +249,19 @@ export class Cursor {
 		else { cursor.moveAfter(closest, app.document); }
 		return cursor;
 	}
+	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | EnterableMathComponent, Cursor | EnterableMathComponent] {
+		const index1 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor1.container));
+		const index2 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor2.container));
+		const groups = (container.components[index1] as EnterableMathComponent | undefined)?.groups() ?? [];
+		const groupIndex1 = groups.findIndex(g => [g, ...g.groupDescendants()].includes(cursor1.container));
+		const groupIndex2 = groups.findIndex(g => [g, ...g.groupDescendants()].includes(cursor2.container));
+		if(index1 === -1 || index2 === -1 || index1 !== index2 || groupIndex1 !== groupIndex2) {
+			return [
+				container,
+				(container.components[index1] as EnterableMathComponent | undefined) ?? cursor1,
+				(container.components[index2] as EnterableMathComponent | undefined) ?? cursor2,
+			];
+		}
+		return Cursor.lastCommonAncestor(cursor1, cursor2, groups[groupIndex1]);
+	}
 }

@@ -6,6 +6,7 @@ import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
 import { Selection } from "../Selection.mjs";
+import { Fraction } from "../math-components/Fraction.mjs";
 
 describe("Cursor.addComponent", () => {
 	it("correctly adds the component when the cursor is at the beginning of its container", () => {
@@ -351,5 +352,58 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(doc.componentsGroup.components, []);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+	});
+});
+describe("Cursor.lastCommonAncestor", () => {
+	it("returns the last common ancestor, along with the two children that contain each cursor", () => {
+		let container1, container2, container3;
+		const doc = new MathDocument([
+			container1 = new EnterableComponentMock(new MathComponentGroup([
+				container2 = new EnterableComponentMock(),
+			])),
+			container3 = new EnterableComponentMock(),
+		]);
+		const cursor1 = new Cursor(container2.componentsGroup, null);
+		const cursor2 = new Cursor(container3.componentsGroup, null);
+		const [ancestor, child1, child2] = Cursor.lastCommonAncestor(cursor1, cursor2, doc.componentsGroup);
+		assert.equal(ancestor, doc.componentsGroup);
+		assert.equal(child1, container1);
+		assert.equal(child2, container3);
+	});
+	it("works when the two cursors have the same container", () => {
+		const doc = new MathDocument([]);
+		const cursor1 = new Cursor(doc.componentsGroup, null);
+		const cursor2 = new Cursor(doc.componentsGroup, null);
+		const [ancestor, child1, child2] = Cursor.lastCommonAncestor(cursor1, cursor2, doc.componentsGroup);
+		assert.equal(ancestor, doc.componentsGroup);
+		assert.equal(child1, cursor1);
+		assert.equal(child2, cursor2);
+	});
+	it("works when the last common ancestor is the container of only one of the cursors", () => {
+		let container;
+		const doc = new MathDocument([
+			container = new EnterableComponentMock(),
+		]);
+		const cursor1 = new Cursor(doc.componentsGroup, null);
+		const cursor2 = new Cursor(container.componentsGroup, null);
+		const [ancestor, child1, child2] = Cursor.lastCommonAncestor(cursor1, cursor2, doc.componentsGroup);
+		assert.equal(ancestor, doc.componentsGroup);
+		assert.equal(child1, cursor1);
+		assert.equal(child2, container);
+	});
+	it("works when there is an EnterableMathComponent with multiple MathComponentGroups", () => {
+		let fraction: Fraction, group1:MathComponentGroup, group2: MathComponentGroup;
+		const doc = new MathDocument([
+			fraction = new Fraction(
+				group1 = new MathComponentGroup([]),
+				group2 = new MathComponentGroup([]),
+			),
+		]);
+		const cursor1 = new Cursor(group1, null);
+		const cursor2 = new Cursor(group2, null);
+		const [ancestor, child1, child2] = Cursor.lastCommonAncestor(cursor1, cursor2, doc.componentsGroup);
+		assert.equal(ancestor, doc.componentsGroup);
+		assert.equal(child1, fraction);
+		assert.equal(child2, fraction);
 	});
 });
