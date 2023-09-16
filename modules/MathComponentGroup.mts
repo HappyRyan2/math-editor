@@ -55,4 +55,13 @@ export class MathComponentGroup {
 			...this.components.map(component => [component, ...cursors.filter(c => c.predecessor === component)]),
 		].flat();
 	}
+
+	*descendants() {
+		for(const component of this.components) {
+			yield component;
+			if(component instanceof EnterableMathComponent) {
+				yield* component.descendants();
+			}
+		}
+	}
 }

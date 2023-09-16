@@ -12,12 +12,7 @@ export abstract class EnterableMathComponent extends MathComponent {
 
 	*descendants(): Generator<MathComponent, void, unknown> {
 		for(const group of this.groups()) {
-			for(const component of group.components) {
-				yield component;
-				if(component instanceof EnterableMathComponent) {
-					yield* component.descendants();
-				}
-			}
+			yield* group.descendants();
 		}
 	}
 	*[Symbol.iterator](): Generator<MathComponent, void, undefined> {
