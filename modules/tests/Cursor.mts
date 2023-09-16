@@ -407,3 +407,35 @@ describe("Cursor.lastCommonAncestor", () => {
 		assert.equal(child2, fraction);
 	});
 });
+describe("Cursor.selectBetween", () => {
+	it("selects the content between the two cursors", () => {
+		let symbolA, symbolB, symbolC;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+			symbolC = new MathSymbol("C"),
+			new MathSymbol("D"),
+		]);
+		const cursor1 = new Cursor(doc.componentsGroup, symbolA);
+		const cursor2 = new Cursor(doc.componentsGroup, symbolC);
+		const result = Cursor.selectBetween(cursor1, cursor2, doc);
+		assert.equal(result.container, doc.componentsGroup);
+		assert.equal(result.predecessor, symbolA);
+		assert.equal(result.selection?.start, symbolB);
+		assert.equal(result.selection?.end, symbolC);
+	});
+	it("selects the content in the last common ancestor if the cursors do not have the same container", () => {
+		let container1, container2;
+		const doc = new MathDocument([
+			container1 = new EnterableComponentMock(new MathComponentGroup([])),
+			container2 = new EnterableComponentMock(new MathComponentGroup([])),
+		]);
+		const cursor1 = new Cursor(container1.componentsGroup, null);
+		const cursor2 = new Cursor(container2.componentsGroup, null);
+		const result = Cursor.selectBetween(cursor1, cursor2, doc);
+		assert.equal(result.container, doc.componentsGroup);
+		assert.equal(result.predecessor, null);
+		assert.equal(result.selection?.start, container1);
+		assert.equal(result.selection?.end, container2);
+	});
+});

@@ -264,4 +264,31 @@ export class Cursor {
 		}
 		return Cursor.lastCommonAncestor(cursor1, cursor2, groups[groupIndex1]);
 	}
+	static selectBetween(cursor1: Cursor, cursor2: Cursor, doc: MathDocument): Cursor {
+		if(cursor1.predecessor === cursor2.predecessor && cursor1.container === cursor2.container) {
+			return new Cursor(cursor1.container, cursor1.predecessor);
+		}
+		const [ancestor, child1, child2] = Cursor.lastCommonAncestor(cursor1, cursor2, doc.componentsGroup);
+		const componentsAndCursors = ancestor.componentsAndCursors([cursor1, cursor2]);
+		const index1 = componentsAndCursors.indexOf(child1);
+		const index2 = componentsAndCursors.indexOf(child2);
+		const selection = (index1 < index2) ? new Selection(
+			child1 instanceof EnterableMathComponent ? child1 : cursor1.nextComponent()!,
+			child2 instanceof EnterableMathComponent ? child2 : cursor2.predecessor!,
+		) : new Selection(
+			child2 instanceof EnterableMathComponent ? child2 : cursor2.nextComponent()!,
+			child1 instanceof EnterableMathComponent ? child1 : cursor1.predecessor!,
+		);
+		const result = new Cursor(ancestor, null, selection);
+		if(child1 instanceof Cursor) {
+			result.predecessor = cursor1.predecessor;
+		}
+		else if(index1 < index2) {
+			result.moveBefore(child1, doc);
+		}
+		else {
+			result.moveAfter(child1, doc);
+		}
+		return result;
+	}
 }
