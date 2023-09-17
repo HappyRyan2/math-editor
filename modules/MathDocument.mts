@@ -17,8 +17,9 @@ export class MathDocument {
 		this.insertLineBreaks(div);
 		return div;
 	}
-	renderWithMapping(app: App): [HTMLDivElement, Map<MathComponent, HTMLElement>] {
+	renderWithMapping(app: App): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const [renderedComponents, map] = this.componentsGroup.renderWithMapping(app);
+		map.delete(this.componentsGroup);
 		return [this.render(app, renderedComponents), map];
 	}
 	insertLineBreaks(renderedDocument: Element) {

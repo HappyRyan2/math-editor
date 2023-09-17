@@ -26,12 +26,12 @@ export abstract class EnterableMathComponent extends MathComponent {
 			yield* group.components;
 		}
 	}
-	renderWithMapping(app: App): [HTMLElement, Map<MathComponent, HTMLElement>] {
+	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const groupsAndMappings = this.groups().map(g => g.renderWithMapping(app));
 		const groups = groupsAndMappings.map((tuple) => tuple[0]);
 		const maps = groupsAndMappings.map(tuple => tuple[1]);
 		const result = this.render(app, ...groups);
-		const resultMap: Map<MathComponent, HTMLElement> = new Map();
+		const resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		for(const map of maps) {
 			for(const [key, value] of map.entries()) {
 				resultMap.set(key, value);

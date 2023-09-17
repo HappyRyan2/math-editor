@@ -36,9 +36,10 @@ describe("App.renderWithMapping", () => {
 		]);
 		const [rendered, map] = app.renderWithMapping();
 		assert.equal(rendered.outerHTML, app.render().outerHTML);
-		assert.equal(map.size, 2);
+		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, mock.render(app).outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
+		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
 	});
 	it("works when there are enterable components, cursors, and selections", () => {
 		const app = new App();
@@ -55,8 +56,9 @@ describe("App.renderWithMapping", () => {
 		const expectedMock = mock.render(app);
 		expectedMock.classList.add("selected");
 		assert.equal(rendered.outerHTML, app.render().outerHTML);
-		assert.equal(map.size, 2);
+		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, expectedMock.outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
+		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
 	});
 });

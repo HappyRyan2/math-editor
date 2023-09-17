@@ -3,6 +3,7 @@ import { Cursor } from "./Cursor.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { MathComponent } from "./MathComponent.mjs";
+import { MathComponentGroup } from "./MathComponentGroup.mjs";
 
 export class App {
 	document: MathDocument;
@@ -39,7 +40,7 @@ export class App {
 		oldDiv.insertAdjacentElement("afterend", div);
 		oldDiv.remove();
 	}
-	renderWithMapping(): [HTMLDivElement, Map<MathComponent, HTMLElement>] {
+	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const [renderedDoc, map] = this.document.renderWithMapping(this);
 		return [this.render(renderedDoc), map];
 	}

@@ -22,14 +22,15 @@ export class MathComponentGroup {
 		}
 		return span;
 	}
-	renderWithMapping(app: App): [HTMLElement, Map<MathComponent, HTMLElement>] {
-		const resultMap: Map<MathComponent, HTMLElement> = new Map();
+	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		const result = document.createElement("span");
+		resultMap.set(this, result);
 		result.classList.add("math-component-group");
 		for(const component of this.componentsAndCursors(app.cursors)) {
 			let renderedComponent: HTMLElement;
 			if(component instanceof EnterableMathComponent) {
-				let map: Map<MathComponent, HTMLElement>;
+				let map: Map<MathComponent | MathComponentGroup, HTMLElement>;
 				[renderedComponent, map] = component.renderWithMapping(app);
 				for(const [key, value] of map.entries()) {
 					resultMap.set(key, value);

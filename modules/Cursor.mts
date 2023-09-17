@@ -230,6 +230,7 @@ export class Cursor {
 		let minDistX = Infinity;
 		let minValue: [MathComponent, "left" | "right"];
 		for(const component of mapping.keys()) {
+			if(component instanceof MathComponentGroup) { continue; }
 			const box = mapping.get(component)!.getBoundingClientRect();
 			for(const direction of ["left", "right"] as const) {
 				const distX = Math.abs(box[direction] - event.clientX);
