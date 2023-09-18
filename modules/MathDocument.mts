@@ -80,4 +80,10 @@ export class MathDocument {
 		}
 		throw new Error("Unexpected: did not find the component in any of the groups of its container.");
 	}
+	depth(component: MathComponent): number {
+		if(this.componentsGroup.components.includes(component)) {
+			return 0;
+		}
+		return this.depth(this.containingComponentOf(component) as EnterableMathComponent) + 1;
+	}
 }

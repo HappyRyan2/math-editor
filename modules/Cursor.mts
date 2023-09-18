@@ -4,6 +4,7 @@ import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
+import { invertMap, maxItem, minItem, rectContains } from "./utils.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -14,6 +15,16 @@ export class Cursor {
 		this.container = container;
 		this.predecessor = predecessor;
 		this.selection = selection ?? null;
+	}
+	static createAdjacent(component: MathComponent, whichSide: "left" | "right", doc: MathDocument) {
+		const cursor = new Cursor(doc.componentsGroup, null);
+		if(whichSide === "left") {
+			cursor.moveBefore(component, doc);
+		}
+		else {
+			cursor.moveAfter(component, doc);
+		}
+		return cursor;
 	}
 
 	addComponent(component: MathComponent) {
@@ -225,30 +236,25 @@ export class Cursor {
 
 	static fromClick(app: App, event: MouseEvent) {
 		const [rendered, mapping] = app.renderWithMapping();
+		const inverseMap = invertMap(mapping);
 		app.renderAndUpdate(rendered);
-		let minDistY = Infinity;
-		let minDistX = Infinity;
-		let minValue: [MathComponent, "left" | "right"];
-		for(const component of mapping.keys()) {
-			if(component instanceof MathComponentGroup) { continue; }
-			const box = mapping.get(component)!.getBoundingClientRect();
-			for(const direction of ["left", "right"] as const) {
-				const distX = Math.abs(box[direction] - event.clientX);
-				const distY = Math.abs((box.top + box.bottom) / 2 - event.clientY);
-				if(distY < minDistY || (distY === minDistY && distX < minDistX)) {
-					minDistX = distX;
-					minDistY = distY;
-					minValue = [component, direction];
-				}
-			}
+		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
+		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
+		if(elementsClicked.length === 0) {
+			const lines = [...rendered.getElementsByClassName("line")];
+			elementsClicked.push(lines[lines.length - 1] as HTMLElement);
 		}
-		const [closest, direction] = minValue!;
-		const cursor = new Cursor(app.document.componentsGroup, null);
-		if(direction === "left") {
-			cursor.moveBefore(closest, app.document);
-		}
-		else { cursor.moveAfter(closest, app.document); }
-		return cursor;
+		const deepestComponent = maxItem(elementsClicked, (element: HTMLElement) => {
+			if(element.classList.contains("line")) { return -1; }
+			return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
+		});
+		const [closestElement, whichSide] = minItem(
+			[...deepestComponent.children]
+				.filter(e => inverseMap.get(e as HTMLElement))
+				.map(e => [[e, "left"], [e, "right"]] as [HTMLElement, "left" | "right"][]).flat(1),
+			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - event.clientX),
+		);
+		return Cursor.createAdjacent(inverseMap.get(closestElement) as MathComponent, whichSide, app.document);
 	}
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);
