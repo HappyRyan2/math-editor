@@ -82,6 +82,12 @@ export class Cursor {
 		const endIndex = this.container.components.indexOf(this.selection.end);
 		return (endIndex - startIndex + 1);
 	}
+	selectedComponents() {
+		if(this.selection == null) { return []; }
+		const startIndex = this.container.components.indexOf(this.selection.start);
+		const endIndex = this.container.components.indexOf(this.selection.end);
+		return this.container.components.slice(startIndex, endIndex + 1);
+	}
 
 	moveRight(doc: MathDocument) {
 		if(this.selection != null) {
