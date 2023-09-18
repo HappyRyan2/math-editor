@@ -12,7 +12,7 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
-	keyHandlers: ({ keyCode: string, handler: (event: KeyboardEvent) => void })[] = [];
+	keyHandlers: ({ key: string, handler: (event: KeyboardEvent) => void })[] = [];
 
 	constructor() {
 		this.document = new MathDocument([]);
@@ -27,11 +27,11 @@ export class App {
 	}
 	initializeKeyHandlers() {
 		this.keyHandlers.push({
-			keyCode: "Enter",
+			key: "Enter",
 			handler: () => this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document)),
 		});
 		this.keyHandlers.push({
-			keyCode: "Backspace",
+			key: "Backspace",
 			handler: () => this.cursors.forEach(cursor => cursor.deletePrevious(this.document)),
 		});
 	}
@@ -96,8 +96,8 @@ export class App {
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
-		for(const { keyCode, handler } of this.keyHandlers) {
-			if(event.code === keyCode) {
+		for(const { key, handler } of this.keyHandlers) {
+			if(event.key === key) {
 				handler(event);
 				return true;
 			}

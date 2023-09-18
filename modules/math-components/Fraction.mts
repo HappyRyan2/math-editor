@@ -67,6 +67,6 @@ export class Fraction extends EnterableMathComponent {
 }
 
 app.keyHandlers.push({
-	keyCode: "Slash",
+	key: "/",
 	handler: () => app.cursors.forEach(cursor => Fraction.insertFraction(cursor, app.document)),
 });
