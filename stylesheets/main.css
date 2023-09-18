@@ -17,7 +17,7 @@ body {
 }
 
 .math-component-group, .line {
-	height: max-content;
+	min-height: 1em;
 	display: flex;
 	align-items: center;
 }
