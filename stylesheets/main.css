@@ -21,3 +21,6 @@ body {
 	display: flex;
 	align-items: center;
 }
+.math-component-group {
+	justify-content: center;
+}
