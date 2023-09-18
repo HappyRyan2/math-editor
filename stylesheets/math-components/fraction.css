@@ -1,6 +1,9 @@
 .fraction {
 	display: inline-flex;
 	flex-direction: column;
+
+	padding-left: 2px;
+	padding-right: 2px;
 }
 .numerator, .denominator {
 	width: 100%;
