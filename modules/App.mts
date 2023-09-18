@@ -12,6 +12,8 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
+	keyHandlers: ({ keyCode: string, handler: (event: KeyboardEvent) => void })[] = [];
+
 	constructor() {
 		this.document = new MathDocument([]);
 		this.cursors = [new Cursor(this.document.componentsGroup, null)];
@@ -20,7 +22,18 @@ export class App {
 	initialize() {
 		this.renderAndUpdate();
 		this.initializeListeners();
+		this.initializeKeyHandlers();
 		Cursor.initialize();
+	}
+	initializeKeyHandlers() {
+		this.keyHandlers.push({
+			keyCode: "Enter",
+			handler: () => this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document)),
+		});
+		this.keyHandlers.push({
+			keyCode: "Backspace",
+			handler: () => this.cursors.forEach(cursor => cursor.deletePrevious(this.document)),
+		});
 	}
 
 	render(renderedDoc = this.document.render(this)) {
@@ -46,9 +59,11 @@ export class App {
 	}
 
 	handleKeyDown(event: KeyboardEvent) {
-		this.handleCharacterKeys(event);
-		this.handleArrowKeys(event);
-		this.handleSpecialKeys(event);
+		const handled = this.handleSpecialKeys(event);
+		if(!handled) {
+			this.handleArrowKeys(event);
+			this.handleCharacterKeys(event);
+		}
 		this.renderAndUpdate();
 	}
 	handleCharacterKeys(event: KeyboardEvent) {
@@ -81,16 +96,13 @@ export class App {
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
-		if(event.code === "Enter") {
-			for(const cursor of this.cursors) {
-				LineBreak.addLineBreak(cursor, this.document);
+		for(const { keyCode, handler } of this.keyHandlers) {
+			if(event.code === keyCode) {
+				handler(event);
+				return true;
 			}
 		}
-		else if(event.code === "Backspace") {
-			for(const cursor of this.cursors) {
-				cursor.deletePrevious(this.document);
-			}
-		}
+		return false;
 	}
 
 	handleMouseUp() {
