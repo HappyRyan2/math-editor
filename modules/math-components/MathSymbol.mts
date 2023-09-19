@@ -1,7 +1,7 @@
 import { MathComponent } from "../MathComponent.mjs";
 
 export class MathSymbol extends MathComponent {
-	static OPERATORS = ["+", "-", "*", "=", ">", "<"];
+	static OPERATORS = ["+", "-", "*", "=", ">", "<", "⋅"];
 	symbol: string;
 
 	constructor(symbol: string) {
