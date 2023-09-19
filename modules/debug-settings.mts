@@ -1,13 +1,17 @@
-import { app } from "./app-initializer.mjs";
-import { Line } from "./Line.mjs";
+import { app } from "./App.mjs";
+import { MathDocument } from "./MathDocument.mjs";
+import { Cursor } from "./Cursor.mjs";
 
 
-const ENABLE_DEBUG_SETTINGS = false;
+const ENABLE_DEBUG_SETTINGS = true;
 const DEBUG_SETTINGS = {
-	INITIAL_LINES: [new Line([])],
+	INITIAL_DOCUMENT: new MathDocument([
+
+	]),
 };
 
 if(ENABLE_DEBUG_SETTINGS) {
-	app.lines = DEBUG_SETTINGS.INITIAL_LINES;
+	app.document = DEBUG_SETTINGS.INITIAL_DOCUMENT;
+	app.cursors = [new Cursor(app.document.componentsGroup, app.document.componentsGroup.components[0])];
 	app.renderAndUpdate();
 }

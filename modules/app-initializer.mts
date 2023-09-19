@@ -1,5 +1,2 @@
-import { App } from "./App.mjs";
-
-const app = new App();
+import { app } from "./App.mjs";
 app.initialize();
-export { app };

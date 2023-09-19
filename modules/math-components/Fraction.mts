@@ -3,7 +3,6 @@ import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
-import { app } from "../app-initializer.mjs";
 
 export class Fraction extends EnterableMathComponent {
 	numerator: MathComponentGroup;
@@ -66,7 +65,3 @@ export class Fraction extends EnterableMathComponent {
 	}
 }
 
-app.keyHandlers.push({
-	key: "/",
-	handler: () => app.cursors.forEach(cursor => Fraction.insertFraction(cursor, app.document)),
-});
