@@ -61,6 +61,31 @@ export class App {
 		const [renderedDoc, map] = this.document.renderWithMapping(this);
 		return [this.render(renderedDoc), map];
 	}
+	updateCursors() {
+		for(const [component, element] of this.renderingMap) {
+			if(component instanceof MathComponent) {
+				if(component.isSelected(this.cursors)) {
+					element.classList.add("selected");
+				}
+				else {
+					element.classList.remove("selected");
+				}
+			}
+		}
+		for(const cursorElement of document.getElementsByClassName("cursor")) {
+			cursorElement.remove();
+		}
+		for(const cursor of this.cursors) {
+			const containerElement = this.renderingMap.get(cursor.container)!;
+			if(cursor.predecessor == null) {
+				containerElement.insertBefore(cursor.render(), containerElement.firstChild);
+			}
+			else {
+				const predecessorElement = this.renderingMap.get(cursor.predecessor)!;
+				predecessorElement.insertAdjacentElement("afterend", cursor.render());
+			}
+		}
+	}
 
 	handleKeyDown(event: KeyboardEvent) {
 		const handled = this.handleSpecialKeys(event);
@@ -124,7 +149,7 @@ export class App {
 		if(this.isMousePressed) {
 			this.cursors = [Cursor.fromDrag(this, this.lastMouseDownEvent!, event)];
 			Cursor.resetCursorBlink();
-			this.renderAndUpdate();
+			this.updateCursors();
 		}
 	}
 }
