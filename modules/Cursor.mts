@@ -258,6 +258,17 @@ export class Cursor {
 			if(element.classList.contains("line")) { return -1; }
 			return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
 		});
+		if(!deepestComponent.querySelector(":not(.cursor)")) {
+			if(deepestComponent.classList.contains("math-component-group")) {
+				return new Cursor(inverseMap.get(deepestComponent) as MathComponentGroup, null);
+			}
+			else {
+				return new Cursor(
+					app.document.componentsGroup,
+					app.document.componentsGroup.components[app.document.componentsGroup.components.length - 1],
+				);
+			}
+		}
 		const [closestElement, whichSide] = minItem(
 			[...deepestComponent.children]
 				.filter(e => inverseMap.get(e as HTMLElement))
