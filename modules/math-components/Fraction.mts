@@ -1,6 +1,7 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { LineBreak } from "../LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 
@@ -47,7 +48,7 @@ export class Fraction extends EnterableMathComponent {
 			);
 			cursor.replaceSelectionWith(fraction);
 		}
-		else if(cursor.predecessor) {
+		else if(cursor.predecessor && !(cursor.predecessor instanceof LineBreak)) {
 			fraction = new Fraction(
 				new MathComponentGroup([cursor.predecessor]),
 				new MathComponentGroup([]),

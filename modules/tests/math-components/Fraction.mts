@@ -6,6 +6,7 @@ import { MathSymbol } from "../../math-components/MathSymbol.mjs";
 import { Fraction } from "../../math-components/Fraction.mjs";
 import { MathComponentGroup } from "../../MathComponentGroup.mjs";
 import { Cursor } from "../../Cursor.mjs";
+import { LineBreak } from "../../LineBreak.mjs";
 
 describe("Fraction.insertFraction", () => {
 	it("puts the selection into a fraction if there is one", () => {
@@ -44,6 +45,19 @@ describe("Fraction.insertFraction", () => {
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.equal(doc.componentsGroup.components[0], fraction);
+		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([]), new MathComponentGroup([])));
+		assert.equal(cursor.container, fraction.denominator);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("creates an empty fraction if the previous component is a line break", () => {
+		const lineBreak = new LineBreak();
+		const doc = new MathDocument([lineBreak]);
+		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
+		const fraction = Fraction.insertFraction(cursor, doc);
+
+		assert.equal(doc.componentsGroup.components.length, 2);
+		assert.equal(doc.componentsGroup.components[0], lineBreak);
+		assert.equal(doc.componentsGroup.components[1], fraction);
 		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([]), new MathComponentGroup([])));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
