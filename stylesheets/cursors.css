@@ -1,6 +1,7 @@
 .cursor {
 	position: relative;
-	width: 1px;
+	width: 0px;
+	margin-right: -2px;
 	height: 1em;
 	box-sizing: border-box;
 	border-right: 2px solid black;
