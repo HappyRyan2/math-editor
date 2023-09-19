@@ -248,7 +248,11 @@ export class Cursor {
 		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
 		if(elementsClicked.length === 0) {
 			const lines = [...rendered.getElementsByClassName("line")];
-			elementsClicked.push(lines[lines.length - 1] as HTMLElement);
+			const closestLine = minItem(lines, (line) => {
+				const box = line.getBoundingClientRect();
+				return Math.abs((box.top + box.bottom) / 2 - event.clientY);
+			});
+			elementsClicked.push(closestLine as HTMLElement);
 		}
 		const deepestComponent = maxItem(elementsClicked, (element: HTMLElement) => {
 			if(element.classList.contains("line")) { return -1; }
