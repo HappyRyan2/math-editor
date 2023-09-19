@@ -13,6 +13,7 @@ export class App {
 	isMousePressed: boolean = false;
 
 	keyHandlers: ({ key: string, handler: (event: KeyboardEvent) => void })[] = [];
+	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
 	constructor() {
 		this.document = new MathDocument([]);
@@ -48,10 +49,13 @@ export class App {
 		document.addEventListener("mouseup", () => this.handleMouseUp());
 		document.addEventListener("mousemove", (event) => this.handleMouseMove(event));
 	}
-	renderAndUpdate(div: HTMLDivElement = this.render()) {
+	renderAndUpdate() {
+		const [div, map] = this.renderWithMapping();
 		const oldDiv = document.getElementById("document-container")!;
 		oldDiv.insertAdjacentElement("afterend", div);
 		oldDiv.remove();
+		this.renderingMap = map;
+		return [div, map];
 	}
 	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const [renderedDoc, map] = this.document.renderWithMapping(this);

@@ -241,9 +241,9 @@ export class Cursor {
 	}
 
 	static fromClick(app: App, event: MouseEvent) {
-		const [rendered, mapping] = app.renderWithMapping();
+		const rendered = document.getElementById("document-container")!;
+		const mapping = app.renderingMap;
 		const inverseMap = invertMap(mapping);
-		app.renderAndUpdate(rendered);
 		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
 		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
 		if(elementsClicked.length === 0) {
