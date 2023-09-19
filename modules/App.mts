@@ -76,13 +76,19 @@ export class App {
 			cursorElement.remove();
 		}
 		for(const cursor of this.cursors) {
-			const containerElement = this.renderingMap.get(cursor.container)!;
+			const containerElement = this.renderingMap.get(cursor.container) ?? document.querySelector(".line")!;
 			if(cursor.predecessor == null) {
 				containerElement.insertBefore(cursor.render(), containerElement.firstChild);
 			}
 			else {
 				const predecessorElement = this.renderingMap.get(cursor.predecessor)!;
-				predecessorElement.insertAdjacentElement("afterend", cursor.render());
+				if(predecessorElement.classList.contains("line-break")) {
+					const nextLine = predecessorElement.parentElement!.nextElementSibling;
+					nextLine?.insertAdjacentElement("afterbegin", cursor.render());
+				}
+				else {
+					predecessorElement.insertAdjacentElement("afterend", cursor.render());
+				}
 			}
 		}
 	}

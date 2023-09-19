@@ -257,7 +257,8 @@ export class Cursor {
 		const [closestElement, whichSide] = minItem(
 			[...deepestComponent.children]
 				.filter(e => inverseMap.get(e as HTMLElement))
-				.map(e => [[e, "left"], [e, "right"]] as [HTMLElement, "left" | "right"][]).flat(1),
+				.map(e => [[e, "left"], [e, "right"]] as [HTMLElement, "left" | "right"][]).flat(1)
+				.filter(([e, whichSide]) => !(e.classList.contains("line-break") && whichSide === "right")),
 			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - event.clientX),
 		);
 		return Cursor.createAdjacent(inverseMap.get(closestElement) as MathComponent, whichSide, app.document);
