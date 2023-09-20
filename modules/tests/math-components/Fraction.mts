@@ -20,7 +20,8 @@ describe("Fraction.insertFraction", () => {
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.equal(doc.componentsGroup.components[0], fraction);
-		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([symbolA, symbolB]), new MathComponentGroup([])));
+		assert.deepEqual(fraction.numerator, new MathComponentGroup([symbolA, symbolB]));
+		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -34,7 +35,8 @@ describe("Fraction.insertFraction", () => {
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.equal(doc.componentsGroup.components[0], fraction);
-		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([symbol]), new MathComponentGroup([])));
+		assert.deepEqual(fraction.numerator, new MathComponentGroup([symbol]));
+		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -45,7 +47,8 @@ describe("Fraction.insertFraction", () => {
 
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.equal(doc.componentsGroup.components[0], fraction);
-		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([]), new MathComponentGroup([])));
+		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
+		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -58,7 +61,8 @@ describe("Fraction.insertFraction", () => {
 		assert.equal(doc.componentsGroup.components.length, 2);
 		assert.equal(doc.componentsGroup.components[0], lineBreak);
 		assert.equal(doc.componentsGroup.components[1], fraction);
-		assert.deepEqual(fraction, new Fraction(new MathComponentGroup([]), new MathComponentGroup([])));
+		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
+		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});

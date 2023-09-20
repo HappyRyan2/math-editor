@@ -146,7 +146,7 @@ export class App {
 			const handlers = RelativeKeyHandler.getHandlers(cursor, this.document, event.key);
 			if(handlers.length !== 0) {
 				const [handler, component] = handlers[0];
-				handler.callback(cursor, component);
+				handler.callback(cursor, component, this);
 			}
 		}
 	}

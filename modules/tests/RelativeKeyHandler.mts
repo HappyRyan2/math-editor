@@ -44,9 +44,9 @@ describe("RelativeKeyHandler.getHandlers", () => {
 			),
 		]);
 		let handler1, handler3;
-		container1.relativeKeyHandlers.push(handler1 = new RelativeKeyHandler("a", [["inside", 0]]));
-		container2.relativeKeyHandlers.push(new RelativeKeyHandler("a", [["inside", 1]]));
-		container3.relativeKeyHandlers.push(handler3 = new RelativeKeyHandler("a", [["inside", 0]]));
+		container1.relativeKeyHandlers = [handler1 = new RelativeKeyHandler("a", [["inside", 0]])];
+		container2.relativeKeyHandlers = [new RelativeKeyHandler("a", [["inside", 1]])];
+		container3.relativeKeyHandlers = [handler3 = new RelativeKeyHandler("a", [["inside", 0]])];
 
 		const doc = new MathDocument([container1]);
 		const cursor = new Cursor(container3.componentsGroup, null);

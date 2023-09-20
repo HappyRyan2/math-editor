@@ -5,6 +5,7 @@ import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
 import { invertMap, maxItem, minItem, rectContains } from "./utils.mjs";
+import { LineBreak } from "./LineBreak.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -25,6 +26,11 @@ export class Cursor {
 			cursor.moveAfter(component, container);
 		}
 		return cursor;
+	}
+	moveTo(cursor: Cursor) {
+		this.container = cursor.container;
+		this.predecessor = cursor.predecessor;
+		this.selection = null;
 	}
 
 	addComponent(component: MathComponent) {
@@ -331,5 +337,21 @@ export class Cursor {
 		);
 		const closestComponent = inverseMap.get(closestElement) as MathComponent;
 		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
+	}
+	renderedPosition(app: App) {
+		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === app.document.componentsGroup)) {
+			return 0;
+		}
+		else if(this.predecessor) {
+			return app.renderingMap.get(this.predecessor)!.getBoundingClientRect().right;
+		}
+		return app.renderingMap.get(this.container)!.getBoundingClientRect().left;
+	}
+	moveToClosest(components: MathComponent[], app: App) {
+		this.moveTo(Cursor.fromClosest(
+			components.map(c => app.renderingMap.get(c)!),
+			this.renderedPosition(app),
+			app,
+		));
 	}
 }

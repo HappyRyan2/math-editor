@@ -1,3 +1,4 @@
+import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { MathComponent } from "./MathComponent.mjs";
@@ -8,9 +9,9 @@ type Location = "before" | "after" | ["inside", number];
 export class RelativeKeyHandler {
 	key: string;
 	locations: Location[];
-	callback: (cursor: Cursor, component: MathComponent) => void;
+	callback: (cursor: Cursor, component: MathComponent, app: App) => void;
 
-	constructor(key: string, locations: Location[], callback: (cursor: Cursor, component: MathComponent) => void = (() => {})) {
+	constructor(key: string, locations: Location[], callback: (cursor: Cursor, component: MathComponent, app: App) => void = (() => {})) {
 		this.locations = locations;
 		this.key = key;
 		this.callback = callback;
