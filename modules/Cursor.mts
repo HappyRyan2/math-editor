@@ -271,15 +271,7 @@ export class Cursor {
 				);
 			}
 		}
-		const [closestElement, whichSide] = minItem(
-			[...deepestComponent.children]
-				.filter(e => inverseMap.get(e as HTMLElement))
-				.map(e => [[e, "left"], [e, "right"]] as [HTMLElement, "left" | "right"][]).flat(1)
-				.filter(([e, whichSide]) => !(e.classList.contains("line-break") && whichSide === "right")),
-			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - event.clientX),
-		);
-		const closestComponent = inverseMap.get(closestElement) as MathComponent;
-		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
+		return Cursor.fromClosest([...deepestComponent.children] as HTMLElement[], event.clientX, app);
 	}
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);
@@ -327,5 +319,17 @@ export class Cursor {
 			result.moveAfter(child1, doc.containingGroupOf(child1));
 		}
 		return result;
+	}
+	static fromClosest(elements: HTMLElement[], xCoord: number, app: App) {
+		const inverseMap = invertMap(app.renderingMap);
+		const [closestElement, whichSide] = minItem(
+			elements
+				.filter(e => inverseMap.get(e as HTMLElement))
+				.map(e => [[e, "left"], [e, "right"]] as [HTMLElement, "left" | "right"][]).flat(1)
+				.filter(([e, whichSide]) => !(e.classList.contains("line-break") && whichSide === "right")),
+			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - xCoord),
+		);
+		const closestComponent = inverseMap.get(closestElement) as MathComponent;
+		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
 	}
 }
