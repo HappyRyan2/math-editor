@@ -1,14 +1,17 @@
 import { App } from "../App.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 
 export class EnterableComponentMock extends EnterableMathComponent {
 	componentsGroup: MathComponentGroup;
 	enteredFromLeft: boolean = false;
 	enteredFromRight: boolean = false;
-	constructor(componentsGroup?: MathComponentGroup) {
+	rect: DOMRect | null;
+	constructor(componentsGroup: MathComponentGroup | MathComponent[] = [], rect: DOMRect | null = null) {
 		super();
-		this.componentsGroup = componentsGroup ?? new MathComponentGroup([]);
+		this.componentsGroup = (componentsGroup instanceof MathComponentGroup ? componentsGroup : new MathComponentGroup(componentsGroup));
+		this.rect = rect;
 	}
 	enterFromLeft(): void {
 		this.enteredFromLeft = true;
@@ -20,6 +23,10 @@ export class EnterableComponentMock extends EnterableMathComponent {
 		const result = document.createElement("span");
 		result.classList.add("enterable-mock");
 		result.appendChild(renderedGroup);
+		if(this.rect) {
+			result.getBoundingClientRect = () => this.rect!;
+			renderedGroup.getBoundingClientRect = () => this.rect!;
+		}
 		return result;
 	}
 	groups() {
