@@ -1,4 +1,5 @@
 import { App } from "../App.mjs";
+import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
@@ -13,10 +14,12 @@ export class EnterableComponentMock extends EnterableMathComponent {
 		this.componentsGroup = (componentsGroup instanceof MathComponentGroup ? componentsGroup : new MathComponentGroup(componentsGroup));
 		this.rect = rect;
 	}
-	enterFromLeft(): void {
+	enterFromLeft(cursor: Cursor): void {
+		super.enterFromLeft(cursor);
 		this.enteredFromLeft = true;
 	}
-	enterFromRight(): void {
+	enterFromRight(cursor: Cursor): void {
+		super.enterFromRight(cursor);
 		this.enteredFromRight = true;
 	}
 	render(app: App, renderedGroup: HTMLElement = this.componentsGroup.render(app)): HTMLElement {

@@ -5,8 +5,6 @@ import { App } from "./App.mjs";
 
 export abstract class EnterableMathComponent extends MathComponent {
 	/* Represents a MathComponent that can contain the user's cursor (e.g. fractions, exponents, subscripts, etc.) */
-	abstract enterFromLeft(cursor: Cursor): void;
-	abstract enterFromRight(cursor: Cursor): void;
 	abstract groups(): MathComponentGroup[];
 	abstract render(app: App, ...renderedGroups: HTMLElement[]): HTMLElement;
 
@@ -38,5 +36,14 @@ export abstract class EnterableMathComponent extends MathComponent {
 			}
 		}
 		return [result, resultMap];
+	}
+	enterFromLeft(cursor: Cursor) {
+		cursor.container = this.groups()[0];
+		cursor.predecessor = null;
+	}
+	enterFromRight(cursor: Cursor) {
+		const mainGroup = this.groups()[0];
+		cursor.container = mainGroup;
+		cursor.predecessor = mainGroup.components[mainGroup.components.length - 1];
 	}
 }
