@@ -46,4 +46,7 @@ export abstract class EnterableMathComponent extends MathComponent {
 		cursor.container = mainGroup;
 		cursor.predecessor = mainGroup.components[mainGroup.components.length - 1];
 	}
+	isEmpty() {
+		return this.groups().every(g => g.components.length === 0);
+	}
 }

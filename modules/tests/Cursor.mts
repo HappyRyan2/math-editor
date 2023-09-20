@@ -356,6 +356,31 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
+	it("deletes the previous EnterableMathComponent if it is empty", () => {
+		let mock;
+		const doc = new MathDocument([
+			mock = new EnterableComponentMock(),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, mock);
+		cursor.deletePrevious(doc);
+		assert.equal(doc.componentsGroup.components.length, 0);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("enters the previous EnterableMathComponent if it is not empty", () => {
+		let mock, symbol;
+		const doc = new MathDocument([
+			mock = new EnterableComponentMock([
+				symbol = new MathSymbol("A"),
+			]),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, mock);
+		cursor.deletePrevious(doc);
+		assert.deepEqual(doc.componentsGroup.components, [mock]);
+		assert.deepEqual(mock.componentsGroup.components, [symbol]);
+		assert.equal(cursor.container, mock.componentsGroup);
+		assert.equal(cursor.predecessor, symbol);
+	});
 });
 describe("Cursor.lastCommonAncestor", () => {
 	it("returns the last common ancestor, along with the two children that contain each cursor", () => {
