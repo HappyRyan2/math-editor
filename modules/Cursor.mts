@@ -247,6 +247,13 @@ export class Cursor {
 			this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
 			this.predecessor = newPredecessor;
 		}
+		else if(this.container.components.length === 0 && this.container != doc.componentsGroup) {
+			const containingComponent = doc.containingComponentOf(this.container) as EnterableMathComponent;
+			const containingGroup = doc.containingGroupOf(containingComponent);
+			const replacingComponents = [...containingComponent];
+			containingGroup.components.splice(containingGroup.components.indexOf(containingComponent), 1, ...replacingComponents);
+			this.moveAfter(replacingComponents[replacingComponents.length - 1], containingGroup);
+		}
 		else if(this.container != doc.componentsGroup) {
 			this.moveLeft(doc);
 		}

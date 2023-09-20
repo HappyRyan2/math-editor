@@ -324,13 +324,14 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(doc.componentsGroup.components, [symbolB]);
 		assert.equal(cursor.predecessor, null);
 	});
-	it("exits the containing component if there is no previous component", () => {
+	it("exits the containing component if there is no previous component and the group is nonempty", () => {
 		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+		const doc = new MathDocument([mock = new EnterableComponentMock([new MathSymbol("A")])]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.deletePrevious(doc);
 
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
+		assert.deepEqual(mock.componentsGroup.components, [new MathSymbol("A")]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
@@ -379,6 +380,16 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
 		assert.deepEqual(mock.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, mock.componentsGroup);
+		assert.equal(cursor.predecessor, symbol);
+	});
+	it("deletes the container and concatenates the groups if there is no previous component and the group is empty", () => {
+		let symbol;
+		const fraction = new Fraction(new MathComponentGroup([]), new MathComponentGroup([symbol = new MathSymbol("A")]));
+		const doc = new MathDocument([fraction]);
+		const cursor = new Cursor(fraction.numerator, null);
+		cursor.deletePrevious(doc);
+		assert.sameOrderedMembers(doc.componentsGroup.components, [symbol]);
+		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 });
