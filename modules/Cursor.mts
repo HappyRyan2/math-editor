@@ -32,6 +32,10 @@ export class Cursor {
 		this.predecessor = cursor.predecessor;
 		this.selection = null;
 	}
+	moveToStart(container: MathComponentGroup) {
+		this.container = container;
+		this.predecessor = null;
+	}
 
 	addComponent(component: MathComponent) {
 		this.container.components.splice(this.position(), 0, component);
@@ -347,7 +351,16 @@ export class Cursor {
 		}
 		return app.renderingMap.get(this.container)!.getBoundingClientRect().left;
 	}
-	moveToClosest(components: MathComponent[], app: App) {
+	moveToClosest(components: MathComponent[], app: App, group?: MathComponentGroup) {
+		if(components.length === 0) {
+			if(group) {
+				this.moveToStart(group);
+				return;
+			}
+			else {
+				throw new Error("Cannot move cursor to closest component: components list was empty and no containing group was provided.");
+			}
+		}
 		this.moveTo(Cursor.fromClosest(
 			components.map(c => app.renderingMap.get(c)!),
 			this.renderedPosition(app),

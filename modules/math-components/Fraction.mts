@@ -20,7 +20,7 @@ export class Fraction extends EnterableMathComponent {
 			"ArrowDown",
 			["before", "after", ["inside", 0]],
 			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.denominator.components, app);
+				cursor.moveToClosest(this.denominator.components, app, this.denominator);
 				Cursor.resetCursorBlink();
 			}),
 		);
@@ -28,7 +28,7 @@ export class Fraction extends EnterableMathComponent {
 			"ArrowUp",
 			["before", "after", ["inside", 1]],
 			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.numerator.components, app);
+				cursor.moveToClosest(this.numerator.components, app, this.numerator);
 				Cursor.resetCursorBlink();
 			}),
 		);
