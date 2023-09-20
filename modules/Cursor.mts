@@ -16,13 +16,13 @@ export class Cursor {
 		this.predecessor = predecessor;
 		this.selection = selection ?? null;
 	}
-	static createAdjacent(component: MathComponent, whichSide: "left" | "right", doc: MathDocument) {
-		const cursor = new Cursor(doc.componentsGroup, null);
+	static createAdjacent(component: MathComponent, whichSide: "left" | "right", container: MathComponentGroup) {
+		const cursor = new Cursor(container, null);
 		if(whichSide === "left") {
-			cursor.moveBefore(component, doc);
+			cursor.moveBefore(component, container);
 		}
 		else {
-			cursor.moveAfter(component, doc);
+			cursor.moveAfter(component, container);
 		}
 		return cursor;
 	}
@@ -50,15 +50,14 @@ export class Cursor {
 	nextComponent(): MathComponent | null {
 		return this.container.components[this.position()] ?? null;
 	}
-	moveBefore(component: MathComponent, doc: MathDocument) {
-		const container = doc.containingGroupOf(component);
+	moveBefore(component: MathComponent, container: MathComponentGroup) {
 		const index = container.components.indexOf(component);
 		this.predecessor = container.components[index - 1] ?? null;
 		this.container = container;
 	}
-	moveAfter(component: MathComponent, doc: MathDocument) {
+	moveAfter(component: MathComponent, container: MathComponentGroup) {
 		this.predecessor = component;
-		this.container = doc.containingGroupOf(component);
+		this.container = container;
 	}
 
 	render() {
@@ -135,7 +134,7 @@ export class Cursor {
 		if(!nextComponent) {
 			const containingObject = doc.containingComponentOf(this.container);
 			if(containingObject instanceof EnterableMathComponent) {
-				this.moveAfter(containingObject, doc);
+				this.moveAfter(containingObject, doc.containingGroupOf(containingObject));
 				this.selection = new Selection(containingObject, containingObject);
 			}
 		}
@@ -146,28 +145,28 @@ export class Cursor {
 			else {
 				this.selection!.start = this.container.components[this.position() + 1];
 			}
-			this.moveAfter(nextComponent, doc);
+			this.moveAfter(nextComponent, this.container);
 		}
 		else if(this.selectionPosition() === "end") {
 			this.selection!.end = nextComponent;
-			this.moveAfter(nextComponent, doc);
+			this.moveAfter(nextComponent, this.container);
 		}
 		else {
 			this.selection = new Selection(nextComponent, nextComponent);
-			this.moveAfter(nextComponent, doc);
+			this.moveAfter(nextComponent, this.container);
 		}
 	}
 	selectLeft(doc: MathDocument) {
 		if(!this.predecessor) {
 			const containingObject = doc.containingComponentOf(this.container);
 			if(containingObject instanceof EnterableMathComponent) {
-				this.moveBefore(containingObject, doc);
+				this.moveBefore(containingObject, doc.containingGroupOf(containingObject));
 				this.selection = new Selection(containingObject, containingObject);
 			}
 		}
 		else if(this.selectionPosition() === "start") {
 			this.selection!.start = this.predecessor;
-			this.moveBefore(this.predecessor, doc);
+			this.moveBefore(this.predecessor, this.container);
 		}
 		else if(this.selectionPosition() === "end") {
 			if(this.selection!.start === this.selection!.end) {
@@ -176,11 +175,11 @@ export class Cursor {
 			else {
 				this.selection!.end = this.container.components[this.container.components.indexOf(this.predecessor) - 1];
 			}
-			this.moveBefore(this.predecessor, doc);
+			this.moveBefore(this.predecessor, this.container);
 		}
 		else {
 			this.selection = new Selection(this.predecessor, this.predecessor);
-			this.moveBefore(this.predecessor, doc);
+			this.moveBefore(this.predecessor, this.container);
 		}
 	}
 
@@ -279,7 +278,8 @@ export class Cursor {
 				.filter(([e, whichSide]) => !(e.classList.contains("line-break") && whichSide === "right")),
 			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - event.clientX),
 		);
-		return Cursor.createAdjacent(inverseMap.get(closestElement) as MathComponent, whichSide, app.document);
+		const closestComponent = inverseMap.get(closestElement) as MathComponent;
+		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
 	}
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);
@@ -321,10 +321,10 @@ export class Cursor {
 			result.predecessor = cursor1.predecessor;
 		}
 		else if(index1 < index2) {
-			result.moveBefore(child1, doc);
+			result.moveBefore(child1, doc.containingGroupOf(child1));
 		}
 		else {
-			result.moveAfter(child1, doc);
+			result.moveAfter(child1, doc.containingGroupOf(child1));
 		}
 		return result;
 	}

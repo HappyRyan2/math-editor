@@ -26,7 +26,7 @@ export class LineBreak extends MathComponent {
 				doc.componentsGroup.components.indexOf(ancestor) + 1,
 				0, lineBreak,
 			);
-			cursor.moveAfter(lineBreak, doc);
+			cursor.moveAfter(lineBreak, doc.componentsGroup);
 			cursor.selection = null;
 		}
 	}
