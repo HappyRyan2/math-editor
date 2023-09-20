@@ -4,6 +4,7 @@ import { MathSymbol } from "./math-components/MathSymbol.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
+import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 
 export class App {
 	document: MathDocument;
@@ -96,6 +97,7 @@ export class App {
 	handleKeyDown(event: KeyboardEvent) {
 		const handled = this.handleSpecialKeys(event);
 		if(!handled) {
+			this.checkRelativeKeyHandlers(event);
 			this.handleArrowKeys(event);
 			this.handleCharacterKeys(event);
 		}
@@ -138,6 +140,15 @@ export class App {
 			}
 		}
 		return false;
+	}
+	checkRelativeKeyHandlers(event: KeyboardEvent) {
+		for(const cursor of this.cursors) {
+			const handlers = RelativeKeyHandler.getHandlers(cursor, this.document, event.key);
+			if(handlers.length !== 0) {
+				const [handler, component] = handlers[0];
+				handler.callback(cursor, component);
+			}
+		}
 	}
 
 	handleMouseUp() {
