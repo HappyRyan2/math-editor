@@ -36,6 +36,10 @@ export class Cursor {
 		this.container = container;
 		this.predecessor = null;
 	}
+	moveToEnd(container: MathComponentGroup) {
+		this.container = container;
+		this.predecessor = container.components[container.components.length - 1];
+	}
 
 	addComponent(component: MathComponent) {
 		this.container.components.splice(this.position(), 0, component);

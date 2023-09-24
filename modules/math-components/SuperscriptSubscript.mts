@@ -1,4 +1,5 @@
 import { App } from "../App.mjs";
+import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
@@ -27,5 +28,20 @@ export class SuperscriptSubscript extends EnterableMathComponent {
 		result.appendChild(subscript);
 
 		return result;
+	}
+
+	static insert(cursor: Cursor, type: "superscript" | "subscript") {
+		const nextComponent = cursor.nextComponent();
+		if(cursor.predecessor instanceof SuperscriptSubscript) {
+			cursor.moveToStart(cursor.predecessor[type]);
+		}
+		else if(nextComponent instanceof SuperscriptSubscript) {
+			cursor.moveToEnd(nextComponent[type]);
+		}
+		else {
+			const superscriptSubscript = new SuperscriptSubscript();
+			cursor.addComponent(superscriptSubscript);
+			cursor.moveToStart(superscriptSubscript[type]);
+		}
 	}
 }
