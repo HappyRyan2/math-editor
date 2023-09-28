@@ -6,6 +6,7 @@ import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
 import { invertMap, maxItem, minItem, rectContains } from "./utils.mjs";
 import { LineBreak } from "./LineBreak.mjs";
+import { Autocomplete } from "./Autocomplete.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -80,6 +81,9 @@ export class Cursor {
 		span.classList.add("cursor");
 		if(Cursor.cursorsBlinkOn) {
 			span.classList.add("blink-on");
+		}
+		if(Autocomplete.autocomplete?.cursor === this) {
+			span.appendChild(Autocomplete.autocomplete.render());
 		}
 		return span;
 	}

@@ -18,13 +18,16 @@ export class Autocomplete {
 		const rendered = document.createElement("div");
 		rendered.id = "autocomplete";
 
-		const search = new Search(Autocomplete.autocompletions.map(({ name, callback }) => ({ value: name, callback: callback })));
+		const search = Autocomplete.getSearch();
 		for(const result of search.getResults(this.searchTerm)) {
 			const resultDiv = document.createElement("div");
 			resultDiv.innerHTML = result.value;
 			rendered.appendChild(resultDiv);
 		}
 		return rendered;
+	}
+	static getSearch() {
+		return new Search(Autocomplete.autocompletions.map(({ name, callback }) => ({ value: name, callback: callback })));
 	}
 
 	static getPreviousCharacters(cursor: Cursor): MathSymbol[] {
@@ -39,12 +42,25 @@ export class Autocomplete {
 		return result.reverse();
 	}
 	static update(cursor: Cursor) {
+		if(Autocomplete.autocomplete?.cursor !== cursor) {
+			return;
+		}
+		Autocomplete.open(cursor);
+	}
+	static open(cursor: Cursor) {
 		const previouscharacters = Autocomplete.getPreviousCharacters(cursor);
 		if(previouscharacters.length === 0) {
 			Autocomplete.autocomplete = null;
 			return;
 		}
 		const autocomplete = new Autocomplete(previouscharacters.map(c => c.symbol).join(""), cursor);
+		if(Autocomplete.getSearch().getResults(autocomplete.searchTerm).length === 0) {
+			Autocomplete.autocomplete = null;
+			return;
+		}
 		Autocomplete.autocomplete = autocomplete;
+	}
+	static close() {
+		Autocomplete.autocomplete = null;
 	}
 }

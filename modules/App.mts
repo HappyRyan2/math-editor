@@ -31,11 +31,17 @@ export class App {
 	initializeKeyHandlers() {
 		this.keyHandlers.push({
 			key: "Enter",
-			handler: () => this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document)),
+			handler: () => {
+				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
+				Autocomplete.close();
+			},
 		});
 		this.keyHandlers.push({
 			key: "Backspace",
-			handler: () => this.cursors.forEach(cursor => cursor.deletePrevious(this.document)),
+			handler: () => {
+				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
+				Autocomplete.update(this.cursors[this.cursors.length - 1]);
+			},
 		});
 	}
 
@@ -105,20 +111,21 @@ export class App {
 		this.renderAndUpdate();
 	}
 	handleCharacterKeys(event: KeyboardEvent) {
-		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
-			Cursor.resetCursorBlink();
-		}
 		for(const cursor of this.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 				cursor.addComponent(new MathSymbol(event.key));
 			}
 		}
-		const lastCursor = this.cursors[this.cursors.length - 1];
-		Autocomplete.update(lastCursor);
+		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
+			Cursor.resetCursorBlink();
+			const lastCursor = this.cursors[this.cursors.length - 1];
+			Autocomplete.open(lastCursor);
+		}
 	}
 	handleArrowKeys(event: KeyboardEvent) {
 		if(event.code === "ArrowLeft" || event.code === "ArrowRight") {
 			Cursor.resetCursorBlink();
+			Autocomplete.close();
 		}
 		for(const cursor of this.cursors) {
 			if(event.code === "ArrowLeft" && !event.shiftKey) {
@@ -163,6 +170,7 @@ export class App {
 
 		this.cursors = [Cursor.fromClick(this, event)];
 		Cursor.resetCursorBlink();
+		Autocomplete.close();
 		this.renderAndUpdate();
 	}
 	handleMouseMove(event: MouseEvent) {
