@@ -8,9 +8,19 @@
 }
 
 .cursor:not(.blink-on) {
-	display: none;
+	border: 0px solid transparent;
+	margin-right: 0px;
 }
 
 .selected {
 	background-color: lightblue;
+}
+
+#autocomplete {
+	position: absolute;
+	border: 1px solid grey;
+	background-color: white;
+}
+#autocomplete:empty {
+	display: none;
 }
