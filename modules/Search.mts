@@ -1,4 +1,4 @@
-type SearchResult = { value: string };
+export type SearchResult = { value: string };
 
 export class Search {
 	results: SearchResult[];

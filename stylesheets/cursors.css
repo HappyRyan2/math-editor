@@ -24,3 +24,6 @@
 #autocomplete:empty {
 	display: none;
 }
+.matched-text {
+	font-weight: bold;
+}

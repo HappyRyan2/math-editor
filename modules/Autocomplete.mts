@@ -1,6 +1,7 @@
 import { Cursor } from "./Cursor.mjs";
 import { Search } from "./Search.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
+import { SearchResult } from "./Search.mjs";
 
 export class Autocomplete {
 	static autocompletions: {name: string, callback: (cursor: Cursor) => void}[] = [];
@@ -20,11 +21,21 @@ export class Autocomplete {
 
 		const search = Autocomplete.getSearch();
 		for(const result of search.getResults(this.searchTerm)) {
-			const resultDiv = document.createElement("div");
-			resultDiv.innerHTML = result.value;
-			rendered.appendChild(resultDiv);
+			rendered.appendChild(this.renderResult(result));
 		}
 		return rendered;
+	}
+	renderResult(result: SearchResult) {
+		const matchedText = document.createElement("span");
+		matchedText.classList.add("matched-text");
+		matchedText.innerHTML += this.searchTerm;
+
+		const resultDiv = document.createElement("div");
+		resultDiv.innerHTML += result.value.slice(0, result.value.indexOf(this.searchTerm));
+		resultDiv.appendChild(matchedText);
+		resultDiv.innerHTML += result.value.slice(result.value.indexOf(this.searchTerm) + this.searchTerm.length);
+
+		return resultDiv;
 	}
 	static getSearch() {
 		return new Search(Autocomplete.autocompletions.map(({ name, callback }) => ({ value: name, callback: callback })));
