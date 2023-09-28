@@ -1,4 +1,5 @@
 import { Cursor } from "./Cursor.mjs";
+import { Search } from "./Search.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class Autocomplete {
@@ -8,6 +9,19 @@ export class Autocomplete {
 
 	constructor(searchTerm: string) {
 		this.searchTerm = searchTerm;
+	}
+
+	render() {
+		const rendered = document.createElement("div");
+		rendered.id = "autocomplete";
+
+		const search = new Search(Autocomplete.autocompletions.map(({ name, callback }) => ({ value: name, callback: callback })));
+		for(const result of search.getResults(this.searchTerm)) {
+			const resultDiv = document.createElement("div");
+			resultDiv.innerHTML = result.value;
+			rendered.appendChild(resultDiv);
+		}
+		return rendered;
 	}
 
 	static getPreviousCharacters(cursor: Cursor): MathSymbol[] {
@@ -23,6 +37,10 @@ export class Autocomplete {
 	}
 	static update(cursor: Cursor) {
 		const previouscharacters = Autocomplete.getPreviousCharacters(cursor);
+		if(previouscharacters.length === 0) {
+			cursor.autocomplete = null;
+			return;
+		}
 		const autocomplete = new Autocomplete(previouscharacters.map(c => c.symbol).join(""));
 		cursor.autocomplete = autocomplete;
 	}
