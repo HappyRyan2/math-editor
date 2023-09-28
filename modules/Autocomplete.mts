@@ -4,11 +4,14 @@ import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class Autocomplete {
 	static autocompletions: {name: string, callback: (cursor: Cursor) => void}[] = [];
+	static autocomplete: Autocomplete | null = null;
 
 	searchTerm: string;
+	cursor: Cursor;
 
-	constructor(searchTerm: string) {
+	constructor(searchTerm: string, cursor: Cursor) {
 		this.searchTerm = searchTerm;
+		this.cursor = cursor;
 	}
 
 	render() {
@@ -38,10 +41,10 @@ export class Autocomplete {
 	static update(cursor: Cursor) {
 		const previouscharacters = Autocomplete.getPreviousCharacters(cursor);
 		if(previouscharacters.length === 0) {
-			cursor.autocomplete = null;
+			Autocomplete.autocomplete = null;
 			return;
 		}
-		const autocomplete = new Autocomplete(previouscharacters.map(c => c.symbol).join(""));
-		cursor.autocomplete = autocomplete;
+		const autocomplete = new Autocomplete(previouscharacters.map(c => c.symbol).join(""), cursor);
+		Autocomplete.autocomplete = autocomplete;
 	}
 }

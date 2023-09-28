@@ -6,13 +6,11 @@ import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
 import { invertMap, maxItem, minItem, rectContains } from "./utils.mjs";
 import { LineBreak } from "./LineBreak.mjs";
-import { Autocomplete } from "./Autocomplete.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
 	predecessor: MathComponent | null;
 	selection: Selection | null;
-	autocomplete: Autocomplete | null = null;
 
 	constructor(container: MathComponentGroup, predecessor: MathComponent | null, selection?: Selection) {
 		this.container = container;
