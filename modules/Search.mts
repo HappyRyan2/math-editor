@@ -26,6 +26,10 @@ export class Search {
 	}
 
 	getResults(query: string) {
-		return this.results.sort((a, b) => Search.compare(query, a, b));
+		if(query === "") { return []; }
+		return (this.results
+			.filter(result => Search.evaluate(query, result) !== "no-match")
+			.sort((a, b) => Search.compare(query, a, b))
+		);
 	}
 }
