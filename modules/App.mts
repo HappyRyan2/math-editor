@@ -5,6 +5,7 @@ import { LineBreak } from "./LineBreak.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
+import { Autocomplete } from "./Autocomplete.mjs";
 
 export class App {
 	document: MathDocument;
@@ -112,6 +113,8 @@ export class App {
 				cursor.addComponent(new MathSymbol(event.key));
 			}
 		}
+		const lastCursor = this.cursors[this.cursors.length - 1];
+		Autocomplete.update(lastCursor);
 	}
 	handleArrowKeys(event: KeyboardEvent) {
 		if(event.code === "ArrowLeft" || event.code === "ArrowRight") {

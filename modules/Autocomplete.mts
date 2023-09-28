@@ -2,7 +2,13 @@ import { Cursor } from "./Cursor.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class Autocomplete {
-	static autocompletions: {name: string, callback: (cursor: Cursor) => void}[];
+	static autocompletions: {name: string, callback: (cursor: Cursor) => void}[] = [];
+
+	searchTerm: string;
+
+	constructor(searchTerm: string) {
+		this.searchTerm = searchTerm;
+	}
 
 	static getPreviousCharacters(cursor: Cursor): MathSymbol[] {
 		const result = [];
@@ -14,5 +20,10 @@ export class Autocomplete {
 			result.push(component);
 		}
 		return result.reverse();
+	}
+	static update(cursor: Cursor) {
+		const previouscharacters = Autocomplete.getPreviousCharacters(cursor);
+		const autocomplete = new Autocomplete(previouscharacters.map(c => c.symbol).join(""));
+		cursor.autocomplete = autocomplete;
 	}
 }
