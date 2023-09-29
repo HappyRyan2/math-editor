@@ -43,6 +43,43 @@ export class App {
 				Autocomplete.update(this.cursors[this.cursors.length - 1]);
 			},
 		});
+		this.initializeArrowKeyHandlers();
+	}
+	initializeArrowKeyHandlers() {
+		this.keyHandlers.push({
+			key: "ArrowLeft",
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveLeft(this.document));
+			},
+		});
+		this.keyHandlers.push({
+			key: "ArrowRight",
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveRight(this.document));
+			},
+		});
+		this.keyHandlers.push({
+			key: "ArrowLeft",
+			shiftKey: true,
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectLeft(this.document));
+			},
+		});
+		this.keyHandlers.push({
+			key: "ArrowRight",
+			shiftKey: true,
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectRight(this.document));
+			},
+		});
 	}
 
 	render(renderedDoc = this.document.render(this)) {
@@ -105,7 +142,6 @@ export class App {
 		const handled = this.handleSpecialKeys(event);
 		if(!handled) {
 			this.checkRelativeKeyHandlers(event);
-			this.handleArrowKeys(event);
 			this.handleCharacterKeys(event);
 		}
 		this.renderAndUpdate();
@@ -120,26 +156,6 @@ export class App {
 			Cursor.resetCursorBlink();
 			const lastCursor = this.cursors[this.cursors.length - 1];
 			Autocomplete.open(lastCursor);
-		}
-	}
-	handleArrowKeys(event: KeyboardEvent) {
-		if(event.code === "ArrowLeft" || event.code === "ArrowRight") {
-			Cursor.resetCursorBlink();
-			Autocomplete.close();
-		}
-		for(const cursor of this.cursors) {
-			if(event.code === "ArrowLeft" && !event.shiftKey) {
-				cursor.moveLeft(this.document);
-			}
-			else if(event.code === "ArrowRight" && !event.shiftKey) {
-				cursor.moveRight(this.document);
-			}
-			else if(event.code === "ArrowLeft" && event.shiftKey) {
-				cursor.selectLeft(this.document);
-			}
-			else if(event.code === "ArrowRight" && event.shiftKey) {
-				cursor.selectRight(this.document);
-			}
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
