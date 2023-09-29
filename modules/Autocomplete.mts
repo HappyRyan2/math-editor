@@ -1,7 +1,6 @@
 import { Cursor } from "./Cursor.mjs";
 import { Search } from "./Search.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
-import { SearchResult } from "./Search.mjs";
 
 export class Autocomplete {
 	static autocompletions: {name: string, callback: (cursor: Cursor) => void}[] = [];
@@ -26,7 +25,7 @@ export class Autocomplete {
 		}
 		return rendered;
 	}
-	renderResult(result: SearchResult, selected: boolean) {
+	renderResult(result: { value: string }, selected: boolean) {
 		const matchedText = document.createElement("span");
 		matchedText.classList.add("matched-text");
 		matchedText.innerHTML += this.searchTerm;

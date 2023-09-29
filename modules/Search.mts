@@ -1,13 +1,11 @@
-export type SearchResult = { value: string };
+export class Search<T extends { value: string}> {
+	results: T[];
 
-export class Search {
-	results: SearchResult[];
-
-	constructor(results: SearchResult[]) {
+	constructor(results: T[]) {
 		this.results = results;
 	}
 
-	static evaluate(query: string, result: SearchResult) {
+	static evaluate(query: string, result: { value: string } ) {
 		if(result.value === query) { return "exact-match"; }
 		if(result.value.startsWith(query)) { return "string-initial"; }
 		const index = result.value.indexOf(query);
@@ -15,7 +13,7 @@ export class Search {
 		if(index > 0) { return "substring"; }
 		return "no-match";
 	}
-	static compare(query: string, result1: SearchResult, result2: SearchResult) {
+	static compare(query: string, result1: { value: string }, result2: { value: string }) {
 		const matchTypes = ["exact-match", "string-initial", "word-initial", "substring", "no-match"] as const;
 		const score1 = matchTypes.indexOf(Search.evaluate(query, result1));
 		const score2 = matchTypes.indexOf(Search.evaluate(query, result2));
