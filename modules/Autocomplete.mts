@@ -96,4 +96,10 @@ export class Autocomplete {
 			this.selectedIndex --;
 		}
 	}
+	activateSelected() {
+		const results = Autocomplete.getSearch().getResults(this.searchTerm);
+		const selected = results[this.selectedIndex];
+		selected.callback(this.cursor);
+		Autocomplete.close();
+	}
 }

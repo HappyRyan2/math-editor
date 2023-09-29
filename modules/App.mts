@@ -63,6 +63,14 @@ export class App {
 				this.cursors.forEach(c => c.selectRight(this.document));
 			},
 		},
+		{
+			key: "Tab",
+			handler: () => {
+				if(Autocomplete.autocomplete) {
+					Autocomplete.autocomplete.activateSelected();
+				}
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
