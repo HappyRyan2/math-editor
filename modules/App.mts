@@ -71,6 +71,18 @@ export class App {
 				}
 			},
 		},
+		{
+			key: "ArrowUp",
+			handler: () => {
+				Autocomplete.autocomplete?.selectPrevious?.();
+			},
+		},
+		{
+			key: "ArrowDown",
+			handler: () => {
+				Autocomplete.autocomplete?.selectNext?.();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
