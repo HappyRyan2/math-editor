@@ -9,6 +9,7 @@ export class Autocomplete {
 
 	searchTerm: string;
 	cursor: Cursor;
+	selectedIndex: number = 0;
 
 	constructor(searchTerm: string, cursor: Cursor) {
 		this.searchTerm = searchTerm;
@@ -73,5 +74,24 @@ export class Autocomplete {
 	}
 	static close() {
 		Autocomplete.autocomplete = null;
+	}
+
+	selectNext() {
+		const numResults = Autocomplete.getSearch().getResults(this.searchTerm).length;
+		if(this.selectedIndex >= numResults - 1) {
+			this.selectedIndex = 0;
+		}
+		else {
+			this.selectedIndex ++;
+		}
+	}
+	selectPrevious() {
+		if(this.selectedIndex <= 0) {
+			const numResults = Autocomplete.getSearch().getResults(this.searchTerm).length;
+			this.selectedIndex = numResults - 1;
+		}
+		else {
+			this.selectedIndex --;
+		}
 	}
 }
