@@ -27,3 +27,6 @@
 .matched-text {
 	font-weight: bold;
 }
+.selected-result {
+	background-color: lightgrey;
+}

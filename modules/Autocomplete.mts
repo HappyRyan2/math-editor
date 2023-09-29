@@ -21,12 +21,12 @@ export class Autocomplete {
 		rendered.id = "autocomplete";
 
 		const search = Autocomplete.getSearch();
-		for(const result of search.getResults(this.searchTerm)) {
-			rendered.appendChild(this.renderResult(result));
+		for(const [index, result] of search.getResults(this.searchTerm).entries()) {
+			rendered.appendChild(this.renderResult(result, index === this.selectedIndex));
 		}
 		return rendered;
 	}
-	renderResult(result: SearchResult) {
+	renderResult(result: SearchResult, selected: boolean) {
 		const matchedText = document.createElement("span");
 		matchedText.classList.add("matched-text");
 		matchedText.innerHTML += this.searchTerm;
@@ -36,6 +36,9 @@ export class Autocomplete {
 		resultDiv.appendChild(matchedText);
 		resultDiv.innerHTML += result.value.slice(result.value.indexOf(this.searchTerm) + this.searchTerm.length);
 
+		if(selected) {
+			resultDiv.classList.add("selected-result");
+		}
 		return resultDiv;
 	}
 	static getSearch() {
