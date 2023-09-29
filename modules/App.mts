@@ -14,7 +14,56 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
-	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent) => void })[] = [];
+	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent) => void })[] = [
+		{
+			key: "Enter",
+			handler: () => {
+				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
+				Autocomplete.close();
+			},
+		},
+		{
+			key: "Backspace",
+			handler: () => {
+				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
+				Autocomplete.update(this.cursors[this.cursors.length - 1]);
+			},
+		},
+		{
+			key: "ArrowLeft",
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveLeft(this.document));
+			},
+		},
+		{
+			key: "ArrowRight",
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveRight(this.document));
+			},
+		},
+		{
+			key: "ArrowLeft",
+			shiftKey: true,
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectLeft(this.document));
+			},
+		},
+		{
+			key: "ArrowRight",
+			shiftKey: true,
+			handler: () => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectRight(this.document));
+			},
+		},
+	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
 	constructor() {
@@ -25,61 +74,7 @@ export class App {
 	initialize() {
 		this.renderAndUpdate();
 		this.initializeListeners();
-		this.initializeKeyHandlers();
 		Cursor.initialize();
-	}
-	initializeKeyHandlers() {
-		this.keyHandlers.push({
-			key: "Enter",
-			handler: () => {
-				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
-				Autocomplete.close();
-			},
-		});
-		this.keyHandlers.push({
-			key: "Backspace",
-			handler: () => {
-				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
-				Autocomplete.update(this.cursors[this.cursors.length - 1]);
-			},
-		});
-		this.initializeArrowKeyHandlers();
-	}
-	initializeArrowKeyHandlers() {
-		this.keyHandlers.push({
-			key: "ArrowLeft",
-			handler: () => {
-				Cursor.resetCursorBlink();
-				Autocomplete.close();
-				this.cursors.forEach(c => c.moveLeft(this.document));
-			},
-		});
-		this.keyHandlers.push({
-			key: "ArrowRight",
-			handler: () => {
-				Cursor.resetCursorBlink();
-				Autocomplete.close();
-				this.cursors.forEach(c => c.moveRight(this.document));
-			},
-		});
-		this.keyHandlers.push({
-			key: "ArrowLeft",
-			shiftKey: true,
-			handler: () => {
-				Cursor.resetCursorBlink();
-				Autocomplete.close();
-				this.cursors.forEach(c => c.selectLeft(this.document));
-			},
-		});
-		this.keyHandlers.push({
-			key: "ArrowRight",
-			shiftKey: true,
-			handler: () => {
-				Cursor.resetCursorBlink();
-				Autocomplete.close();
-				this.cursors.forEach(c => c.selectRight(this.document));
-			},
-		});
 	}
 
 	render(renderedDoc = this.document.render(this)) {
