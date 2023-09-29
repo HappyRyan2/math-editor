@@ -14,7 +14,7 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
-	keyHandlers: ({ key: string, handler: (event: KeyboardEvent) => void })[] = [];
+	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent) => void })[] = [];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
 	constructor() {
@@ -143,8 +143,13 @@ export class App {
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
-		for(const { key, handler } of this.keyHandlers) {
-			if(event.key === key) {
+		for(const { key, ctrlKey, altKey, shiftKey, handler } of this.keyHandlers) {
+			if(
+				event.key === key &&
+				(event.ctrlKey === !!ctrlKey === true) &&
+				(event.altKey === !!altKey === true) &&
+				(event.shiftKey === !!shiftKey === true)
+			) {
 				handler(event);
 				return true;
 			}
