@@ -4,8 +4,9 @@ import { Fraction } from "../Fraction.mjs";
 
 app.keyHandlers.push({
 	key: "/",
-	handler: () => {
+	handler: (event, stopPropagation) => {
 		app.cursors.forEach(cursor => Fraction.insertFraction(cursor, app.document));
 		Autocomplete.close();
+		stopPropagation();
 	},
 });

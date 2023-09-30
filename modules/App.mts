@@ -14,73 +14,86 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
-	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent) => void })[] = [
+	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void) => void })[] = [
 		{
 			key: "Enter",
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
 				Autocomplete.close();
+				stopPropagation();
 			},
 		},
 		{
 			key: "Backspace",
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
 				Autocomplete.update(this.cursors[this.cursors.length - 1]);
+				stopPropagation();
 			},
 		},
 		{
 			key: "ArrowLeft",
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
 				this.cursors.forEach(c => c.moveLeft(this.document));
+				stopPropagation();
 			},
 		},
 		{
 			key: "ArrowRight",
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
 				this.cursors.forEach(c => c.moveRight(this.document));
+				stopPropagation();
 			},
 		},
 		{
 			key: "ArrowLeft",
 			shiftKey: true,
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
 				this.cursors.forEach(c => c.selectLeft(this.document));
+				stopPropagation();
 			},
 		},
 		{
 			key: "ArrowRight",
 			shiftKey: true,
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
 				this.cursors.forEach(c => c.selectRight(this.document));
+				stopPropagation();
 			},
 		},
 		{
 			key: "Tab",
-			handler: () => {
+			handler: (event, stopPropagation) => {
 				if(Autocomplete.autocomplete) {
 					Autocomplete.autocomplete.activateSelected();
+					stopPropagation();
 				}
 			},
 		},
 		{
 			key: "ArrowUp",
-			handler: () => {
-				Autocomplete.autocomplete?.selectPrevious?.();
+			handler: (event, stopPropagation) => {
+				if(Autocomplete.autocomplete) {
+					Autocomplete.autocomplete.selectPrevious?.();
+					stopPropagation();
+				}
 			},
 		},
 		{
 			key: "ArrowDown",
-			handler: () => {
-				Autocomplete.autocomplete?.selectNext?.();
+			handler: (event, stopPropagation) => {
+				if(Autocomplete.autocomplete) {
+					Autocomplete.autocomplete?.selectNext?.();
+					stopPropagation();
+				}
 			},
 		},
 	];
@@ -174,6 +187,8 @@ export class App {
 		}
 	}
 	handleSpecialKeys(event: KeyboardEvent) {
+		let handled = false;
+		const stopPropagation = () => (handled = true);
 		for(const { key, ctrlKey, altKey, shiftKey, handler } of this.keyHandlers) {
 			if(
 				event.key === key &&
@@ -181,8 +196,10 @@ export class App {
 				(event.altKey === !!altKey === true) &&
 				(event.shiftKey === !!shiftKey === true)
 			) {
-				handler(event);
-				return true;
+				handler(event, stopPropagation);
+				if(handled) {
+					return true;
+				}
 			}
 		}
 		return false;
