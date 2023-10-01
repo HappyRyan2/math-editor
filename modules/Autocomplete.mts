@@ -1,4 +1,5 @@
 import { Cursor } from "./Cursor.mjs";
+import { MathComponent } from "./MathComponent.mjs";
 import { Search } from "./Search.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
@@ -101,5 +102,9 @@ export class Autocomplete {
 		const selected = results[this.selectedIndex];
 		selected.callback(this.cursor);
 		Autocomplete.close();
+	}
+	replaceCompletedWith(...components: MathComponent[]) {
+		this.cursor.container.components.splice(this.cursor.position() - this.searchTerm.length, this.searchTerm.length, ...components);
+		this.cursor.moveAfter(components[components.length - 1], this.cursor.container);
 	}
 }
