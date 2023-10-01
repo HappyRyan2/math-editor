@@ -19,12 +19,24 @@ describe("Autcomplete.getPreviousCharacters", () => {
 		const characters = Autocomplete.getPreviousCharacters(cursor);
 		assert.sameOrderedMembers(characters, [symbolB, symbolC]);
 	});
-	it("stops when it reaches a MathSymbol that is not a character", () => {
+	it("stops when it reaches a MathSymbol that is not a letter, like an equals sign", () => {
 		let symbol;
 		const doc = new MathDocument([
 			new MathSymbol("A"),
 			new MathSymbol("B"),
 			new MathSymbol("="),
+			symbol = new MathSymbol("C"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbol);
+		const characters = Autocomplete.getPreviousCharacters(cursor);
+		assert.sameOrderedMembers(characters, [symbol]);
+	});
+	it("stops when it reaches a MathSymbol that is not a letter, like a space", () => {
+		let symbol;
+		const doc = new MathDocument([
+			new MathSymbol("A"),
+			new MathSymbol("B"),
+			new MathSymbol(" "),
 			symbol = new MathSymbol("C"),
 		]);
 		const cursor = new Cursor(doc.componentsGroup, symbol);

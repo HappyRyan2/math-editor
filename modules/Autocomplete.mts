@@ -48,7 +48,7 @@ export class Autocomplete {
 		const result = [];
 		for(let i = cursor.position() - 1; i >= 0; i --) {
 			const component = cursor.container.components[i];
-			if(!(component instanceof MathSymbol) || MathSymbol.OPERATORS.includes(component.symbol)) {
+			if(!(component instanceof MathSymbol) || !(/[A-Za-z]/g.test(component.symbol))) {
 				break;
 			}
 			result.push(component);
