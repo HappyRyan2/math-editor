@@ -1,0 +1,88 @@
+import { Autocomplete } from "../../Autocomplete.mjs";
+import { MathSymbol } from "../MathSymbol.mjs";
+
+const GREEK_ALPHABET = {
+	"alpha": "α",
+	"beta": "β",
+	"gamma": "γ",
+	"delta": "δ",
+	"epsilon": "ε",
+	"zeta": "ζ",
+	"eta": "η",
+	"theta": "θ",
+	"iota": "ι",
+	"kappa": "κ",
+	"lambda": "λ",
+	"mu": "μ",
+	"nu": "ν",
+	"xi": "ξ",
+	"omicron": "ο",
+	"pi": "π",
+	"rho": "ρ",
+	"sigma": "σ",
+	"tau": "τ",
+	"upsilon": "υ",
+	"phi": "φ",
+	"chi": "χ",
+	"psi": "ψ",
+	"omega": "ω",
+
+	"Alpha": "Α",
+	"Beta": "Β",
+	"Gamma": "Γ",
+	"Delta": "Δ",
+	"Epsilon": "Ε",
+	"Zeta": "Ζ",
+	"Eta": "Η",
+	"Theta": "Θ",
+	"Iota": "Ι",
+	"Kappa": "Κ",
+	"Lambda": "Λ",
+	"Mu": "Μ",
+	"Nu": "Ν",
+	"Xi": "Ξ",
+	"Omicron": "Ο",
+	"Pi": "Π",
+	"Rho": "Ρ",
+	"Sigma": "Σ",
+	"Tau": "Τ",
+	"Upsilon": "Υ",
+	"Phi": "Φ",
+	"Chi": "Χ",
+	"Psi": "Ψ",
+	"Omega": "Ω",
+};
+const HEBREW_ALPHABET = {
+	"aleph": "א‎",
+	"bet": "ב‎",
+	"gimel": "ג‎",
+	"dalet": "ד‎",
+	"he": "ה‎",
+	"vav": "ו‎",
+	"zayin": "ז‎",
+	"chet": "ח‎",
+	"tet": "ט‎",
+	"yod": "י‎",
+	"kaf": "ך‎",
+	"lamed": "ל‎",
+	"mem": "ם‎",
+	"nun": "ן‎",
+	"samekh": "ס‎",
+	"ayin": "ע‎",
+	"pe": "ף‎",
+	"tsadi": "ץ‎",
+	"qof": "ק‎",
+	"resh": "ר‎",
+	"shin": "שׂ‎",
+	"tav": "ת‎",
+};
+
+for(const [name, letter] of Object.entries({...GREEK_ALPHABET, ...HEBREW_ALPHABET})) {
+	Autocomplete.autocompletions.push({
+		name: name,
+		callback: () => {
+			Autocomplete.autocomplete!.replaceCompletedWith(new MathSymbol(letter));
+			Autocomplete.close();
+		},
+	});
+}
