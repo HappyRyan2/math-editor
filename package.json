@@ -16,5 +16,9 @@
 	"scripts": {
 		"start": "electron ."
 	},
-	"main": "compiled/main.js"
+	"main": "compiled/main.js",
+	"devDependencies": {
+		"@playwright/test": "^1.38.1",
+		"playwright": "^1.38.1"
+	}
 }
