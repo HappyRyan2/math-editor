@@ -1,0 +1,25 @@
+.parenthese-round {
+	padding: 0 5px;
+	position: relative;
+}
+
+.parenthese-round::after {
+	background-image: url(../../images//round-parenthese-right.svg);
+	right: 0;
+}
+.parenthese-round::before {
+	background-image: url(../../images//round-parenthese-left.svg);
+	left: 0;
+}
+
+.parenthese-round::after, .parenthese-round::before {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+
+	content: " ";
+	width: 5px;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-size: 5px 100%;
+}
