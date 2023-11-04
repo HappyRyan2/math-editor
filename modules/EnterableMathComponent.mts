@@ -7,6 +7,7 @@ export abstract class EnterableMathComponent extends MathComponent {
 	/* Represents a MathComponent that can contain the user's cursor (e.g. fractions, exponents, subscripts, etc.) */
 	abstract groups(): MathComponentGroup[];
 	abstract render(app: App, ...renderedGroups: HTMLElement[]): HTMLElement;
+	deleteAtStart: "always" | "only-when-empty" = "only-when-empty";
 
 	*descendants(): Generator<MathComponent, void, unknown> {
 		for(const group of this.groups()) {

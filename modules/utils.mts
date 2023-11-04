@@ -26,3 +26,6 @@ export const maxItem = function<T>(array: T[], callback: (t: T) => number) {
 export const minItem = function<T>(array: T[], callback: (t: T) => number) {
 	return maxItem(array, (t) => -callback(t));
 };
+export const lastItem = function<T>(array: T[]) {
+	return array[array.length - 1];
+};

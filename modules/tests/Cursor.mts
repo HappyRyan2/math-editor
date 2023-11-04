@@ -10,6 +10,7 @@ import { Fraction } from "../math-components/Fraction.mjs";
 import { JSDOM } from "jsdom";
 import { App } from "../App.mjs";
 import { LineBreak } from "../LineBreak.mjs";
+import { Parenthese } from "../math-components/Parenthese.mjs";
 
 describe("Cursor.addComponent", () => {
 	it("correctly adds the component when the cursor is at the beginning of its container", () => {
@@ -382,15 +383,29 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.container, mock.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
-	it("deletes the container and concatenates the groups if there is no previous component and the group is empty", () => {
+	it("deletes the container and concatenates the groups if the group is empty and has deleteOnStart=only-when-empty", () => {
 		let symbol;
 		const fraction = new Fraction(new MathComponentGroup([]), new MathComponentGroup([symbol = new MathSymbol("A")]));
+		fraction.deleteAtStart = "only-when-empty";
 		const doc = new MathDocument([fraction]);
 		const cursor = new Cursor(fraction.numerator, null);
 		cursor.deletePrevious(doc);
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, symbol);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("deletes the container and concatenates the groups if the container has deleteOnStart=always", () => {
+		let symbolA, symbolB;
+		const parenthese = new Parenthese(new MathComponentGroup([
+			symbolA = new MathSymbol("A"),
+		]), "round");
+		parenthese.deleteAtStart = "always";
+		const doc = new MathDocument([symbolB = new MathSymbol("B"), parenthese]);
+		const cursor = new Cursor(parenthese.components, null);
+		cursor.deletePrevious(doc);
+		assert.sameOrderedMembers(doc.componentsGroup.components, [symbolB, symbolA]);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, symbolB);
 	});
 });
 describe("Cursor.lastCommonAncestor", () => {

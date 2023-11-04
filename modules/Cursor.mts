@@ -4,7 +4,7 @@ import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
-import { invertMap, maxItem, minItem, rectContains } from "./utils.mjs";
+import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 
@@ -255,12 +255,30 @@ export class Cursor {
 			this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
 			this.predecessor = newPredecessor;
 		}
-		else if(this.container.components.length === 0 && this.container != doc.componentsGroup) {
+		else if(
+			this.container != doc.componentsGroup && (this.container.components.length === 0 ||
+			(doc.containingComponentOf(this.container) as EnterableMathComponent).deleteAtStart !== "only-when-empty")
+		) {
 			const containingComponent = doc.containingComponentOf(this.container) as EnterableMathComponent;
 			const containingGroup = doc.containingGroupOf(containingComponent);
+			const groupIndex = containingComponent.groups().indexOf(this.container);
+			const previousComponent = (
+				lastItem(containingComponent.groups().find((group, index) =>
+					group.components.length !== 0 &&
+					index < groupIndex &&
+					containingComponent.groups().every((g, i) => i <= index || i >= groupIndex || g.components.length === 0),
+				)?.components ?? [])
+				?? containingGroup.components[containingGroup.components.indexOf(containingComponent) - 1]
+				?? null
+			) as MathComponent | null;
 			const replacingComponents = [...containingComponent];
 			containingGroup.components.splice(containingGroup.components.indexOf(containingComponent), 1, ...replacingComponents);
-			this.moveAfter(replacingComponents[replacingComponents.length - 1], containingGroup);
+			if(previousComponent == null) {
+				this.moveToStart(containingGroup);
+			}
+			else {
+				this.moveAfter(previousComponent, containingGroup);
+			}
 		}
 		else if(this.container != doc.componentsGroup) {
 			this.moveLeft(doc);
