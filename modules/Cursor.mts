@@ -243,6 +243,28 @@ export class Cursor {
 		return (startIndex <= index && index <= endIndex);
 	}
 
+	deleteContainer(doc: MathDocument) {
+		const containingComponent = doc.containingComponentOf(this.container) as EnterableMathComponent;
+		const containingGroup = doc.containingGroupOf(containingComponent);
+		const groupIndex = containingComponent.groups().indexOf(this.container);
+		const previousComponent = (
+				lastItem(containingComponent.groups().find((group, index) =>
+					group.components.length !== 0 &&
+					index < groupIndex &&
+					containingComponent.groups().every((g, i) => i <= index || i >= groupIndex || g.components.length === 0),
+				)?.components ?? [])
+				?? containingGroup.components[containingGroup.components.indexOf(containingComponent) - 1]
+				?? null
+			) as MathComponent | null;
+		const replacingComponents = [...containingComponent];
+		containingGroup.components.splice(containingGroup.components.indexOf(containingComponent), 1, ...replacingComponents);
+		if(previousComponent == null) {
+			this.moveToStart(containingGroup);
+		}
+		else {
+			this.moveAfter(previousComponent, containingGroup);
+		}
+	}
 	deletePrevious(doc: MathDocument) {
 		if(this.selection != null) {
 			this.replaceSelectionWith(...[]);
@@ -259,26 +281,7 @@ export class Cursor {
 			this.container != doc.componentsGroup && (this.container.components.length === 0 ||
 			(doc.containingComponentOf(this.container) as EnterableMathComponent).deleteAtStart !== "only-when-empty")
 		) {
-			const containingComponent = doc.containingComponentOf(this.container) as EnterableMathComponent;
-			const containingGroup = doc.containingGroupOf(containingComponent);
-			const groupIndex = containingComponent.groups().indexOf(this.container);
-			const previousComponent = (
-				lastItem(containingComponent.groups().find((group, index) =>
-					group.components.length !== 0 &&
-					index < groupIndex &&
-					containingComponent.groups().every((g, i) => i <= index || i >= groupIndex || g.components.length === 0),
-				)?.components ?? [])
-				?? containingGroup.components[containingGroup.components.indexOf(containingComponent) - 1]
-				?? null
-			) as MathComponent | null;
-			const replacingComponents = [...containingComponent];
-			containingGroup.components.splice(containingGroup.components.indexOf(containingComponent), 1, ...replacingComponents);
-			if(previousComponent == null) {
-				this.moveToStart(containingGroup);
-			}
-			else {
-				this.moveAfter(previousComponent, containingGroup);
-			}
+			this.deleteContainer(doc);
 		}
 		else if(this.container != doc.componentsGroup) {
 			this.moveLeft(doc);
