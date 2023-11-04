@@ -14,6 +14,7 @@ export class Parenthese extends EnterableMathComponent {
 		this.type = type;
 		this.components = components;
 		this.isGrayedOut = isGrayedOut;
+		this.deleteAtStart = "always";
 	}
 
 	groups() {
