@@ -1,15 +1,15 @@
 .parenthese-round {
-	padding: 0 5px;
+	padding: 0 10px;
 	position: relative;
 }
 
 .parenthese-round::after {
 	background-image: url(../../images//round-parenthese-right.svg);
-	right: 0;
+	right: 3px;
 }
 .parenthese-round::before {
 	background-image: url(../../images//round-parenthese-left.svg);
-	left: 0;
+	left: 3px;
 }
 
 .parenthese-round::after, .parenthese-round::before {
@@ -22,4 +22,7 @@
 	height: 100%;
 	background-repeat: no-repeat;
 	background-size: 5px 100%;
+}
+.parenthese .math-component-group {
+	min-width: 8px;
 }
