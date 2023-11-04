@@ -7,6 +7,9 @@
 	background-image: url(../../images//round-parenthese-right.svg);
 	right: 3px;
 }
+.parenthese-grayed-out::after {
+	background-image: url(../../images/round-parenthese-right-grey.svg);
+}
 .parenthese-round::before {
 	background-image: url(../../images//round-parenthese-left.svg);
 	left: 3px;
