@@ -1,6 +1,8 @@
 import { App } from "../App.mjs";
+import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
+import { MathDocument } from "../MathDocument.mjs";
 
 type ParentheseType = "round" | "square" | "curly" | "angle";
 
@@ -29,5 +31,13 @@ export class Parenthese extends EnterableMathComponent {
 		}
 		result.appendChild(components);
 		return result;
+	}
+
+	collapseTo(cursor: Cursor, doc: MathDocument) {
+		if(cursor.container !== this.components) {
+			throw new Error("Parenthese group must contain cursor.");
+		}
+		const itemsAfter = this.components.components.splice(cursor.position(), Infinity);
+		doc.containingGroupOf(this).insertAfter(this, itemsAfter);
 	}
 }
