@@ -72,4 +72,9 @@ export class MathComponentGroup {
 			}
 		}
 	}
+
+	insertAfter(component: MathComponent, componentsToInsert: MathComponent[]) {
+		const index = this.components.indexOf(component);
+		this.components.splice(index + 1, 0, ...componentsToInsert);
+	}
 }

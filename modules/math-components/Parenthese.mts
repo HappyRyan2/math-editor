@@ -1,6 +1,7 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { LineBreak } from "../LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 
@@ -10,6 +11,14 @@ export class Parenthese extends EnterableMathComponent {
 	type: ParentheseType;
 	components: MathComponentGroup;
 	isGrayedOut: boolean;
+	onDeletion(preventDeletion: () => void, doc: MathDocument, cursor: Cursor) {
+		if(!this.isGrayedOut) {
+			cursor.moveToEnd(this.components);
+			this.isGrayedOut = true;
+			this.expand(doc);
+			preventDeletion();
+		}
+	}
 
 	constructor(components: MathComponentGroup, type: ParentheseType, isGrayedOut: boolean = false) {
 		super();
@@ -39,5 +48,12 @@ export class Parenthese extends EnterableMathComponent {
 		}
 		const itemsAfter = this.components.components.splice(cursor.position(), Infinity);
 		doc.containingGroupOf(this).insertAfter(this, itemsAfter);
+	}
+	expand(doc: MathDocument) {
+		const containingGroup = doc.containingGroupOf(this);
+		const index = containingGroup.components.indexOf(this) + 1;
+		const nextLineBreak = containingGroup.components.findIndex((c, i) => c instanceof LineBreak && i > index);
+		const itemsAfter = containingGroup.components.splice(index, nextLineBreak === -1 ? containingGroup.components.length : nextLineBreak - 1);
+		this.components.components.push(...itemsAfter);
 	}
 }

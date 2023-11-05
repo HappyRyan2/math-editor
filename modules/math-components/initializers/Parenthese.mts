@@ -9,6 +9,7 @@ app.keyHandlers.push({
 		app.cursors.forEach(cursor => {
 			const parenthese = new Parenthese(new MathComponentGroup([]), "round", true);
 			cursor.addComponent(parenthese);
+			parenthese.expand(app.document);
 			cursor.moveToStart(parenthese.components);
 		});
 		stopPropagation();
