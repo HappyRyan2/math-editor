@@ -7,10 +7,15 @@ app.keyHandlers.push({
 	shiftKey: true,
 	handler: (event, stopPropagation) => {
 		app.cursors.forEach(cursor => {
-			const parenthese = new Parenthese(new MathComponentGroup([]), "round", true);
-			cursor.addComponent(parenthese);
-			parenthese.expand(app.document);
-			cursor.moveToStart(parenthese.components);
+			if(cursor.selection == null) {
+				const parenthese = new Parenthese(new MathComponentGroup([]), "round", true);
+				cursor.addComponent(parenthese);
+				parenthese.expand(app.document);
+				cursor.moveToStart(parenthese.components);
+			}
+			else {
+				Parenthese.parenthesizeSelection(cursor, "round");
+			}
 		});
 		stopPropagation();
 	},
