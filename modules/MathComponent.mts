@@ -7,6 +7,8 @@ import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 export abstract class MathComponent {
 	relativeKeyHandlers: RelativeKeyHandler[] = [];
 	abstract render(app: App, ...components: HTMLElement[]): HTMLElement; // `components` array is only used for EnterableMathComponents
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onDeletion(preventDeletion: () => void, doc: MathDocument, cursor: Cursor) {}
 
 	isSelected(cursors: Cursor[]) {
 		return cursors.some(c => c.selectionContains(this));

@@ -269,13 +269,18 @@ export class Cursor {
 		if(this.selection != null) {
 			this.replaceSelectionWith(...[]);
 		}
-		else if(this.predecessor != null && this.predecessor instanceof EnterableMathComponent && !this.predecessor.isEmpty()) {
-			this.predecessor.enterFromRight(this);
-		}
 		else if(this.predecessor != null) {
-			const newPredecessor = this.container.components[this.position() - 2];
-			this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
-			this.predecessor = newPredecessor;
+			let shouldDelete = true;
+			const preventDeletion = () => shouldDelete = false;
+			this.predecessor.onDeletion(preventDeletion, doc, this);
+			if(shouldDelete && this.predecessor instanceof EnterableMathComponent && !this.predecessor.isEmpty()) {
+				this.predecessor.enterFromRight(this);
+			}
+			else if(shouldDelete) {
+				const newPredecessor = this.container.components[this.position() - 2];
+				this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
+				this.predecessor = newPredecessor;
+			}
 		}
 		else if(
 			this.container != doc.componentsGroup && (this.container.components.length === 0 ||
