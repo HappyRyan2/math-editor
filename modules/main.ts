@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const fs = require("fs").promises;
 
 app.whenReady().then(async () => {
 	const window = new BrowserWindow({
@@ -16,5 +17,5 @@ app.whenReady().then(async () => {
 });
 
 ipcMain.on("save", (_, content: string, fileName: string) => {
-	console.log(`saving ${content} to ${fileName}`);
+	fs.writeFile(fileName, content);
 });
