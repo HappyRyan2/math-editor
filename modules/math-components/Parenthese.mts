@@ -57,9 +57,11 @@ export class Parenthese extends EnterableMathComponent {
 		this.components.components.push(...itemsAfter);
 	}
 	static parenthesizeSelection(cursor: Cursor, type: ParentheseType) {
-		cursor.replaceSelectionWith(new Parenthese(
+		const parenthese = new Parenthese(
 			new MathComponentGroup(cursor.selectedComponents()),
 			type, false,
-		));
+		);
+		cursor.replaceSelectionWith(parenthese);
+		cursor.moveToStart(parenthese.components);
 	}
 }
