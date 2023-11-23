@@ -4,7 +4,7 @@ import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
-import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils.mjs";
+import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils/utils.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 
