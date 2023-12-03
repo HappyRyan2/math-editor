@@ -11,6 +11,7 @@ const DEBUG_SETTINGS = {
 };
 
 if(ENABLE_DEBUG_SETTINGS) {
+if(ENABLE_DEBUG_SETTINGS && !electronAPI.CI) {
 	app.document = DEBUG_SETTINGS.INITIAL_DOCUMENT;
 	app.cursors = [new Cursor(app.document.componentsGroup, app.document.componentsGroup.components[0])];
 	app.renderAndUpdate();

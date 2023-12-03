@@ -2,7 +2,7 @@ import { _electron } from "playwright";
 import { test, expect } from "@playwright/test";
 
 test("the user can insert superscripts", async () => {
-	const electronApp = await _electron.launch({ args: ["compiled/main.js"] });
+	const electronApp = await _electron.launch({ args: ["compiled/main.js"], env: { CI: "true" } });
 	const page = await electronApp.firstWindow();
 	await page.waitForLoadState();
 	await expect(page.locator(".cursor")).toBeVisible();
