@@ -24,6 +24,7 @@ module.exports = {
 		"func-style": ["error", "expression"],
 		"@typescript-eslint/no-var-requires": 0,
 		"no-trailing-spaces": ["error"],
+		"no-console": ["error"],
 	},
 	"plugins": [
 		"@typescript-eslint",
