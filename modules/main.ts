@@ -1,7 +1,18 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, session } = require("electron");
 const fs = require("fs").promises;
 
 app.whenReady().then(async () => {
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				"Content-Security-Policy": [
+					"default-src 'self'",
+				],
+			},
+		});
+	});
+
 	const window = new BrowserWindow({
 		width: 800, height: 800,
 		webPreferences: {
