@@ -5,7 +5,8 @@ import { LineBreak } from "../LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 
-type ParentheseType = "round" | "square" | "curly" | "angle";
+const PARENTHESE_TYPES = ["round", "square", "curly", "angle"] as const;
+type ParentheseType = typeof PARENTHESE_TYPES[number];
 
 export class Parenthese extends EnterableMathComponent {
 	type: ParentheseType;
@@ -63,5 +64,21 @@ export class Parenthese extends EnterableMathComponent {
 		);
 		cursor.replaceSelectionWith(parenthese);
 		cursor.moveToStart(parenthese.components);
+	}
+
+	static parse(input: object) {
+		if(!("type" in input && typeof input.type === "string" &&
+			PARENTHESE_TYPES.some(t => t === input.type))
+		) { throw new Error("Serialized parenthese was missing `type` property.");}
+
+		if(!("isGrayedOut" in input && typeof input.isGrayedOut === "boolean")) {
+			throw new Error("Serialized parenthese was missing `type` property.");
+		}
+
+		return new Parenthese(
+			new MathComponentGroup([]),
+			input.type as ParentheseType,
+			input.isGrayedOut,
+		);
 	}
 }
