@@ -21,4 +21,12 @@ export class MathSymbol extends MathComponent {
 		}
 		return span;
 	}
+
+	static parse(input: object) {
+		if(!("symbol" in input && typeof input.symbol === "string")) {
+			throw new Error("Serialized MathSymbol did not have a valid `symbol` property.");
+		}
+
+		return new MathSymbol(input.symbol);
+	}
 }
