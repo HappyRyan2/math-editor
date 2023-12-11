@@ -1,5 +1,6 @@
 import { app } from "../../App.mjs";
 import { Autocomplete } from "../../Autocomplete.mjs";
+import { MathComponent } from "../../MathComponent.mjs";
 import { MathSymbol } from "../MathSymbol.mjs";
 
 app.keyHandlers.push({
@@ -11,3 +12,5 @@ app.keyHandlers.push({
 		stopPropagation();
 	},
 });
+
+MathComponent.subclasses.set("MathSymbol", MathSymbol);

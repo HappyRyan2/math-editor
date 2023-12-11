@@ -1,5 +1,6 @@
 import { app } from "../../App.mjs";
 import { Autocomplete } from "../../Autocomplete.mjs";
+import { MathComponent } from "../../MathComponent.mjs";
 import { SuperscriptSubscript } from "../SuperscriptSubscript.mjs";
 
 app.keyHandlers.push({
@@ -20,3 +21,6 @@ app.keyHandlers.push({
 		app.cursors.forEach(cursor => SuperscriptSubscript.insert(cursor, "subscript"));
 	},
 });
+
+
+MathComponent.subclasses.set("SuperscriptSubscript", SuperscriptSubscript);

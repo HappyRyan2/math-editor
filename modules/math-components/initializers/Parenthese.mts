@@ -1,4 +1,5 @@
 import { app } from "../../App.mjs";
+import { MathComponent } from "../../MathComponent.mjs";
 import { MathComponentGroup } from "../../MathComponentGroup.mjs";
 import { Parenthese } from "../Parenthese.mjs";
 
@@ -43,3 +44,5 @@ app.keyHandlers.push({
 		}
 	},
 });
+
+MathComponent.subclasses.set("Parenthese", Parenthese);

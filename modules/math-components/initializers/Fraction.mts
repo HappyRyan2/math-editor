@@ -1,5 +1,6 @@
 import { app } from "../../App.mjs";
 import { Autocomplete } from "../../Autocomplete.mjs";
+import { MathComponent } from "../../MathComponent.mjs";
 import { Fraction } from "../Fraction.mjs";
 
 app.keyHandlers.push({
@@ -10,3 +11,5 @@ app.keyHandlers.push({
 		stopPropagation();
 	},
 });
+
+MathComponent.subclasses.set("Fraction", Fraction);
