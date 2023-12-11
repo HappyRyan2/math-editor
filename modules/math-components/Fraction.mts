@@ -75,5 +75,19 @@ export class Fraction extends EnterableMathComponent {
 		cursor.predecessor = null;
 		return fraction;
 	}
+
+	static parse(input: object) {
+		if(!("numerator" in input && typeof input.numerator === "object" && input.numerator != null)) {
+			throw new Error("Serialized Fraction did not have a valid `numerator` property.");
+		}
+		if(!("denominator" in input && typeof input.denominator === "object" && input.denominator != null)) {
+			throw new Error("Serialized Fraction did not have a valid `denominator` property.");
+		}
+
+		return new Fraction(
+			MathComponentGroup.parse(input.numerator),
+			MathComponentGroup.parse(input.denominator),
+		);
+	}
 }
 
