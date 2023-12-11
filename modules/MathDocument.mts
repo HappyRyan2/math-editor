@@ -88,16 +88,10 @@ export class MathDocument {
 	}
 
 	static parse(serialized: string): MathDocument {
-		const parsed = JSON.parse(serialized);
-		return new MathDocument(new MathComponentGroup(
-			parsed.componentsGroup.map((component: unknown) => {
-				if(typeof (component as { constructorName: string })?.constructorName !== "string") {
-					throw new Error(`Did not find constructorName property on parsed input ${component}`);
-				}
-				else {
-					return MathComponent.parseObject(component as { constructorName: string });
-				}
-			}),
-		));
+		const parsed = JSON.parse(serialized) as object;
+		if(!("componentsGroup" in parsed && typeof parsed.componentsGroup === "object" && parsed.componentsGroup != null)) {
+			throw new Error("Serialized MathDocument did not have a valid `componentsGroup` property.");
+		}
+		return new MathDocument(MathComponentGroup.parse(parsed.componentsGroup));
 	}
 }
