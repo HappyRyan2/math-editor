@@ -69,14 +69,17 @@ export class Parenthese extends EnterableMathComponent {
 	static parse(input: object) {
 		if(!("type" in input && typeof input.type === "string" &&
 			PARENTHESE_TYPES.some(t => t === input.type))
-		) { throw new Error("Serialized parenthese was missing `type` property.");}
+		) { throw new Error("Serialized parenthese did not have a valid `type` property.");}
 
 		if(!("isGrayedOut" in input && typeof input.isGrayedOut === "boolean")) {
-			throw new Error("Serialized parenthese was missing `type` property.");
+			throw new Error("Serialized parenthese did not have a valid `isGrayedOut` property.");
+		}
+		if(!("components" in input && typeof input.components === "object" && input.components != null)) {
+			throw new Error("Serialized parenthese did not have a valid `components` property.");
 		}
 
 		return new Parenthese(
-			new MathComponentGroup([]),
+			MathComponentGroup.parse(input.components),
 			input.type as ParentheseType,
 			input.isGrayedOut,
 		);
