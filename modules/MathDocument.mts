@@ -86,4 +86,18 @@ export class MathDocument {
 		}
 		return this.depth(this.containingComponentOf(component) as EnterableMathComponent) + 1;
 	}
+
+	static parse(serialized: string): MathDocument {
+		const parsed = JSON.parse(serialized);
+		return new MathDocument(new MathComponentGroup(
+			parsed.componentsGroup.map((component: unknown) => {
+				if(typeof (component as { constructorName: string })?.constructorName !== "string") {
+					throw new Error(`Did not find constructorName property on parsed input ${component}`);
+				}
+				else {
+					return MathComponent.parseObject(component as { constructorName: string });
+				}
+			}),
+		));
+	}
 }

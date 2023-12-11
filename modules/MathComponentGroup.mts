@@ -77,4 +77,17 @@ export class MathComponentGroup {
 		const index = this.components.indexOf(component);
 		this.components.splice(index + 1, 0, ...componentsToInsert);
 	}
+
+	toJSON() {
+		return { ...this, constructorName: "MathComponentGroup" };
+	}
+
+	static parse(input: object) {
+		if("components" in input && Array.isArray(input.components)) {
+			return new MathComponentGroup(input.components.map(c => MathComponent.parseObject(c)));
+		}
+		else {
+			throw new Error("Serialized MathComponentGroup did not have a valid `components` property.");
+		}
+	}
 }
