@@ -62,4 +62,18 @@ export class SuperscriptSubscript extends EnterableMathComponent {
 			cursor.moveToStart(superscriptSubscript[type]);
 		}
 	}
+
+	static parse(input: object) {
+		if(!("superscript" in input && typeof input.superscript === "object" && input.superscript != null)) {
+			throw new Error("Serialized SuperscriptSubscript did not have a valid `superscript` property.");
+		}
+		if(!("subscript" in input && typeof input.subscript === "object" && input.subscript != null)) {
+			throw new Error("Serialized SuperscriptSubscript did not have a valid `subscript` property.");
+		}
+
+		return new SuperscriptSubscript(
+			MathComponentGroup.parse(input.superscript),
+			MathComponentGroup.parse(input.subscript),
+		);
+	}
 }
