@@ -67,6 +67,30 @@ describe("Cursor.moveRight", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
+	it("clears the selection when the cursor is at the end of its selection", () => {
+		let symbolA;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbolA, new Selection(symbolA, symbolA));
+		cursor.moveRight(doc);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, symbolA);
+		assert.equal(cursor.selection, null);
+	});
+	it("moves the cursor to the end of its selection when the cursor is at the beginning of its selection", () => {
+		let symbolA, symbolB;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+			new MathSymbol("C"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB));
+		cursor.moveRight(doc);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, symbolB);
+		assert.equal(cursor.selection, null);
+	});
 });
 describe("Cursor.moveLeft", () => {
 	it("moves past the previous component if the component is not enterable", () => {
@@ -98,6 +122,31 @@ describe("Cursor.moveLeft", () => {
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+	});
+	it("clears the selection when the cursor is at the beginning of its selection", () => {
+		let symbolA, symbolB;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbolA, new Selection(symbolB, symbolB));
+		cursor.moveLeft(doc);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, symbolA);
+		assert.equal(cursor.selection, null);
+	});
+	it("moves the cursor to the beginning of its selection when the cursor is at the end of its selection", () => {
+		let symbolA, symbolB, symbolC;
+		const doc = new MathDocument([
+			symbolA = new MathSymbol("A"),
+			symbolB = new MathSymbol("B"),
+			symbolC = new MathSymbol("C"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbolC, new Selection(symbolB, symbolC));
+		cursor.moveLeft(doc);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, symbolA);
+		assert.equal(cursor.selection, null);
 	});
 });
 describe("Cursor.selectRight", () => {

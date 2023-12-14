@@ -108,6 +108,7 @@ export class Cursor {
 
 	moveRight(doc: MathDocument) {
 		if(this.selection != null) {
+			this.moveAfter(this.selection.end, this.container);
 			this.selection = null;
 			return;
 		}
@@ -128,6 +129,7 @@ export class Cursor {
 	}
 	moveLeft(doc: MathDocument) {
 		if(this.selection != null) {
+			this.moveBefore(this.selection.start, this.container);
 			this.selection = null;
 			return;
 		}
