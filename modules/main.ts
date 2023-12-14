@@ -34,6 +34,12 @@ app.whenReady().then(async () => {
 			}
 		});
 	});
+	ipcMain.handle("open-with-dialog", (_, fileTypes: { name: string, extensions: string[] }[]) => {
+		return dialog.showOpenDialog(window, { filters: fileTypes }).then((resolved) => {
+			return Promise.all(resolved.filePaths.map(p => fs.readFile(p, "utf8")))
+				.then(contents => contents.map((str, i) => [resolved.filePaths[i], str]));
+		});
+	});
 });
 
 ipcMain.on("save", (_, content: string, fileName: string) => {
