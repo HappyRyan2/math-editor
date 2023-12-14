@@ -107,6 +107,18 @@ export class Cursor {
 			() => this.predecessor,
 		);
 	}
+	selectWordRight(doc: MathDocument) {
+		Cursor.movePastWord(
+			() => this.selectRight(doc),
+			() => this.nextComponent(),
+		);
+	}
+	selectWordLeft(doc: MathDocument) {
+		Cursor.movePastWord(
+			() => this.selectLeft(doc),
+			() => this.predecessor,
+		);
+	}
 
 	render() {
 		const span = document.createElement("span");

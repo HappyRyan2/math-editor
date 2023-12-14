@@ -116,6 +116,28 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "ArrowRight",
+			ctrlKey: true,
+			shiftKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectWordRight(this.document));
+				stopPropagation();
+			},
+		},
+		{
+			key: "ArrowLeft",
+			ctrlKey: true,
+			shiftKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.selectWordLeft(this.document));
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
