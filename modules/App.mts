@@ -138,6 +138,16 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "Backspace",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.deleteWord(this.document));
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 

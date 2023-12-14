@@ -119,6 +119,12 @@ export class Cursor {
 			() => this.predecessor,
 		);
 	}
+	deleteWord(doc: MathDocument) {
+		Cursor.movePastWord(
+			() => this.deletePrevious(doc, true),
+			() => this.predecessor,
+		);
+	}
 
 	render() {
 		const span = document.createElement("span");
@@ -312,15 +318,17 @@ export class Cursor {
 			this.moveAfter(previousComponent, containingGroup);
 		}
 	}
-	deletePrevious(doc: MathDocument) {
+	deletePrevious(doc: MathDocument, forceDeletion: boolean = false) {
 		if(this.selection != null) {
 			this.replaceSelectionWith(...[]);
 		}
 		else if(this.predecessor != null) {
 			let shouldDelete = true;
-			const preventDeletion = () => shouldDelete = false;
-			this.predecessor.onDeletion(preventDeletion, doc, this);
-			if(shouldDelete && this.predecessor instanceof EnterableMathComponent && !this.predecessor.isEmpty()) {
+			if(!forceDeletion) {
+				const preventDeletion = () => shouldDelete = false;
+				this.predecessor.onDeletion(preventDeletion, doc, this);
+			}
+			if(shouldDelete && this.predecessor instanceof EnterableMathComponent && !this.predecessor.isEmpty() && !forceDeletion) {
 				this.predecessor.enterFromRight(this);
 			}
 			else if(shouldDelete) {
