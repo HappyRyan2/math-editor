@@ -7,6 +7,7 @@ import { App } from "./App.mjs";
 import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils/utils.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
+import { MathSymbol } from "./math-components/MathSymbol.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -75,6 +76,38 @@ export class Cursor {
 		this.container = container;
 	}
 
+	static isWordBoundary(component: MathComponent | null) {
+		return (
+			(component == null)
+			|| (component instanceof MathSymbol && (component.symbol === " " || MathSymbol.OPERATORS.includes(component.symbol)))
+			|| (component instanceof LineBreak)
+		);
+	}
+	static movePastWord(move: () => void, getNextComponent: () => MathComponent | null) {
+		while(true) {
+			const nextComponent = getNextComponent();
+			move();
+			if(nextComponent == null || !Cursor.isWordBoundary(nextComponent)) { break; }
+		}
+		while(true) {
+			const nextComponent = getNextComponent();
+			if(Cursor.isWordBoundary(nextComponent)) { break; }
+			move();
+		}
+	}
+	moveWordRight(doc: MathDocument) {
+		Cursor.movePastWord(
+			() => this.moveRight(doc, true),
+			() => this.nextComponent(),
+		);
+	}
+	moveWordLeft(doc: MathDocument) {
+		Cursor.movePastWord(
+			() => this.moveLeft(doc, true),
+			() => this.predecessor,
+		);
+	}
+
 	render() {
 		const span = document.createElement("span");
 		span.innerHTML = "&ZeroWidthSpace;";
@@ -106,14 +139,14 @@ export class Cursor {
 		return this.container.components.slice(startIndex, endIndex + 1);
 	}
 
-	moveRight(doc: MathDocument) {
+	moveRight(doc: MathDocument, skipEnterableComponents: boolean = false) {
 		if(this.selection != null) {
 			this.moveAfter(this.selection.end, this.container);
 			this.selection = null;
 			return;
 		}
 		const nextComponent = this.nextComponent();
-		if(nextComponent && nextComponent instanceof EnterableMathComponent) {
+		if(nextComponent && nextComponent instanceof EnterableMathComponent && !skipEnterableComponents) {
 			nextComponent.enterFromLeft(this);
 		}
 		else if(nextComponent) {
@@ -127,13 +160,13 @@ export class Cursor {
 			}
 		}
 	}
-	moveLeft(doc: MathDocument) {
+	moveLeft(doc: MathDocument, skipEnterableComponents: boolean = false) {
 		if(this.selection != null) {
 			this.moveBefore(this.selection.start, this.container);
 			this.selection = null;
 			return;
 		}
-		if(this.predecessor && this.predecessor instanceof EnterableMathComponent) {
+		if(this.predecessor && this.predecessor instanceof EnterableMathComponent && !skipEnterableComponents) {
 			this.predecessor.enterFromRight(this);
 		}
 		else if(this.predecessor) {

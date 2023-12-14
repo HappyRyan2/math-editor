@@ -96,6 +96,26 @@ export class App {
 				}
 			},
 		},
+		{
+			key: "ArrowRight",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveWordRight(this.document));
+				stopPropagation();
+			},
+		},
+		{
+			key: "ArrowLeft",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				this.cursors.forEach(c => c.moveWordLeft(this.document));
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 

@@ -25,6 +25,7 @@ module.exports = {
 		"@typescript-eslint/no-var-requires": 0,
 		"no-trailing-spaces": ["error"],
 		"no-console": ["error"],
+		"no-constant-condition": ["error", { "checkLoops": false }],
 	},
 	"plugins": [
 		"@typescript-eslint",
