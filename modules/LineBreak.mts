@@ -30,4 +30,8 @@ export class LineBreak extends MathComponent {
 			cursor.selection = null;
 		}
 	}
+
+	static parse() {
+		return new LineBreak();
+	}
 }

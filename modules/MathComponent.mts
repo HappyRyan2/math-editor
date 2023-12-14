@@ -1,6 +1,7 @@
 import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { LineBreak } from "./LineBreak.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 import { Fraction } from "./math-components/Fraction.mjs";
@@ -8,7 +9,7 @@ import { MathSymbol } from "./math-components/MathSymbol.mjs";
 import { Parenthese } from "./math-components/Parenthese.mjs";
 import { SuperscriptSubscript } from "./math-components/SuperscriptSubscript.mjs";
 
-type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSymbol | typeof SuperscriptSubscript;
+type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSymbol | typeof SuperscriptSubscript | typeof LineBreak;
 
 export abstract class MathComponent {
 	relativeKeyHandlers: RelativeKeyHandler[] = [];
