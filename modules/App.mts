@@ -6,6 +6,7 @@ import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
+import { Selection } from "./Selection.mjs";
 
 export class App {
 	document: MathDocument;
@@ -145,6 +146,21 @@ export class App {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
 				this.cursors.forEach(c => c.deleteWord(this.document));
+				stopPropagation();
+			},
+		},
+		{
+			key: "a",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
+				Autocomplete.close();
+				const components = app.document.componentsGroup.components;
+				app.cursors = [new Cursor(
+					app.document.componentsGroup,
+					components[components.length - 1] ?? null,
+					new Selection(components[0], components[components.length - 1]),
+				)];
 				stopPropagation();
 			},
 		},
