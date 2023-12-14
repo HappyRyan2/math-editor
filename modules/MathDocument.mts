@@ -5,9 +5,11 @@ import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
 
 export class MathDocument {
 	componentsGroup: MathComponentGroup;
+	filePath: string | null;
 
-	constructor(components: MathComponentGroup | MathComponent[]) {
+	constructor(components: MathComponentGroup | MathComponent[], filePath: string | null = null) {
 		this.componentsGroup = (components instanceof MathComponentGroup) ? components : new MathComponentGroup(components);
+		this.filePath = filePath;
 	}
 
 	render(app: App, renderedComponents = this.componentsGroup.render(app)) {

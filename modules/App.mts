@@ -164,6 +164,21 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "s",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				const string = JSON.stringify(this.document);
+				const filePath = this.document.filePath;
+				if(filePath == null) {
+					electronAPI.sendSaveWithDialog(string, [{ name: "Math Document", extensions: ["mathdoc"] }]);
+				}
+				else {
+					electronAPI.sendSave(string, filePath);
+				}
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
