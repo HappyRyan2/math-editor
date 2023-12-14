@@ -7,6 +7,7 @@ import { Fraction } from "../../math-components/Fraction.mjs";
 import { MathComponentGroup } from "../../MathComponentGroup.mjs";
 import { Cursor } from "../../Cursor.mjs";
 import { LineBreak } from "../../LineBreak.mjs";
+import "../../math-components/initializers/all-initializers.mjs";
 
 describe("Fraction.insertFraction", () => {
 	it("puts the selection into a fraction if there is one", () => {
@@ -66,4 +67,14 @@ describe("Fraction.insertFraction", () => {
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
+});
+
+describe("Fraction.parse()", () => {
+	const fraction = new Fraction(
+		new MathComponentGroup([new MathSymbol("A")]),
+		new MathComponentGroup([new MathSymbol("B")]),
+	);
+	const result = Fraction.parse(JSON.parse(JSON.stringify(fraction)));
+	result.relativeKeyHandlers = fraction.relativeKeyHandlers = []; // prevents false positives since Mocha can't check if functions are deeply equal
+	assert.deepEqual(result, fraction);
 });
