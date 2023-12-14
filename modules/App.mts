@@ -179,6 +179,20 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "o",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				electronAPI.openWithDialog([{ name: "Math Document", extensions: ["mathdoc"] }]).then((resolved) => {
+					const [[filePath, fileContents]] = resolved;
+					app.document = MathDocument.parse(fileContents);
+					app.document.filePath = filePath;
+					app.cursors = [new Cursor(app.document.componentsGroup, null)];
+					app.renderAndUpdate();
+				});
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
