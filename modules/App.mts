@@ -7,6 +7,7 @@ import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { Selection } from "./Selection.mjs";
+import { EditorTab } from "./EditorTab.mjs";
 
 export class App {
 	document: MathDocument;
@@ -196,9 +197,18 @@ export class App {
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
+	editorTabs: EditorTab[];
+	activeTab: EditorTab;
+
 	constructor() {
-		this.document = new MathDocument([]);
-		this.cursors = [new Cursor(this.document.componentsGroup, null)];
+		const document = new MathDocument([]);
+		this.editorTabs = [new EditorTab(
+			document,
+			[new Cursor(document.componentsGroup, null)],
+		)];
+		this.activeTab = this.editorTabs[0];
+		this.document = document;
+		this.cursors = this.editorTabs[0].cursors;
 	}
 
 	initialize() {
