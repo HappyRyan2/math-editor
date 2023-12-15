@@ -20,6 +20,8 @@
 	position: absolute;
 	border: 1px solid grey;
 	background-color: white;
+	max-height: 100px;
+	overflow-y: scroll;
 }
 #autocomplete:empty {
 	display: none;
