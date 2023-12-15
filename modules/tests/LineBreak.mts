@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { Cursor } from "../Cursor.mjs";
 import { describe, it } from "mocha";
-import { LineBreak } from "../LineBreak.mjs";
+import { LineBreak } from "../math-components/LineBreak.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";

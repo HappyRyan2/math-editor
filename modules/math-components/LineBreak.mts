@@ -1,6 +1,6 @@
-import { Cursor } from "./Cursor.mjs";
-import { MathComponent } from "./MathComponent.mjs";
-import { MathDocument } from "./MathDocument.mjs";
+import { Cursor } from "../Cursor.mjs";
+import { MathComponent } from "../MathComponent.mjs";
+import { MathDocument } from "../MathDocument.mjs";
 
 export class LineBreak extends MathComponent {
 	render() {

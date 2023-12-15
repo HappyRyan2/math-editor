@@ -5,7 +5,7 @@ import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
 import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils/utils.mjs";
-import { LineBreak } from "./LineBreak.mjs";
+import { LineBreak } from "./math-components/LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 

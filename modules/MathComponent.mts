@@ -1,7 +1,7 @@
 import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
-import { LineBreak } from "./LineBreak.mjs";
+import { LineBreak } from "./math-components/LineBreak.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 import { Fraction } from "./math-components/Fraction.mjs";

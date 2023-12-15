@@ -9,7 +9,7 @@ import { Selection } from "../Selection.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { JSDOM } from "jsdom";
 import { App } from "../App.mjs";
-import { LineBreak } from "../LineBreak.mjs";
+import { LineBreak } from "../math-components/LineBreak.mjs";
 import { Parenthese } from "../math-components/Parenthese.mjs";
 
 describe("Cursor.addComponent", () => {

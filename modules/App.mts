@@ -1,7 +1,7 @@
 import { MathDocument } from "./MathDocument.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
-import { LineBreak } from "./LineBreak.mjs";
+import { LineBreak } from "./math-components/LineBreak.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";

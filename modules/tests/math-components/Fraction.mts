@@ -6,7 +6,7 @@ import { MathSymbol } from "../../math-components/MathSymbol.mjs";
 import { Fraction } from "../../math-components/Fraction.mjs";
 import { MathComponentGroup } from "../../MathComponentGroup.mjs";
 import { Cursor } from "../../Cursor.mjs";
-import { LineBreak } from "../../LineBreak.mjs";
+import { LineBreak } from "../../math-components/LineBreak.mjs";
 import "../../math-components/initializers/all-initializers.mjs";
 
 describe("Fraction.insertFraction", () => {
