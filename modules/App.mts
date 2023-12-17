@@ -227,9 +227,12 @@ export class App {
 
 	initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
-		document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
 		document.addEventListener("mouseup", () => this.handleMouseUp());
 		document.addEventListener("mousemove", (event) => this.handleMouseMove(event));
+		this.initializeMathDocumentListeners(document.getElementById("math-document")!);
+	}
+	initializeMathDocumentListeners(element: HTMLElement) {
+		element.addEventListener("mousedown", (event) => this.handleMouseDown(event));
 	}
 	renderAndUpdate() {
 		const [div, map] = this.renderWithMapping();
@@ -238,6 +241,7 @@ export class App {
 		this.renderingMap = map;
 
 		document.getElementById("tabs-container")!.replaceWith(this.renderTabs());
+		this.initializeMathDocumentListeners(div);
 		return [div, map];
 	}
 	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
