@@ -19,12 +19,6 @@ beforeEach(() => {
 });
 
 
-describe("App.render", () => {
-	it("renders the app without throwing any errors", () => {
-		const app = new App(new MathDocument([new MathSymbol("A")]));
-		app.render();
-	});
-});
 describe("App.renderWithMapping", () => {
 	it("returns a rendered app, along with a Map that maps each component to its rendered HTML element", () => {
 		let mock: EnterableComponentMock, symbol: MathSymbol;
@@ -34,7 +28,7 @@ describe("App.renderWithMapping", () => {
 			])),
 		]));
 		const [rendered, map] = app.renderWithMapping();
-		assert.equal(rendered.outerHTML, app.render().outerHTML);
+		assert.equal(rendered.outerHTML, app.document.render(app).outerHTML);
 		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, mock.render(app).outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
@@ -55,7 +49,7 @@ describe("App.renderWithMapping", () => {
 
 		const expectedMock = mock.render(app);
 		expectedMock.classList.add("selected");
-		assert.equal(rendered.outerHTML, app.render().outerHTML);
+		assert.equal(rendered.outerHTML, app.document.render(app).outerHTML);
 		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, expectedMock.outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);

@@ -225,12 +225,6 @@ export class App {
 		Cursor.initialize();
 	}
 
-	render(renderedDoc = this.document.render(this)) {
-		const div = document.createElement("div");
-		div.id = "document-container";
-		div.appendChild(renderedDoc);
-		return div;
-	}
 	initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
 		document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
@@ -239,7 +233,7 @@ export class App {
 	}
 	renderAndUpdate() {
 		const [div, map] = this.renderWithMapping();
-		const oldDiv = document.getElementById("document-container")!;
+		const oldDiv = document.getElementById("math-document")!;
 		oldDiv.replaceWith(div);
 		this.renderingMap = map;
 
@@ -248,7 +242,7 @@ export class App {
 	}
 	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const [renderedDoc, map] = this.document.renderWithMapping(this);
-		return [this.render(renderedDoc), map];
+		return [renderedDoc, map];
 	}
 	renderTabs() {
 		const result = document.createElement("div");

@@ -558,7 +558,7 @@ describe("Cursor.fromClick", () => {
 	}
 	beforeEach(() => {
 		const dom = new JSDOM(
-			"<html> <body> <div id='document-container'></div> </body> </html>",
+			"<html> <body> <div id='tabs-container'> </div> <div id='math-document'></div> </body> </html>",
 			{ url: "http://localhost" },
 		);
 		global.document = dom.window.document;

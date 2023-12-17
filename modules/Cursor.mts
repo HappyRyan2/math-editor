@@ -349,7 +349,7 @@ export class Cursor {
 	}
 
 	static fromClick(app: App, event: MouseEvent) {
-		const rendered = document.getElementById("document-container")!;
+		const rendered = document.getElementById("math-document")!;
 		const mapping = app.renderingMap;
 		const inverseMap = invertMap(mapping);
 		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
