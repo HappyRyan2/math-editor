@@ -217,6 +217,25 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "Tab",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				const index = this.editorTabs.indexOf(this.activeTab);
+				this.activeTab = this.editorTabs[index + 1] ?? this.editorTabs[0];
+				stopPropagation();
+			},
+		},
+		{
+			key: "Tab",
+			ctrlKey: true,
+			shiftKey: true,
+			handler: (event, stopPropagation) => {
+				const index = this.editorTabs.indexOf(this.activeTab);
+				this.activeTab = this.editorTabs[index - 1] ?? this.editorTabs[this.editorTabs.length - 1];
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
