@@ -13,6 +13,9 @@
 	padding: 10px;
 	font-size: 13px;
 }
+.tab:not(#active-tab):hover {
+	background-color: rgb(230, 230, 230);
+}
 
 #active-tab {
 	background-color: white;
