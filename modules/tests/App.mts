@@ -68,9 +68,9 @@ describe("App.renderTabs", () => {
 		const result = app.renderTabs();
 		const tab1 = result.children[0];
 		const tab2 = result.children[1];
-		assert.equal(tab1.innerHTML, "C:\\folder\\file1.mathdoc");
+		assert.equal(tab1.innerHTML, "file1.mathdoc");
 		assert.equal(tab1.id, "active-tab");
-		assert.equal(tab2.innerHTML, "C:\\folder\\file2.mathdoc");
+		assert.equal(tab2.innerHTML, "file2.mathdoc");
 		assert.equal(tab2.id, "");
 	});
 });

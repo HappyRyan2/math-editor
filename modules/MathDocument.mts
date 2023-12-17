@@ -44,7 +44,10 @@ export class MathDocument {
 	renderTab() {
 		const result = document.createElement("div");
 		result.classList.add("tab");
-		result.innerHTML = this.filePath ?? "untitled";
+		if(this.filePath) {
+			result.innerHTML = this.filePath.substring(this.filePath.lastIndexOf("\\") + 1);
+		}
+		else { result.innerHTML = "untitled"; }
 		return result;
 	}
 
