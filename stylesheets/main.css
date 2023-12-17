@@ -1,5 +1,7 @@
 body {
 	margin: 0px;
+	user-select: none;
+	overflow: hidden;
 }
 
 #document-container {
@@ -9,6 +11,10 @@ body {
 
 	font-family:'Courier New', Courier, monospace;
 	font-size: 15px;
+}
+
+#math-document {
+	overflow-y: auto;
 }
 
 .line {

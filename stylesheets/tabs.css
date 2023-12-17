@@ -1,0 +1,14 @@
+#tabs-container {
+	overflow: auto;
+	white-space: nowrap;
+
+	background-color: rgb(230, 230, 230);
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tab {
+	display: inline-block;
+
+	padding: 10px;
+	font-size: 13px;
+}
