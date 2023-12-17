@@ -2,13 +2,18 @@
 	overflow: auto;
 	white-space: nowrap;
 
-	background-color: rgb(230, 230, 230);
+	background-color: rgb(243, 243, 243);
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .tab {
 	display: inline-block;
+	background-color: rgb(220, 220, 220);
 
 	padding: 10px;
 	font-size: 13px;
+}
+
+#active-tab {
+	background-color: white;
 }
