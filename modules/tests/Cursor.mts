@@ -567,13 +567,12 @@ describe("Cursor.fromClick", () => {
 	});
 
 	it("returns a cursor next to the component you clicked on", () => {
-		const app = new App();
 		let symbol;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			symbol = new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			new MathSymbolMock("C", new DOMRect(20, 0, 10, 10)),
-		]);
+		]));
 		app.renderAndUpdate();
 		document.querySelector(".line")!.getBoundingClientRect = () => new DOMRect(0, 0, 30, 10);
 
@@ -582,15 +581,14 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor at the end of the line, but before the line break, when you click to the right of the last component", () => {
-		const app = new App();
 		let symbol;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new LineBreak(),
 			symbol = new MathSymbolMock("B", new DOMRect(0, 10, 10, 10)),
 			new LineBreak(),
 			new MathSymbolMock("C", new DOMRect(0, 20, 10, 10)),
-		]);
+		]));
 		app.renderAndUpdate();
 		const lines = [...document.querySelectorAll(".line")];
 		lines[0].getBoundingClientRect = () => new DOMRect(0, 0, 10, 10);
@@ -602,15 +600,14 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor inside the enterable component when you click on one", () => {
-		const app = new App();
 		let symbol, enterable;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			enterable = new EnterableComponentMock([
 				symbol = new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 				new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			], new DOMRect(0, 0, 20, 10)),
 			new MathSymbolMock("C", new DOMRect(20, 0, 10, 10)),
-		]);
+		]));
 		app.renderAndUpdate();
 		document.querySelector(".line")!.getBoundingClientRect = () => new DOMRect(0, 0, 30, 10);
 
@@ -619,14 +616,13 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor on the first line when you click above the first line", () => {
-		const app = new App();
 		let symbol;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			symbol = new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			new LineBreak(),
 			new MathSymbolMock("C", new DOMRect(0, 10, 10, 10)),
-		]);
+		]));
 		app.renderAndUpdate();
 		const lines = [...document.querySelectorAll(".line")];
 		lines[0].getBoundingClientRect = () => new DOMRect(0, 0, 20, 10);
@@ -637,14 +633,13 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor on the last line when you click below the last line", () => {
-		const app = new App();
 		let symbol;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new LineBreak(),
 			symbol = new MathSymbolMock("B", new DOMRect(0, 10, 10, 10)),
 			new MathSymbolMock("C", new DOMRect(10, 10, 10, 10)),
-		]);
+		]));
 		app.renderAndUpdate();
 		const lines = [...document.querySelectorAll(".line")];
 		lines[0].getBoundingClientRect = () => new DOMRect(0, 0, 10, 10);
@@ -655,8 +650,7 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("works when you click on an empty line", () => {
-		const app = new App();
-		app.document = new MathDocument([]);
+		const app = new App(new MathDocument([]));
 		app.renderAndUpdate();
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 5 }));

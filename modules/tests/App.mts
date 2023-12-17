@@ -8,6 +8,7 @@ import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Selection } from "../Selection.mjs";
 import { Cursor } from "../Cursor.mjs";
+import { EditorTab } from "../EditorTab.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -20,20 +21,18 @@ beforeEach(() => {
 
 describe("App.render", () => {
 	it("renders the app without throwing any errors", () => {
-		const app = new App();
-		app.document = new MathDocument([new MathSymbol("A")]);
+		const app = new App(new MathDocument([new MathSymbol("A")]));
 		app.render();
 	});
 });
 describe("App.renderWithMapping", () => {
 	it("returns a rendered app, along with a Map that maps each component to its rendered HTML element", () => {
-		const app = new App();
 		let mock: EnterableComponentMock, symbol: MathSymbol;
-		app.document = new MathDocument([
+		const app = new App(new MathDocument([
 			mock = new EnterableComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
-		]);
+		]));
 		const [rendered, map] = app.renderWithMapping();
 		assert.equal(rendered.outerHTML, app.render().outerHTML);
 		assert.equal(map.size, 3);
@@ -44,13 +43,14 @@ describe("App.renderWithMapping", () => {
 	it("works when there are enterable components, cursors, and selections", () => {
 		const app = new App();
 		let mock: EnterableComponentMock, symbol: MathSymbol;
-		app.document = new MathDocument([
+		const doc = new MathDocument([
 			mock = new EnterableComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
 		]);
-		const cursor = new Cursor(app.document.componentsGroup, mock, new Selection(mock, mock));
-		app.cursors = [cursor];
+		app.activeTab = new EditorTab(doc, []);
+		app.editorTabs = [app.activeTab];
+		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, mock, new Selection(mock, mock))];
 		const [rendered, map] = app.renderWithMapping();
 
 		const expectedMock = mock.render(app);

@@ -10,9 +10,6 @@ import { Selection } from "./Selection.mjs";
 import { EditorTab } from "./EditorTab.mjs";
 
 export class App {
-	document: MathDocument;
-	cursors: Cursor[];
-
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
@@ -156,9 +153,9 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				const components = app.document.componentsGroup.components;
-				app.cursors = [new Cursor(
-					app.document.componentsGroup,
+				const components = app.activeTab.document.componentsGroup.components;
+				app.activeTab.cursors = [new Cursor(
+					app.activeTab.document.componentsGroup,
 					components[components.length - 1] ?? null,
 					new Selection(components[0], components[components.length - 1]),
 				)];
@@ -186,9 +183,13 @@ export class App {
 			handler: (event, stopPropagation) => {
 				electronAPI.openWithDialog([{ name: "Math Document", extensions: ["mathdoc"] }]).then((resolved) => {
 					const [[filePath, fileContents]] = resolved;
-					app.document = MathDocument.parse(fileContents);
-					app.document.filePath = filePath;
-					app.cursors = [new Cursor(app.document.componentsGroup, null)];
+					const doc = MathDocument.parse(fileContents);
+					doc.filePath = filePath;
+					app.editorTabs.push(new EditorTab(
+						doc,
+						[new Cursor(doc.componentsGroup, null)],
+					));
+					app.activeTab = app.editorTabs[app.editorTabs.length - 1];
 					app.renderAndUpdate();
 				});
 				stopPropagation();
@@ -200,15 +201,19 @@ export class App {
 	editorTabs: EditorTab[];
 	activeTab: EditorTab;
 
-	constructor() {
-		const document = new MathDocument([]);
+	constructor(document: MathDocument = new MathDocument([])) {
 		this.editorTabs = [new EditorTab(
 			document,
 			[new Cursor(document.componentsGroup, null)],
 		)];
 		this.activeTab = this.editorTabs[0];
-		this.document = document;
-		this.cursors = this.editorTabs[0].cursors;
+	}
+
+	get document() {
+		return this.activeTab.document;
+	}
+	get cursors() {
+		return this.activeTab.cursors;
 	}
 
 	initialize() {
@@ -328,14 +333,14 @@ export class App {
 		this.lastMouseDownEvent = event;
 		this.isMousePressed = true;
 
-		this.cursors = [Cursor.fromClick(this, event)];
+		this.activeTab.cursors = [Cursor.fromClick(this, event)];
 		Cursor.resetCursorBlink();
 		Autocomplete.close();
 		this.renderAndUpdate();
 	}
 	handleMouseMove(event: MouseEvent) {
 		if(this.isMousePressed) {
-			this.cursors = [Cursor.fromDrag(this, this.lastMouseDownEvent!, event)];
+			this.activeTab.cursors = [Cursor.fromDrag(this, this.lastMouseDownEvent!, event)];
 			Cursor.resetCursorBlink();
 			this.updateCursors();
 		}
