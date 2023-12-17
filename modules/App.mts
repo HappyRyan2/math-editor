@@ -253,6 +253,10 @@ export class App {
 		for(const tab of this.editorTabs) {
 			const renderedTab = tab.document.renderTab();
 			result.appendChild(renderedTab);
+			renderedTab.addEventListener("click", () => {
+				this.activeTab = tab;
+				this.renderAndUpdate();
+			});
 			if(tab === this.activeTab) {
 				renderedTab.id = "active-tab";
 			}
