@@ -17,6 +17,7 @@ export class App {
 		{
 			key: "Enter",
 			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
 				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
 				Autocomplete.close();
 				stopPropagation();
@@ -25,6 +26,7 @@ export class App {
 		{
 			key: "Backspace",
 			handler: (event, stopPropagation) => {
+				Cursor.resetCursorBlink();
 				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
 				Autocomplete.update(this.cursors[this.cursors.length - 1]);
 				stopPropagation();
@@ -72,6 +74,7 @@ export class App {
 			key: "Tab",
 			handler: (event, stopPropagation) => {
 				if(Autocomplete.autocomplete) {
+					Cursor.resetCursorBlink();
 					Autocomplete.autocomplete.activateSelected();
 					stopPropagation();
 				}
