@@ -56,3 +56,21 @@ describe("App.renderWithMapping", () => {
 		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
 	});
 });
+describe("App.renderTabs", () => {
+	it("renders the tabs, with a special ID for the active tab", () => {
+		const app = new App();
+		app.editorTabs = [
+			new EditorTab(new MathDocument([], "C:\\folder\\file1.mathdoc"), []),
+			new EditorTab(new MathDocument([], "C:\\folder\\file2.mathdoc"), []),
+		];
+		app.activeTab = app.editorTabs[0];
+
+		const result = app.renderTabs();
+		const tab1 = result.children[0];
+		const tab2 = result.children[1];
+		assert.equal(tab1.innerHTML, "C:\\folder\\file1.mathdoc");
+		assert.equal(tab1.id, "active-tab");
+		assert.equal(tab2.innerHTML, "C:\\folder\\file2.mathdoc");
+		assert.equal(tab2.id, "");
+	});
+});

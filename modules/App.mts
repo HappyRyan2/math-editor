@@ -247,7 +247,11 @@ export class App {
 	renderTabs() {
 		const result = document.createElement("div");
 		for(const tab of this.editorTabs) {
-			result.appendChild(tab.document.renderTab());
+			const renderedTab = tab.document.renderTab();
+			result.appendChild(renderedTab);
+			if(tab === this.activeTab) {
+				renderedTab.id = "active-tab";
+			}
 		}
 		result.id = "tabs-container";
 		return result;
