@@ -13,7 +13,7 @@ export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
 	isMousePressed: boolean = false;
 
-	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void) => void })[] = [
+	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void, preventDefault: () => void) => void })[] = [
 		{
 			key: "Enter",
 			handler: (event, stopPropagation) => {
@@ -198,6 +198,16 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "w",
+			ctrlKey: true,
+			handler: (event, stopPropagation, preventDefault) => {
+				this.closeTab();
+				app.renderAndUpdate();
+				stopPropagation();
+				preventDefault();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
@@ -326,7 +336,7 @@ export class App {
 				(event.altKey === !!altKey === true) &&
 				(event.shiftKey === !!shiftKey === true)
 			) {
-				handler(event, stopPropagation);
+				handler(event, stopPropagation, () => event.preventDefault());
 				if(handled) {
 					return true;
 				}
@@ -362,6 +372,14 @@ export class App {
 			Cursor.resetCursorBlink();
 			this.updateCursors();
 		}
+	}
+
+	closeTab() {
+		if(this.editorTabs.length === 1) { return; }
+		const index = this.editorTabs.indexOf(this.activeTab);
+		if(index === -1) { throw new Error("Did not find the active tab in the list of tabs."); }
+		this.editorTabs.splice(index, 1);
+		this.activeTab = this.editorTabs[index] ?? this.editorTabs[index - 1];
 	}
 }
 
