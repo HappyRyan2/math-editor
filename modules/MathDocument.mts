@@ -41,6 +41,12 @@ export class MathDocument {
 			renderedDocument.appendChild(lineElement);
 		}
 	}
+	renderTab() {
+		const result = document.createElement("div");
+		result.classList.add("tab");
+		result.innerHTML = this.filePath ?? "untitled";
+		return result;
+	}
 
 	*descendants(): Generator<MathComponent, void, unknown> {
 		for(const component of this.componentsGroup.components) {

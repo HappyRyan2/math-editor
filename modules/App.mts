@@ -240,14 +240,23 @@ export class App {
 	renderAndUpdate() {
 		const [div, map] = this.renderWithMapping();
 		const oldDiv = document.getElementById("document-container")!;
-		oldDiv.insertAdjacentElement("afterend", div);
-		oldDiv.remove();
+		oldDiv.replaceWith(div);
 		this.renderingMap = map;
+
+		document.getElementById("tabs-container")!.replaceWith(this.renderTabs());
 		return [div, map];
 	}
 	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		const [renderedDoc, map] = this.document.renderWithMapping(this);
 		return [this.render(renderedDoc), map];
+	}
+	renderTabs() {
+		const result = document.createElement("div");
+		for(const tab of this.editorTabs) {
+			result.appendChild(tab.document.renderTab());
+		}
+		result.id = "tabs-container";
+		return result;
 	}
 	updateCursors() {
 		for(const [component, element] of this.renderingMap) {
