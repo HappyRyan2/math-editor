@@ -208,6 +208,15 @@ export class App {
 				preventDefault();
 			},
 		},
+		{
+			key: "n",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				this.editorTabs.push(EditorTab.createEmpty());
+				this.activeTab = this.editorTabs[this.editorTabs.length - 1];
+				stopPropagation();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 

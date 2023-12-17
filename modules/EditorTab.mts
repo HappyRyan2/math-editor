@@ -9,4 +9,9 @@ export class EditorTab {
 		this.document = document;
 		this.cursors = cursors;
 	}
+	static createEmpty() {
+		const doc = new MathDocument([]);
+		const cursor = new Cursor(doc.componentsGroup, null);
+		return new EditorTab(doc, [cursor]);
+	}
 }
