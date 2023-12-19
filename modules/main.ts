@@ -27,10 +27,10 @@ app.whenReady().then(async () => {
 	}
 
 
-	ipcMain.on("save-with-dialog", (_, content: string, fileTypes: { name: string, extensions: string[] }[]) => {
-		dialog.showSaveDialog(window, { filters: fileTypes }).then((resolved) => {
+	ipcMain.handle("save-with-dialog", (_, content: string, fileTypes: { name: string, extensions: string[] }[]) => {
+		return dialog.showSaveDialog(window, { filters: fileTypes }).then((resolved) => {
 			if(!resolved.canceled) {
-				fs.writeFile(resolved.filePath, content);
+				return fs.writeFile(resolved.filePath, content).then(() => { return resolved.filePath; });
 			}
 		});
 	});

@@ -172,7 +172,10 @@ export class App {
 				const string = JSON.stringify(this.document);
 				const filePath = this.document.filePath;
 				if(filePath == null) {
-					electronAPI.sendSaveWithDialog(string, [{ name: "Math Document", extensions: ["mathdoc"] }]);
+					electronAPI.sendSaveWithDialog(string, [{ name: "Math Document", extensions: ["mathdoc"] }]).then((savedFilePath) => {
+						this.document.filePath = savedFilePath;
+						app.renderAndUpdate();
+					});
 				}
 				else {
 					electronAPI.sendSave(string, filePath);
