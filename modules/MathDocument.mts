@@ -41,13 +41,28 @@ export class MathDocument {
 			renderedDocument.appendChild(lineElement);
 		}
 	}
-	renderTab() {
+	renderTab(app: App) {
 		const result = document.createElement("div");
 		result.classList.add("tab");
 		if(this.filePath) {
 			result.innerHTML = this.filePath.substring(this.filePath.lastIndexOf("\\") + 1);
 		}
 		else { result.innerHTML = "untitled"; }
+
+		const closeButton = document.createElement("div");
+		closeButton.classList.add("tab-close-button");
+		closeButton.innerHTML = "×";
+		result.appendChild(closeButton);
+		closeButton.addEventListener("click", (event) => {
+			if(this === app.activeTab.document) {
+				app.closeTab();
+			}
+			else {
+				app.editorTabs = app.editorTabs.filter(e => e.document !== this);
+			}
+			app.renderAndUpdate();
+			event.stopImmediatePropagation();
+		});
 		return result;
 	}
 

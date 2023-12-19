@@ -289,7 +289,7 @@ export class App {
 	renderTabs() {
 		const result = document.createElement("div");
 		for(const tab of this.editorTabs) {
-			const renderedTab = tab.document.renderTab();
+			const renderedTab = tab.document.renderTab(this);
 			result.appendChild(renderedTab);
 			renderedTab.addEventListener("click", () => {
 				this.activeTab = tab;

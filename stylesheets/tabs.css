@@ -11,6 +11,7 @@
 	background-color: rgb(220, 220, 220);
 
 	padding: 10px;
+	padding-right: 7px;
 	font-size: 13px;
 }
 .tab:not(#active-tab):hover {
@@ -19,4 +20,24 @@
 
 #active-tab {
 	background-color: white;
+}
+
+.tab-close-button {
+	display: inline-block;
+	margin-left: 4px;
+	padding-left: 3px;
+	padding-right: 3px;
+	border-radius: 5px;
+
+	font-weight: bolder;
+	font-size: 1.2em;
+}
+.tab#active-tab .tab-close-button:hover {
+	background-color: rgb(243, 243, 243);
+}
+.tab:not(#active-tab) .tab-close-button:hover {
+	background-color: rgb(210, 210, 210);
+}
+.tab:not(#active-tab):not(:hover) .tab-close-button {
+	visibility: hidden;
 }
