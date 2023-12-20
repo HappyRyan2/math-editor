@@ -16,6 +16,6 @@ test("the user can insert superscripts", async () => {
 		await expect(page).toHaveScreenshot("image.png");
 	}
 	finally {
-		await electronApp.close();
+		electronApp.close();
 	}
 });
