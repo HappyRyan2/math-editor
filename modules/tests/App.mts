@@ -68,9 +68,13 @@ describe("App.renderTabs", () => {
 		const result = app.renderTabs();
 		const tab1 = result.children[0];
 		const tab2 = result.children[1];
-		assert.equal(tab1.innerHTML, "file1.mathdoc");
+		const [text1, button1] = [...tab1.childNodes] as [Text, HTMLDivElement];
+		const [text2, button2] = [...tab2.childNodes] as [Text, HTMLDivElement];
 		assert.equal(tab1.id, "active-tab");
-		assert.equal(tab2.innerHTML, "file2.mathdoc");
+		assert.equal(text1.wholeText, "file1.mathdoc");
+		assert.isTrue(button1.classList.contains("tab-close-button"));
 		assert.equal(tab2.id, "");
+		assert.equal(text2.wholeText, "file2.mathdoc");
+		assert.isTrue(button2.classList.contains("tab-close-button"));
 	});
 });
