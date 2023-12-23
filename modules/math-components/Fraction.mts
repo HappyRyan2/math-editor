@@ -64,7 +64,7 @@ export class Fraction extends EnterableMathComponent {
 				new MathComponentGroup([cursor.predecessor]),
 				new MathComponentGroup([]),
 			);
-			cursor.deletePrevious(doc);
+			cursor.deletePrevious(doc, true);
 			cursor.addComponent(fraction);
 		}
 		else {

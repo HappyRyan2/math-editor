@@ -8,6 +8,7 @@ import { MathComponentGroup } from "../../MathComponentGroup.mjs";
 import { Cursor } from "../../Cursor.mjs";
 import { LineBreak } from "../../math-components/LineBreak.mjs";
 import "../../math-components/initializers/all-initializers.mjs";
+import { Parenthese } from "../../math-components/Parenthese.mjs";
 
 describe("Fraction.insertFraction", () => {
 	it("puts the selection into a fraction if there is one", () => {
@@ -64,6 +65,19 @@ describe("Fraction.insertFraction", () => {
 		assert.equal(doc.componentsGroup.components[1], fraction);
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
+		assert.equal(cursor.container, fraction.denominator);
+		assert.equal(cursor.predecessor, null);
+	});
+	it("works when the previous component is enterable", () => {
+		const parenthese = new Parenthese(new MathComponentGroup([]), "round");
+		const doc = new MathDocument([parenthese]);
+		const cursor = new Cursor(doc.componentsGroup, parenthese);
+		const fraction = Fraction.insertFraction(cursor, doc);
+
+		assert.sameOrderedMembers(doc.componentsGroup.components, [fraction]);
+		assert.sameOrderedMembers(fraction.numerator.components, [parenthese]);
+		assert.sameOrderedMembers(fraction.denominator.components, []);
+		assert.sameOrderedMembers(parenthese.components.components, []);
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
