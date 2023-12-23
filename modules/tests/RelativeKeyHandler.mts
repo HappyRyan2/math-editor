@@ -3,7 +3,7 @@ import { Cursor } from "../Cursor.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { describe, it } from "mocha";
@@ -37,9 +37,9 @@ describe("RelativeKeyHandler.getHandlers", () => {
 	});
 	it("handles any ancestors that have `inside` handlers on the correct group, in reverse order of depth", () => {
 		let container2, container3;
-		const container1 = new EnterableComponentMock([
+		const container1 = new CompositeMathComponentMock([
 			container2 = new Fraction(
-				new MathComponentGroup([container3 = new EnterableComponentMock([])]),
+				new MathComponentGroup([container3 = new CompositeMathComponentMock([])]),
 				new MathComponentGroup([]),
 			),
 		]);
@@ -55,7 +55,7 @@ describe("RelativeKeyHandler.getHandlers", () => {
 	});
 	it("returns the `before` and `after` handlers before the `inside` handlers", () => {
 		let component;
-		const container = new EnterableComponentMock([
+		const container = new CompositeMathComponentMock([
 			component = new MathSymbol("A"),
 		]);
 		let insideHandler, afterHandler;

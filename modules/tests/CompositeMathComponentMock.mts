@@ -1,10 +1,10 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
-import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 
-export class EnterableComponentMock extends EnterableMathComponent {
+export class CompositeMathComponentMock extends CompositeMathComponent {
 	componentsGroup: MathComponentGroup;
 	enteredFromLeft: boolean = false;
 	enteredFromRight: boolean = false;
@@ -24,7 +24,7 @@ export class EnterableComponentMock extends EnterableMathComponent {
 	}
 	render(app: App, renderedGroup: HTMLElement = this.componentsGroup.render(app)): HTMLElement {
 		const result = document.createElement("span");
-		result.classList.add("enterable-mock");
+		result.classList.add("composite-math-component-mock");
 		result.appendChild(renderedGroup);
 		if(this.rect) {
 			result.getBoundingClientRect = () => this.rect!;

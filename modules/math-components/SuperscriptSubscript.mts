@@ -1,11 +1,11 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
-import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
 
-export class SuperscriptSubscript extends EnterableMathComponent {
+export class SuperscriptSubscript extends CompositeMathComponent {
 	superscript: MathComponentGroup;
 	subscript: MathComponentGroup;
 

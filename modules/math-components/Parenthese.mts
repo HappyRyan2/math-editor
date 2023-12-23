@@ -1,6 +1,6 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
-import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
@@ -8,7 +8,7 @@ import { MathDocument } from "../MathDocument.mjs";
 const PARENTHESE_TYPES = ["round", "square", "curly", "angle"] as const;
 type ParentheseType = typeof PARENTHESE_TYPES[number];
 
-export class Parenthese extends EnterableMathComponent {
+export class Parenthese extends CompositeMathComponent {
 	type: ParentheseType;
 	components: MathComponentGroup;
 	isGrayedOut: boolean;

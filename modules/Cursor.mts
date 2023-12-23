@@ -1,6 +1,6 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
-import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
@@ -157,14 +157,14 @@ export class Cursor {
 		return this.container.components.slice(startIndex, endIndex + 1);
 	}
 
-	moveRight(doc: MathDocument, skipEnterableComponents: boolean = false) {
+	moveRight(doc: MathDocument, skipCompositeComponents: boolean = false) {
 		if(this.selection != null) {
 			this.moveAfter(this.selection.end, this.container);
 			this.selection = null;
 			return;
 		}
 		const nextComponent = this.nextComponent();
-		if(nextComponent && nextComponent instanceof EnterableMathComponent && !skipEnterableComponents) {
+		if(nextComponent && nextComponent instanceof CompositeMathComponent && !skipCompositeComponents) {
 			nextComponent.enterFromLeft(this);
 		}
 		else if(nextComponent) {
@@ -172,19 +172,19 @@ export class Cursor {
 		}
 		else {
 			const containingComponent = doc.containingComponentOf(this.container);
-			if(containingComponent instanceof EnterableMathComponent) {
+			if(containingComponent instanceof CompositeMathComponent) {
 				this.predecessor = containingComponent;
 				this.container = doc.containingGroupOf(containingComponent);
 			}
 		}
 	}
-	moveLeft(doc: MathDocument, skipEnterableComponents: boolean = false) {
+	moveLeft(doc: MathDocument, skipCompositeComponents: boolean = false) {
 		if(this.selection != null) {
 			this.moveBefore(this.selection.start, this.container);
 			this.selection = null;
 			return;
 		}
-		if(this.predecessor && this.predecessor instanceof EnterableMathComponent && !skipEnterableComponents) {
+		if(this.predecessor && this.predecessor instanceof CompositeMathComponent && !skipCompositeComponents) {
 			this.predecessor.enterFromRight(this);
 		}
 		else if(this.predecessor) {
@@ -192,7 +192,7 @@ export class Cursor {
 		}
 		else {
 			const containingComponent = doc.containingComponentOf(this.container);
-			if(containingComponent instanceof EnterableMathComponent) {
+			if(containingComponent instanceof CompositeMathComponent) {
 				const containingGroup = doc.containingGroupOf(containingComponent);
 				const index = containingGroup.components.indexOf(containingComponent);
 				this.predecessor = containingGroup.components[index - 1] ?? null;
@@ -204,7 +204,7 @@ export class Cursor {
 		const nextComponent = this.nextComponent();
 		if(!nextComponent) {
 			const containingObject = doc.containingComponentOf(this.container);
-			if(containingObject instanceof EnterableMathComponent) {
+			if(containingObject instanceof CompositeMathComponent) {
 				this.moveAfter(containingObject, doc.containingGroupOf(containingObject));
 				this.selection = new Selection(containingObject, containingObject);
 			}
@@ -230,7 +230,7 @@ export class Cursor {
 	selectLeft(doc: MathDocument) {
 		if(!this.predecessor) {
 			const containingObject = doc.containingComponentOf(this.container);
-			if(containingObject instanceof EnterableMathComponent) {
+			if(containingObject instanceof CompositeMathComponent) {
 				this.moveBefore(containingObject, doc.containingGroupOf(containingObject));
 				this.selection = new Selection(containingObject, containingObject);
 			}
@@ -297,7 +297,7 @@ export class Cursor {
 	}
 
 	deleteContainer(doc: MathDocument) {
-		const containingComponent = doc.containingComponentOf(this.container) as EnterableMathComponent;
+		const containingComponent = doc.containingComponentOf(this.container) as CompositeMathComponent;
 		const containingGroup = doc.containingGroupOf(containingComponent);
 		const groupIndex = containingComponent.groups().indexOf(this.container);
 		const previousComponent = (
@@ -328,7 +328,7 @@ export class Cursor {
 				const preventDeletion = () => shouldDelete = false;
 				this.predecessor.onDeletion(preventDeletion, doc, this);
 			}
-			if(shouldDelete && this.predecessor instanceof EnterableMathComponent && !this.predecessor.isEmpty() && !forceDeletion) {
+			if(shouldDelete && this.predecessor instanceof CompositeMathComponent && !this.predecessor.isEmpty() && !forceDeletion) {
 				this.predecessor.enterFromRight(this);
 			}
 			else if(shouldDelete) {
@@ -339,7 +339,7 @@ export class Cursor {
 		}
 		else if(
 			this.container != doc.componentsGroup && (this.container.components.length === 0 ||
-			(doc.containingComponentOf(this.container) as EnterableMathComponent).deleteAtStart !== "only-when-empty")
+			(doc.containingComponentOf(this.container) as CompositeMathComponent).deleteAtStart !== "only-when-empty")
 		) {
 			this.deleteContainer(doc);
 		}
@@ -384,17 +384,17 @@ export class Cursor {
 		const cursor2 = Cursor.fromClick(app, dragStart);
 		return Cursor.selectBetween(cursor1, cursor2, app.document);
 	}
-	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | EnterableMathComponent, Cursor | EnterableMathComponent] {
-		const index1 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor1.container));
-		const index2 = container.components.findIndex(c => c instanceof EnterableMathComponent && [...c.groupDescendants()].includes(cursor2.container));
-		const groups = (container.components[index1] as EnterableMathComponent | undefined)?.groups() ?? [];
+	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | CompositeMathComponent, Cursor | CompositeMathComponent] {
+		const index1 = container.components.findIndex(c => c instanceof CompositeMathComponent && [...c.groupDescendants()].includes(cursor1.container));
+		const index2 = container.components.findIndex(c => c instanceof CompositeMathComponent && [...c.groupDescendants()].includes(cursor2.container));
+		const groups = (container.components[index1] as CompositeMathComponent | undefined)?.groups() ?? [];
 		const groupIndex1 = groups.findIndex(g => [g, ...g.groupDescendants()].includes(cursor1.container));
 		const groupIndex2 = groups.findIndex(g => [g, ...g.groupDescendants()].includes(cursor2.container));
 		if(index1 === -1 || index2 === -1 || index1 !== index2 || groupIndex1 !== groupIndex2) {
 			return [
 				container,
-				(container.components[index1] as EnterableMathComponent | undefined) ?? cursor1,
-				(container.components[index2] as EnterableMathComponent | undefined) ?? cursor2,
+				(container.components[index1] as CompositeMathComponent | undefined) ?? cursor1,
+				(container.components[index2] as CompositeMathComponent | undefined) ?? cursor2,
 			];
 		}
 		return Cursor.lastCommonAncestor(cursor1, cursor2, groups[groupIndex1]);
@@ -408,11 +408,11 @@ export class Cursor {
 		const index1 = componentsAndCursors.indexOf(child1);
 		const index2 = componentsAndCursors.indexOf(child2);
 		const selection = (index1 < index2) ? new Selection(
-			child1 instanceof EnterableMathComponent ? child1 : cursor1.nextComponent()!,
-			child2 instanceof EnterableMathComponent ? child2 : cursor2.predecessor!,
+			child1 instanceof CompositeMathComponent ? child1 : cursor1.nextComponent()!,
+			child2 instanceof CompositeMathComponent ? child2 : cursor2.predecessor!,
 		) : new Selection(
-			child2 instanceof EnterableMathComponent ? child2 : cursor2.nextComponent()!,
-			child1 instanceof EnterableMathComponent ? child1 : cursor1.predecessor!,
+			child2 instanceof CompositeMathComponent ? child2 : cursor2.nextComponent()!,
+			child1 instanceof CompositeMathComponent ? child1 : cursor1.predecessor!,
 		);
 		const result = new Cursor(ancestor, null, selection);
 		if(child1 instanceof Cursor) {

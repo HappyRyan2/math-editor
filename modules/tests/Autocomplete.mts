@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import { assert } from "chai";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { Autocomplete } from "../Autocomplete.mjs";
 import { Cursor } from "../Cursor.mjs";
 
@@ -11,7 +11,7 @@ describe("Autcomplete.getPreviousCharacters", () => {
 		let symbolB, symbolC;
 		const doc = new MathDocument([
 			new MathSymbol("A"),
-			new EnterableComponentMock([]),
+			new CompositeMathComponentMock([]),
 			symbolB = new MathSymbol("B"),
 			symbolC = new MathSymbol("C"),
 		]);

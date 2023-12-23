@@ -4,7 +4,7 @@ import { App } from "../App.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { JSDOM } from "jsdom";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Selection } from "../Selection.mjs";
 import { Cursor } from "../Cursor.mjs";
@@ -21,9 +21,9 @@ beforeEach(() => {
 
 describe("App.renderWithMapping", () => {
 	it("returns a rendered app, along with a Map that maps each component to its rendered HTML element", () => {
-		let mock: EnterableComponentMock, symbol: MathSymbol;
+		let mock: CompositeMathComponentMock, symbol: MathSymbol;
 		const app = new App(new MathDocument([
-			mock = new EnterableComponentMock(new MathComponentGroup([
+			mock = new CompositeMathComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
 		]));
@@ -34,11 +34,11 @@ describe("App.renderWithMapping", () => {
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
 		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
 	});
-	it("works when there are enterable components, cursors, and selections", () => {
+	it("works when there are composite components, cursors, and selections", () => {
 		const app = new App();
-		let mock: EnterableComponentMock, symbol: MathSymbol;
+		let mock: CompositeMathComponentMock, symbol: MathSymbol;
 		const doc = new MathDocument([
-			mock = new EnterableComponentMock(new MathComponentGroup([
+			mock = new CompositeMathComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
 		]);

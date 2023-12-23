@@ -1,13 +1,13 @@
 import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
-import { EnterableMathComponent } from "../EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
 
-export class Fraction extends EnterableMathComponent {
+export class Fraction extends CompositeMathComponent {
 	numerator: MathComponentGroup;
 	denominator: MathComponentGroup;
 

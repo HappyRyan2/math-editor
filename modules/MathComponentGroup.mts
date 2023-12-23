@@ -1,7 +1,7 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { App } from "./App.mjs";
-import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 
 export class MathComponentGroup {
 	components: MathComponent[];
@@ -29,7 +29,7 @@ export class MathComponentGroup {
 		result.classList.add("math-component-group");
 		for(const component of this.componentsAndCursors(app.cursors)) {
 			let renderedComponent: HTMLElement;
-			if(component instanceof EnterableMathComponent) {
+			if(component instanceof CompositeMathComponent) {
 				let map: Map<MathComponent | MathComponentGroup, HTMLElement>;
 				[renderedComponent, map] = component.renderWithMapping(app);
 				for(const [key, value] of map.entries()) {
@@ -60,14 +60,14 @@ export class MathComponentGroup {
 	*descendants() {
 		for(const component of this.components) {
 			yield component;
-			if(component instanceof EnterableMathComponent) {
+			if(component instanceof CompositeMathComponent) {
 				yield* component.descendants();
 			}
 		}
 	}
 	*groupDescendants() {
 		for(const component of this.components) {
-			if(component instanceof EnterableMathComponent) {
+			if(component instanceof CompositeMathComponent) {
 				yield* component.groupDescendants();
 			}
 		}

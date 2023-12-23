@@ -1,7 +1,7 @@
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { App } from "./App.mjs";
-import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 
 export class MathDocument {
 	componentsGroup: MathComponentGroup;
@@ -69,7 +69,7 @@ export class MathDocument {
 	*descendants(): Generator<MathComponent, void, unknown> {
 		for(const component of this.componentsGroup.components) {
 			yield component;
-			if(component instanceof EnterableMathComponent) {
+			if(component instanceof CompositeMathComponent) {
 				yield* component.descendants();
 			}
 		}
@@ -87,7 +87,7 @@ export class MathDocument {
 		}
 		for(const descendant of this.descendants()) {
 			if(
-				descendant instanceof EnterableMathComponent && (
+				descendant instanceof CompositeMathComponent && (
 					(componentOrGroup instanceof MathComponent && [...descendant].includes(componentOrGroup))
 					|| (componentOrGroup instanceof MathComponentGroup && descendant.groups().includes(componentOrGroup)
 					))) { return descendant; }
@@ -110,7 +110,7 @@ export class MathDocument {
 		if(this.componentsGroup.components.includes(component)) {
 			return 0;
 		}
-		return this.depth(this.containingComponentOf(component) as EnterableMathComponent) + 1;
+		return this.depth(this.containingComponentOf(component) as CompositeMathComponent) + 1;
 	}
 
 	static parse(serialized: string): MathDocument {

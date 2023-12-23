@@ -3,7 +3,7 @@ import { Cursor } from "./Cursor.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
 import { App } from "./App.mjs";
 
-export abstract class EnterableMathComponent extends MathComponent {
+export abstract class CompositeMathComponent extends MathComponent {
 	/* Represents a MathComponent that can contain the user's cursor (e.g. fractions, exponents, subscripts, etc.) */
 	abstract groups(): MathComponentGroup[];
 	abstract render(app: App, ...renderedGroups: HTMLElement[]): HTMLElement;

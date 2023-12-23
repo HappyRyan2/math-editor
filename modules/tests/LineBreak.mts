@@ -3,7 +3,7 @@ import { Cursor } from "../Cursor.mjs";
 import { describe, it } from "mocha";
 import { LineBreak } from "../math-components/LineBreak.mjs";
 import { MathDocument } from "../MathDocument.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { Selection } from "../Selection.mjs";
@@ -19,10 +19,10 @@ describe("LineBreak.addLineBreak", () => {
 		assert.instanceOf(cursor.predecessor, LineBreak);
 	});
 	it("adds a line break after the containing component's last ancestor and moves the cursor after the line break", () => {
-		let component1: EnterableComponentMock, component2: EnterableComponentMock;
+		let component1: CompositeMathComponentMock, component2: CompositeMathComponentMock;
 		const doc = new MathDocument([
-			component1 = new EnterableComponentMock(new MathComponentGroup([
-				component2 = new EnterableComponentMock(),
+			component1 = new CompositeMathComponentMock(new MathComponentGroup([
+				component2 = new CompositeMathComponentMock(),
 			])),
 		]);
 		const cursor = new Cursor(component2.componentsGroup, null);
@@ -44,9 +44,9 @@ describe("LineBreak.addLineBreak", () => {
 		assert.instanceOf(cursor.predecessor, LineBreak);
 	});
 	it("adds a line break after the containing component's last ancestor even if the user has a nonempty selection", () => {
-		let container: EnterableComponentMock, symbol: MathSymbol;
+		let container: CompositeMathComponentMock, symbol: MathSymbol;
 		const doc = new MathDocument([
-			container = new EnterableComponentMock(new MathComponentGroup([
+			container = new CompositeMathComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
 		]);

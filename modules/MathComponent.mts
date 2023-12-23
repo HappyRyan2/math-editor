@@ -1,6 +1,6 @@
 import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
-import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { LineBreak } from "./math-components/LineBreak.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
@@ -13,7 +13,7 @@ type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSy
 
 export abstract class MathComponent {
 	relativeKeyHandlers: RelativeKeyHandler[] = [];
-	abstract render(app: App, ...components: HTMLElement[]): HTMLElement; // `components` array is only used for EnterableMathComponents
+	abstract render(app: App, ...components: HTMLElement[]): HTMLElement; // `components` array is only used for CompositeMathComponents
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onDeletion(preventDeletion: () => void, doc: MathDocument, cursor: Cursor) {}
 
@@ -37,7 +37,7 @@ export abstract class MathComponent {
 		}
 		return container.lastComponentAncestor(doc);
 	}
-	ancestors(doc: MathDocument): EnterableMathComponent[] {
+	ancestors(doc: MathDocument): CompositeMathComponent[] {
 		const container = doc.containingComponentOf(this);
 		if(container instanceof MathDocument) {
 			return [];

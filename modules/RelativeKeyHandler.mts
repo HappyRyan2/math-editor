@@ -1,6 +1,6 @@
 import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
-import { EnterableMathComponent } from "./EnterableMathComponent.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 
@@ -33,7 +33,7 @@ export class RelativeKeyHandler {
 			);
 		}
 		const containingComponent = doc.containingComponentOf(cursor.container);
-		if(containingComponent instanceof EnterableMathComponent) {
+		if(containingComponent instanceof CompositeMathComponent) {
 			for(const ancestor of [containingComponent, ...containingComponent.ancestors(doc)]) {
 				const groupIndex = ancestor.groups().findIndex(g => g === cursor.container || [...g.descendants()].includes(containingComponent));
 				result.push(...ancestor.relativeKeyHandlers

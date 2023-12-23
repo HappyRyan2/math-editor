@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import { assert } from "chai";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { Parenthese } from "../math-components/Parenthese.mjs";
@@ -16,9 +16,9 @@ describe("MathDocument.containingComponent", () => {
 		assert.equal(doc.containingComponentOf(component), doc);
 	});
 	it("returns the container if the component is not top-level", () => {
-		let container: EnterableComponentMock, component: MathSymbol;
+		let container: CompositeMathComponentMock, component: MathSymbol;
 		const doc = new MathDocument([
-			container = new EnterableComponentMock(new MathComponentGroup([
+			container = new CompositeMathComponentMock(new MathComponentGroup([
 				component = new MathSymbol("A"),
 			])),
 		]);
@@ -29,9 +29,9 @@ describe("MathDocument.containingComponent", () => {
 		assert.equal(doc.containingComponentOf(doc.componentsGroup), doc);
 	});
 	it("returns the container if the group is not top-level", () => {
-		let mock: EnterableComponentMock;
+		let mock: CompositeMathComponentMock;
 		const doc = new MathDocument([
-			mock = new EnterableComponentMock(),
+			mock = new CompositeMathComponentMock(),
 		]);
 		assert.equal(doc.containingComponentOf(mock.componentsGroup), mock);
 	});

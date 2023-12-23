@@ -4,7 +4,7 @@ import { MathDocument } from "../MathDocument.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
-import { EnterableComponentMock } from "./EnterableComponentMock.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 import { Selection } from "../Selection.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { JSDOM } from "jsdom";
@@ -36,7 +36,7 @@ describe("Cursor.addComponent", () => {
 });
 
 describe("Cursor.moveRight", () => {
-	it("moves past the next component if the component is not enterable", () => {
+	it("moves past the next component if the component is not a composite component", () => {
 		let symbol: MathSymbol;
 		const doc = new MathDocument([symbol = new MathSymbol("a")]);
 		const cursor = new Cursor(doc.componentsGroup, null);
@@ -44,17 +44,17 @@ describe("Cursor.moveRight", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
-	it("moves into the next component if the component is enterable", () => {
-		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+	it("moves into the next component if the component is a composite component", () => {
+		let mock: CompositeMathComponentMock;
+		const doc = new MathDocument([mock = new CompositeMathComponentMock()]);
 		const cursor = new Cursor(doc.componentsGroup, null);
 		cursor.moveRight(doc);
 		assert.isTrue(mock.enteredFromLeft);
 		assert.isFalse(mock.enteredFromRight);
 	});
 	it("moves out of the containing component if there is no next component", () => {
-		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+		let mock: CompositeMathComponentMock;
+		const doc = new MathDocument([mock = new CompositeMathComponentMock()]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.moveRight(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -93,24 +93,24 @@ describe("Cursor.moveRight", () => {
 	});
 });
 describe("Cursor.moveLeft", () => {
-	it("moves past the previous component if the component is not enterable", () => {
+	it("moves past the previous component if the component is not a composite component", () => {
 		const doc = new MathDocument([new MathSymbol("a")]);
 		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
-	it("moves into the previous component if the previous component is enterable", () => {
-		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+	it("moves into the previous component if the previous component is a composite component", () => {
+		let mock: CompositeMathComponentMock;
+		const doc = new MathDocument([mock = new CompositeMathComponentMock()]);
 		const cursor = new Cursor(doc.componentsGroup, mock);
 		cursor.moveLeft(doc);
 		assert.isTrue(mock.enteredFromRight);
 		assert.isFalse(mock.enteredFromLeft);
 	});
 	it("moves out of the containing component if there is no previous component", () => {
-		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock()]);
+		let mock: CompositeMathComponentMock;
+		const doc = new MathDocument([mock = new CompositeMathComponentMock()]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
@@ -197,7 +197,7 @@ describe("Cursor.selectRight", () => {
 		assert.equal(cursor.predecessor, symbolA);
 	});
 	it("selects the containing component if there is no next component and the current selection is empty", () => {
-		const mock = new EnterableComponentMock();
+		const mock = new CompositeMathComponentMock();
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.selectRight(doc);
@@ -210,7 +210,7 @@ describe("Cursor.selectRight", () => {
 	});
 	it("selects the containing component if there is no next component and the current selection is nonempty", () => {
 		const symbol = new MathSymbol("A");
-		const mock = new EnterableComponentMock(new MathComponentGroup([symbol]));
+		const mock = new CompositeMathComponentMock(new MathComponentGroup([symbol]));
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, symbol, new Selection(symbol, symbol));
 		cursor.selectRight(doc);
@@ -293,7 +293,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.predecessor, null);
 	});
 	it("selects the containing component if there is no previous component and the current selection is empty", () => {
-		const mock = new EnterableComponentMock();
+		const mock = new CompositeMathComponentMock();
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.selectLeft(doc);
@@ -306,7 +306,7 @@ describe("Cursor.selectLeft", () => {
 	});
 	it("selects the containing component if there is no previous component and the current selection is nonempty", () => {
 		const symbol = new MathSymbol("A");
-		const mock = new EnterableComponentMock(new MathComponentGroup([symbol]));
+		const mock = new CompositeMathComponentMock(new MathComponentGroup([symbol]));
 		const doc = new MathDocument([mock]);
 		const cursor = new Cursor(mock.componentsGroup, null, new Selection(symbol, symbol));
 		cursor.selectLeft(doc);
@@ -375,8 +375,8 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.predecessor, null);
 	});
 	it("exits the containing component if there is no previous component and the group is nonempty", () => {
-		let mock: EnterableComponentMock;
-		const doc = new MathDocument([mock = new EnterableComponentMock([new MathSymbol("A")])]);
+		let mock: CompositeMathComponentMock;
+		const doc = new MathDocument([mock = new CompositeMathComponentMock([new MathSymbol("A")])]);
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.deletePrevious(doc);
 
@@ -407,10 +407,10 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
-	it("deletes the previous EnterableMathComponent if it is empty", () => {
+	it("deletes the previous CompositeMathComponent if it is empty", () => {
 		let mock;
 		const doc = new MathDocument([
-			mock = new EnterableComponentMock(),
+			mock = new CompositeMathComponentMock(),
 		]);
 		const cursor = new Cursor(doc.componentsGroup, mock);
 		cursor.deletePrevious(doc);
@@ -418,10 +418,10 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
-	it("enters the previous EnterableMathComponent if it is not empty", () => {
+	it("enters the previous CompositeMathComponent if it is not empty", () => {
 		let mock, symbol;
 		const doc = new MathDocument([
-			mock = new EnterableComponentMock([
+			mock = new CompositeMathComponentMock([
 				symbol = new MathSymbol("A"),
 			]),
 		]);
@@ -461,10 +461,10 @@ describe("Cursor.lastCommonAncestor", () => {
 	it("returns the last common ancestor, along with the two children that contain each cursor", () => {
 		let container1, container2, container3;
 		const doc = new MathDocument([
-			container1 = new EnterableComponentMock(new MathComponentGroup([
-				container2 = new EnterableComponentMock(),
+			container1 = new CompositeMathComponentMock(new MathComponentGroup([
+				container2 = new CompositeMathComponentMock(),
 			])),
-			container3 = new EnterableComponentMock(),
+			container3 = new CompositeMathComponentMock(),
 		]);
 		const cursor1 = new Cursor(container2.componentsGroup, null);
 		const cursor2 = new Cursor(container3.componentsGroup, null);
@@ -485,7 +485,7 @@ describe("Cursor.lastCommonAncestor", () => {
 	it("works when the last common ancestor is the container of only one of the cursors", () => {
 		let container;
 		const doc = new MathDocument([
-			container = new EnterableComponentMock(),
+			container = new CompositeMathComponentMock(),
 		]);
 		const cursor1 = new Cursor(doc.componentsGroup, null);
 		const cursor2 = new Cursor(container.componentsGroup, null);
@@ -494,7 +494,7 @@ describe("Cursor.lastCommonAncestor", () => {
 		assert.equal(child1, cursor1);
 		assert.equal(child2, container);
 	});
-	it("works when there is an EnterableMathComponent with multiple MathComponentGroups", () => {
+	it("works when there is an CompositeMathComponent with multiple MathComponentGroups", () => {
 		let fraction: Fraction, group1:MathComponentGroup, group2: MathComponentGroup;
 		const doc = new MathDocument([
 			fraction = new Fraction(
@@ -530,8 +530,8 @@ describe("Cursor.selectBetween", () => {
 	it("selects the content in the last common ancestor if the cursors do not have the same container", () => {
 		let container1, container2;
 		const doc = new MathDocument([
-			container1 = new EnterableComponentMock(new MathComponentGroup([])),
-			container2 = new EnterableComponentMock(new MathComponentGroup([])),
+			container1 = new CompositeMathComponentMock(new MathComponentGroup([])),
+			container2 = new CompositeMathComponentMock(new MathComponentGroup([])),
 		]);
 		const cursor1 = new Cursor(container1.componentsGroup, null);
 		const cursor2 = new Cursor(container2.componentsGroup, null);
@@ -599,10 +599,10 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.container, app.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
-	it("returns a cursor inside the enterable component when you click on one", () => {
-		let symbol, enterable;
+	it("returns a cursor inside the composite math component when you click on one", () => {
+		let symbol, mock;
 		const app = new App(new MathDocument([
-			enterable = new EnterableComponentMock([
+			mock = new CompositeMathComponentMock([
 				symbol = new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 				new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			], new DOMRect(0, 0, 20, 10)),
@@ -612,7 +612,7 @@ describe("Cursor.fromClick", () => {
 		document.querySelector(".line")!.getBoundingClientRect = () => new DOMRect(0, 0, 30, 10);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 5 }));
-		assert.equal(cursor.container, enterable.componentsGroup);
+		assert.equal(cursor.container, mock.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor on the first line when you click above the first line", () => {

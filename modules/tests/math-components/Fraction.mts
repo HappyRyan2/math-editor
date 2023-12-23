@@ -68,7 +68,7 @@ describe("Fraction.insertFraction", () => {
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
 	});
-	it("works when the previous component is enterable", () => {
+	it("works when the previous component is a composite math component", () => {
 		const parenthese = new Parenthese(new MathComponentGroup([]), "round");
 		const doc = new MathDocument([parenthese]);
 		const cursor = new Cursor(doc.componentsGroup, parenthese);
