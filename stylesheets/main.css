@@ -6,6 +6,7 @@ body {
 
 #math-document {
 	overflow-y: auto;
+	overflow-x: hidden;
 	
 	cursor: text;
 	width: 100%;
