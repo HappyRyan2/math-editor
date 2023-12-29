@@ -30,12 +30,11 @@ export abstract class CompositeMathComponent extends MathComponent {
 		const groups = groupsAndMappings.map((tuple) => tuple[0]);
 		const maps = groupsAndMappings.map(tuple => tuple[1]);
 		const result = this.render(app, ...groups);
-		const resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		for(const map of maps) {
-			for(const [key, value] of map.entries()) {
-				resultMap.set(key, value);
-			}
+			resultMap = new Map([...resultMap, ...map]);
 		}
+		resultMap.set(this, result);
 		return [result, resultMap];
 	}
 	enterFromLeft(cursor: Cursor) {

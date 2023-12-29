@@ -8,6 +8,7 @@ import { Fraction } from "./math-components/Fraction.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
 import { Parenthese } from "./math-components/Parenthese.mjs";
 import { SuperscriptSubscript } from "./math-components/SuperscriptSubscript.mjs";
+import { MathComponentGroup } from "./MathComponentGroup.mjs";
 
 type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSymbol | typeof SuperscriptSubscript | typeof LineBreak;
 
@@ -47,5 +48,10 @@ export abstract class MathComponent {
 
 	toJSON(): object {
 		return {...this, constructorName: this.constructor.name};
+	}
+
+	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const rendered = this.render(app);
+		return [rendered, new Map([[this, rendered]])];
 	}
 }

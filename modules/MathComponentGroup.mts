@@ -43,28 +43,22 @@ export class MathComponentGroup {
 		return span;
 	}
 	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		const result = document.createElement("span");
 		resultMap.set(this, result);
 		result.classList.add("math-component-group");
 		for(const component of this.componentsAndCursors(app.cursors)) {
-			let renderedComponent: HTMLElement;
-			if(component instanceof CompositeMathComponent) {
-				let map: Map<MathComponent | MathComponentGroup, HTMLElement>;
-				[renderedComponent, map] = component.renderWithMapping(app);
-				for(const [key, value] of map.entries()) {
-					resultMap.set(key, value);
+			if(component instanceof MathComponent) {
+				const [renderedComponent, map] = component.renderWithMapping(app);
+				result.appendChild(renderedComponent);
+				resultMap = new Map([...resultMap, ...map]);
+
+				if(component.isSelected(app.cursors)) {
+					renderedComponent.classList.add("selected");
 				}
 			}
 			else {
-				renderedComponent = component.render(app);
-			}
-			result.appendChild(renderedComponent);
-			if(component instanceof MathComponent && component.isSelected(app.cursors)) {
-				renderedComponent.classList.add("selected");
-			}
-			if(component instanceof MathComponent) {
-				resultMap.set(component, renderedComponent);
+				result.appendChild(component.render());
 			}
 		}
 		return [result, resultMap];
