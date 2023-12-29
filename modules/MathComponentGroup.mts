@@ -2,12 +2,32 @@ import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { App } from "./App.mjs";
 import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
+import { MathSymbol } from "./math-components/MathSymbol.mjs";
+import { LineBreak } from "./math-components/LineBreak.mjs";
 
 export class MathComponentGroup {
 	components: MathComponent[];
 
 	constructor(components: MathComponent[]) {
 		this.components = components;
+	}
+
+	getWordGroups(): MathComponent[][] {
+		const getType = (component: MathComponent) => (
+			(component instanceof MathSymbol && (component.symbol === " " || MathSymbol.OPERATORS.includes(component.symbol))) ? "word-boundary" :
+				(component instanceof MathSymbol) ? "non-word-boundary-character" :
+					(component instanceof LineBreak) ? "line-break" :
+						"non-math-symbol"
+		);
+
+		const wordGroups: MathComponent[][] = [[]];
+		for(const [index, component] of this.components.entries()) {
+			if(index !== 0 && getType(component) !== getType(this.components[index - 1])) {
+				wordGroups.push([]);
+			}
+			wordGroups[wordGroups.length - 1].push(component);
+		}
+		return wordGroups;
 	}
 
 	render(app: App) {
