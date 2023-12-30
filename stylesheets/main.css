@@ -21,7 +21,7 @@ body {
 	padding: 5px;
 }
 
-.math-component-group, .line {
+.math-component-group, .line, .word {
 	min-height: 1em;
 	display: flex;
 	align-items: center;

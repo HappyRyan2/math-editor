@@ -366,7 +366,7 @@ export class Cursor {
 			if(element.classList.contains("line")) { return -1; }
 			return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
 		});
-		if(!deepestComponent.querySelector(":not(.cursor)")) {
+		if(!deepestComponent.querySelector(":not(.cursor, .word)")) {
 			if(deepestComponent.classList.contains("math-component-group")) {
 				return new Cursor(inverseMap.get(deepestComponent) as MathComponentGroup, null);
 			}
@@ -377,7 +377,7 @@ export class Cursor {
 				);
 			}
 		}
-		return Cursor.fromClosest([...deepestComponent.children] as HTMLElement[], event.clientX, app);
+		return Cursor.fromClosest([...deepestComponent.children].map(c => [...c.children]).flat(1) as HTMLElement[], event.clientX, app);
 	}
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);

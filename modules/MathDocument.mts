@@ -30,7 +30,7 @@ export class MathDocument {
 			const element = renderedDocument.children[0];
 			element.remove();
 			lines[lines.length - 1].push(element as HTMLElement);
-			if(element.classList.contains("line-break")) {
+			if([...element.children].some(c => c.classList.contains("line-break"))) {
 				lines.push([]);
 			}
 		}

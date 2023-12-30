@@ -39,23 +39,17 @@ export class MathComponentGroup {
 		const result = document.createElement("span");
 		resultMap.set(this, result);
 		result.classList.add("math-component-group");
-		for(const component of this.componentsAndCursors(app.cursors)) {
-			if(component instanceof MathComponent) {
-				const [renderedComponent, map] = component.renderWithMapping(app);
-				result.appendChild(renderedComponent);
-				resultMap = new Map([...resultMap, ...map]);
-
-				if(component.isSelected(app.cursors)) {
-					renderedComponent.classList.add("selected");
-				}
-			}
-			else {
-				result.appendChild(component.render());
-			}
+		for(const [wordIndex, word] of this.getWordGroups().entries()) {
+			const cursors = app.cursors.filter(cursor => cursor.container === this && (
+				(cursor.predecessor == null && wordIndex == 0) || (cursor.predecessor != null && word.includes(cursor.predecessor))
+			));
+			const [renderedWord, map] = MathComponentGroup.renderWordWithMapping(word, cursors, app);
+			result.appendChild(renderedWord);
+			resultMap = new Map([...resultMap, ...map]);
 		}
 		return [result, resultMap];
 	}
-	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App) {
+	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		const result = document.createElement("span");
 		result.classList.add("word");
