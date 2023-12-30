@@ -31,16 +31,8 @@ export class MathComponentGroup {
 	}
 
 	render(app: App) {
-		const span = document.createElement("span");
-		span.classList.add("math-component-group");
-		for(const component of this.componentsAndCursors(app.cursors)) {
-			const renderedComponent = component.render(app);
-			span.appendChild(renderedComponent);
-			if(component instanceof MathComponent && component.isSelected(app.cursors)) {
-				renderedComponent.classList.add("selected");
-			}
-		}
-		return span;
+		const [rendered] = this.renderWithMapping(app);
+		return rendered;
 	}
 	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
@@ -63,11 +55,38 @@ export class MathComponentGroup {
 		}
 		return [result, resultMap];
 	}
+	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App) {
+		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+		const result = document.createElement("span");
+		result.classList.add("word");
+		for(const component of MathComponentGroup.componentsAndCursors(word, cursors)) {
+			if(component instanceof MathComponent) {
+				const [renderedComponent, map] = component.renderWithMapping(app);
+				result.appendChild(renderedComponent);
+				resultMap = new Map([...resultMap, ...map]);
+
+				if(component.isSelected(app.cursors)) {
+					renderedComponent.classList.add("selected");
+				}
+			}
+			else {
+				result.appendChild(component.render());
+			}
+		}
+		return [result, resultMap];
+	}
 	componentsAndCursors(cursors: Cursor[]) {
 		cursors = cursors.filter(c => c.container === this).sort((a, b) => a.position() - b.position());
 		return [
 			...cursors.filter(c => c.predecessor == null),
 			...this.components.map(component => [component, ...cursors.filter(c => c.predecessor === component)]),
+		].flat();
+	}
+	static componentsAndCursors(components: MathComponent[], cursors: Cursor[]) {
+		cursors = cursors.sort((a, b) => a.position() - b.position());
+		return [
+			...cursors.filter(c => c.predecessor == null),
+			...components.map(component => [component, ...cursors.filter(c => c.predecessor === component)]),
 		].flat();
 	}
 
