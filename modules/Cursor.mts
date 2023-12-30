@@ -84,10 +84,14 @@ export class Cursor {
 		);
 	}
 	static movePastWord(move: () => void, getNextComponent: () => MathComponent | null) {
+		/*
+		Move past any number of word boundaries (but at most one line break), followed by any number of non-word-boundaries.
+		*/
 		while(true) {
 			const nextComponent = getNextComponent();
 			move();
 			if(nextComponent == null || !Cursor.isWordBoundary(nextComponent)) { break; }
+			if(nextComponent instanceof LineBreak) { break; }
 		}
 		while(true) {
 			const nextComponent = getNextComponent();
