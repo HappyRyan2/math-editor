@@ -2,7 +2,7 @@ import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { App } from "./App.mjs";
 import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
-import { MathSymbol } from "./math-components/MathSymbol.mjs";
+import { lastItem } from "./utils/utils.mjs";
 import { LineBreak } from "./math-components/LineBreak.mjs";
 
 export class MathComponentGroup {
@@ -13,21 +13,23 @@ export class MathComponentGroup {
 	}
 
 	getWordGroups(): MathComponent[][] {
-		const getType = (component: MathComponent) => (
-			(component instanceof MathSymbol && (component.symbol === " " || MathSymbol.OPERATORS.includes(component.symbol))) ? "word-boundary" :
-				(component instanceof MathSymbol) ? "non-word-boundary-character" :
-					(component instanceof LineBreak) ? "line-break" :
-						"non-math-symbol"
-		);
-
-		const wordGroups: MathComponent[][] = [[]];
-		for(const [index, component] of this.components.entries()) {
-			if(index !== 0 && getType(component) !== getType(this.components[index - 1])) {
-				wordGroups.push([]);
-			}
-			wordGroups[wordGroups.length - 1].push(component);
+		const words: MathComponent[][] = [];
+		if(this.components.length === 0) { return [[]]; }
+		let index = this.components.length - 1;
+		while(index >= 0) {
+			words.unshift([]);
+			Cursor.movePastWord(
+				() => {
+					words[0].unshift(this.components[index]);
+					index --;
+				},
+				() => this.components[index] ?? null,
+			);
 		}
-		return wordGroups;
+		if(lastItem(lastItem(words)) instanceof LineBreak) {
+			words.push([]);
+		}
+		return words;
 	}
 
 	render(app: App) {
@@ -39,9 +41,11 @@ export class MathComponentGroup {
 		const result = document.createElement("span");
 		resultMap.set(this, result);
 		result.classList.add("math-component-group");
-		for(const [wordIndex, word] of this.getWordGroups().entries()) {
+		const words = this.getWordGroups();
+		for(const [wordIndex, word] of words.entries()) {
 			const cursors = app.cursors.filter(cursor => cursor.container === this && (
-				(cursor.predecessor == null && wordIndex == 0) || (cursor.predecessor != null && word.includes(cursor.predecessor))
+				(cursor.nextComponent() == null && wordIndex === words.length - 1) ||
+				(cursor.nextComponent() != null && word.includes(cursor.nextComponent() as MathComponent))
 			));
 			const [renderedWord, map] = MathComponentGroup.renderWordWithMapping(word, cursors, app);
 			result.appendChild(renderedWord);
@@ -79,7 +83,7 @@ export class MathComponentGroup {
 	static componentsAndCursors(components: MathComponent[], cursors: Cursor[]) {
 		cursors = cursors.sort((a, b) => a.position() - b.position());
 		return [
-			...cursors.filter(c => c.predecessor == null),
+			...cursors.filter(c => c.predecessor == null || !components.includes(c.predecessor)),
 			...components.map(component => [component, ...cursors.filter(c => c.predecessor === component)]),
 		].flat();
 	}
