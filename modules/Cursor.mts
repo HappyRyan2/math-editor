@@ -468,9 +468,9 @@ export class Cursor {
 		));
 	}
 
-	createCursorFromSelection(doc: MathDocument): Cursor | null {
+	createCursorFromSelection(doc: MathDocument, foundSelection: boolean = false): Cursor | null {
 		if(this.selection == null) { return null; }
-		let foundSelection = false;
+		const searchingFromBeginning = foundSelection;
 		for(const mathComponent of doc.descendants()) {
 			const containingGroup = doc.containingGroupOf(mathComponent);
 			const nextComponents = containingGroup.components.slice(
@@ -490,6 +490,9 @@ export class Cursor {
 			if(mathComponent === this.selection.start) {
 				foundSelection = true;
 			}
+		}
+		if(!searchingFromBeginning) {
+			return this.createCursorFromSelection(doc, true);
 		}
 		return null;
 	}

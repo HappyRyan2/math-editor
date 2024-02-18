@@ -678,4 +678,23 @@ describe("Cursor.createCursorFromSelection", () => {
 		assert.equal(newCursor!.selection?.start, additionalSelectionStart);
 		assert.equal(newCursor!.selection?.end, additionalSelectionEnd);
 	});
+	it("wraps around to the beginning of the document when there is no match before the end", () => {
+		let originalSelectionStart, originalSelectionEnd, additionalSelectionStart, additionalSelectionEnd;
+		const doc = new MathDocument([
+			additionalSelectionStart = new MathSymbol("A"),
+			additionalSelectionEnd = new MathSymbol("B"),
+			new MathSymbol("A"),
+			new MathSymbol("B"),
+			new MathSymbol("C"),
+			originalSelectionStart = new MathSymbol("A"),
+			originalSelectionEnd = new MathSymbol("B"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, originalSelectionEnd, new Selection(originalSelectionStart, originalSelectionEnd));
+		const newCursor = cursor.createCursorFromSelection(doc);
+		assert.isNotNull(newCursor);
+		assert.equal(newCursor!.container, doc.componentsGroup);
+		assert.equal(newCursor!.predecessor, additionalSelectionEnd);
+		assert.equal(newCursor!.selection?.start, additionalSelectionStart);
+		assert.equal(newCursor!.selection?.end, additionalSelectionEnd);
+	});
 });
