@@ -15,6 +15,7 @@ type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSy
 export abstract class MathComponent {
 	relativeKeyHandlers: RelativeKeyHandler[] = [];
 	abstract render(app: App, ...components: HTMLElement[]): HTMLElement; // `components` array is only used for CompositeMathComponents
+	abstract matches(component: MathComponent): boolean;
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onDeletion(preventDeletion: () => void, doc: MathDocument, cursor: Cursor) {}
 

@@ -29,4 +29,8 @@ export class MathSymbol extends MathComponent {
 
 		return new MathSymbol(input.symbol);
 	}
+
+	matches(component: MathComponent) {
+		return (component instanceof MathSymbol && component.symbol === this.symbol);
+	}
 }

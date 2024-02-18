@@ -34,4 +34,7 @@ export class LineBreak extends MathComponent {
 	static parse() {
 		return new LineBreak();
 	}
+	matches(mathComponent: MathComponent) {
+		return (mathComponent instanceof LineBreak);
+	}
 }

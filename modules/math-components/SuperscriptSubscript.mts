@@ -76,4 +76,9 @@ export class SuperscriptSubscript extends CompositeMathComponent {
 			MathComponentGroup.parse(input.subscript),
 		);
 	}
+
+	matches(component: MathComponent) {
+		if(!(component instanceof SuperscriptSubscript)) { return false; }
+		return this.superscript.matches(component.superscript) && this.subscript.matches(component.subscript);
+	}
 }

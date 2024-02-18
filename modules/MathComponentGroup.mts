@@ -121,4 +121,8 @@ export class MathComponentGroup {
 			throw new Error("Serialized MathComponentGroup did not have a valid `components` property.");
 		}
 	}
+
+	matches(group: MathComponentGroup) {
+		return this.components.length === group.components.length && this.components.every((component, index) => component.matches(group.components[index]));
+	}
 }

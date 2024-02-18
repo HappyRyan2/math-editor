@@ -4,6 +4,7 @@ import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { LineBreak } from "./LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
+import { MathComponent } from "../MathComponent.mjs";
 
 const PARENTHESE_TYPES = ["round", "square", "curly", "angle"] as const;
 type ParentheseType = typeof PARENTHESE_TYPES[number];
@@ -82,6 +83,14 @@ export class Parenthese extends CompositeMathComponent {
 			MathComponentGroup.parse(input.components),
 			input.type as ParentheseType,
 			input.isGrayedOut,
+		);
+	}
+
+	matches(component: MathComponent) {
+		return (
+			component instanceof Parenthese &&
+			component.type === this.type &&
+			component.components.matches(this.components)
 		);
 	}
 }

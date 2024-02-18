@@ -35,4 +35,8 @@ export class CompositeMathComponentMock extends CompositeMathComponent {
 	groups() {
 		return [this.componentsGroup];
 	}
+	matches(component: MathComponent): boolean {
+		if(!(component instanceof CompositeMathComponentMock)) { return false; }
+		return this.componentsGroup.matches(component.componentsGroup);
+	}
 }

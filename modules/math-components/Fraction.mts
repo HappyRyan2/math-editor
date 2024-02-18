@@ -89,5 +89,13 @@ export class Fraction extends CompositeMathComponent {
 			MathComponentGroup.parse(input.denominator),
 		);
 	}
+
+	matches(component: MathComponent) {
+		if(!(component instanceof Fraction)) { return false; }
+		return (
+			this.numerator.matches(component.numerator) &&
+			this.denominator.matches(component.denominator)
+		);
+	}
 }
 
