@@ -467,4 +467,30 @@ export class Cursor {
 			app,
 		));
 	}
+
+	createCursorFromSelection(doc: MathDocument): Cursor | null {
+		if(this.selection == null) { return null; }
+		let foundSelection = false;
+		for(const mathComponent of doc.descendants()) {
+			const containingGroup = doc.containingGroupOf(mathComponent);
+			const nextComponents = containingGroup.components.slice(
+				containingGroup.components.indexOf(mathComponent),
+				containingGroup.components.indexOf(mathComponent) + this.selectedComponents().length,
+			);
+			if(foundSelection && this.selectedComponents().every((component, index) => component.matches(nextComponents[index]))) {
+				return new Cursor(
+					containingGroup,
+					(
+						this.selectionPosition() === "start" ? containingGroup.components[containingGroup.components.indexOf(mathComponent) - 1] ?? null
+							: lastItem(nextComponents)
+					),
+					new Selection(mathComponent, lastItem(nextComponents)),
+				);
+			}
+			if(mathComponent === this.selection.start) {
+				foundSelection = true;
+			}
+		}
+		return null;
+	}
 }

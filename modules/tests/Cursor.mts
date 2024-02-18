@@ -658,3 +658,24 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, null);
 	});
 });
+describe("Cursor.createCursorFromSelection", () => {
+	it("works when the selection is a sequence of MathSymbols", () => {
+		let originalPredecessor, originalSelectionStart, originalSelectionEnd, additionalPredecessor, additionalSelectionStart, additionalSelectionEnd;
+		const doc = new MathDocument([
+			new MathSymbol("A"),
+			originalPredecessor = new MathSymbol("B"),
+			originalSelectionStart = new MathSymbol("A"),
+			originalSelectionEnd = new MathSymbol("B"),
+			additionalPredecessor = new MathSymbol("C"),
+			additionalSelectionStart = new MathSymbol("A"),
+			additionalSelectionEnd = new MathSymbol("B"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, originalPredecessor, new Selection(originalSelectionStart, originalSelectionEnd));
+		const newCursor = cursor.createCursorFromSelection(doc);
+		assert.isNotNull(newCursor);
+		assert.equal(newCursor!.container, doc.componentsGroup);
+		assert.equal(newCursor!.predecessor, additionalPredecessor);
+		assert.equal(newCursor!.selection?.start, additionalSelectionStart);
+		assert.equal(newCursor!.selection?.end, additionalSelectionEnd);
+	});
+});
