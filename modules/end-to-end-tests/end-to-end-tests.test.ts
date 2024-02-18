@@ -3,64 +3,36 @@ import { test, expect } from "@playwright/test";
 
 test("the user can insert various math components, including using autocomplete", async () => {
 	const electronApp = await _electron.launch({ args: ["compiled/main.js"], env: { CI: "true" } });
-	const page = await electronApp.firstWindow();
-	await page.waitForLoadState();
-	await expect(page.locator(".cursor")).toBeVisible();
-
-	await page.keyboard.press("x");
-	await page.keyboard.down("Shift");
-	await page.keyboard.press("^");
-	await page.keyboard.up("Shift");
-	await page.keyboard.press("2");
-	await page.keyboard.press("ArrowRight");
-	await page.keyboard.press("+");
-	await page.keyboard.press("1");
-	await page.keyboard.press("/");
-	await page.keyboard.press("3");
-	await page.keyboard.down("Shift");
-	await page.keyboard.press("(");
-	await page.keyboard.up("Shift");
-	await page.keyboard.type("alpha");
-	await page.keyboard.press("Tab");
 	try {
+		const page = await electronApp.firstWindow();
+		await page.waitForLoadState();
+		await expect(page.locator(".cursor")).toBeVisible();
+
+		await page.keyboard.press("x");
+		await page.keyboard.press("Shift+^");
+		await page.keyboard.press("2");
+		await page.keyboard.press("ArrowRight");
+		await page.keyboard.type("+1/3");
+		await page.keyboard.press("Shift+(");
+		await page.keyboard.type("alpha");
+		await page.keyboard.press("Tab");
 		await expect(page).toHaveScreenshot("math-components.png");
-	}
-	catch {
-		electronApp.close();
-	}
 
-	await page.keyboard.press("Enter");
-	await page.keyboard.press("Enter");
-	await page.keyboard.press("A");
-	await page.keyboard.press("B");
-	await page.keyboard.press("A");
-	await page.keyboard.press("B");
-	await page.keyboard.press("A");
-	await page.keyboard.press("B");
+		await page.keyboard.press("Enter");
+		await page.keyboard.press("Enter");
+		await page.keyboard.type("ABABAB");
 
-	await page.keyboard.press("ArrowLeft");
-	await page.keyboard.press("ArrowLeft");
-
-	await page.keyboard.down("Shift");
-	await page.keyboard.press("ArrowLeft");
-	await page.keyboard.press("ArrowLeft");
-	await page.keyboard.up("Shift");
-
-	await page.keyboard.down("Control");
-	await page.keyboard.press("d");
-	await page.keyboard.up("Control");
-	try {
+		await page.keyboard.press("ArrowLeft");
+		await page.keyboard.press("ArrowLeft");
+		await page.keyboard.press("Shift+ArrowLeft");
+		await page.keyboard.press("Shift+ArrowLeft");
+		await page.keyboard.press("Control+d");
 		await expect(page).toHaveScreenshot("multi-cursoring.png");
-	}
-	catch {
-		electronApp.close();
-	}
 
-	await page.keyboard.press("ArrowRight");
-	await page.keyboard.type("xyz");
-	await page.keyboard.press("Control+ArrowRight");
-	await page.keyboard.type("123");
-	try {
+		await page.keyboard.press("ArrowRight");
+		await page.keyboard.type("xyz");
+		await page.keyboard.press("Control+ArrowRight");
+		await page.keyboard.type("123");
 		await expect(page).toHaveScreenshot("typing-with-multicursors.png");
 	}
 	finally {
