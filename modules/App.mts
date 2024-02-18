@@ -240,7 +240,7 @@ export class App {
 			},
 		},
 		{
-			key: "D",
+			key: "d",
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
 				const cursor = this.cursors[this.cursors.length - 1];
@@ -248,6 +248,7 @@ export class App {
 				if(newCursor != null) {
 					this.cursors.push(newCursor);
 				}
+				stopPropagation();
 			},
 		},
 	];

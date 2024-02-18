@@ -51,7 +51,7 @@ test("the user can insert various math components, including using autocomplete"
 	await page.keyboard.up("Shift");
 
 	await page.keyboard.down("Control");
-	await page.keyboard.press("D");
+	await page.keyboard.press("d");
 	try {
 		await expect(page).toHaveScreenshot("multi-cursoring.png");
 	}
