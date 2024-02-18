@@ -25,6 +25,36 @@ test("the user can insert various math components, including using autocomplete"
 	try {
 		await expect(page).toHaveScreenshot("math-components.png");
 	}
+	catch {
+		electronApp.close();
+	}
+
+	await page.keyboard.press("Enter");
+	await page.keyboard.press("Enter");
+	await page.keyboard.press("A");
+	await page.keyboard.press("B");
+	await page.keyboard.press("Enter");
+	await page.keyboard.press("A");
+	await page.keyboard.press("B");
+	await page.keyboard.press("Enter");
+	await page.keyboard.press("A");
+	await page.keyboard.press("B");
+
+	await page.keyboard.down("Control");
+	await page.keyboard.press("ArrowLeft");
+	await page.keyboard.up("Control");
+	await page.keyboard.press("ArrowLeft");
+
+	await page.keyboard.down("Shift");
+	await page.keyboard.press("ArrowLeft");
+	await page.keyboard.press("ArrowLeft");
+	await page.keyboard.up("Shift");
+
+	await page.keyboard.down("Control");
+	await page.keyboard.press("D");
+	try {
+		await expect(page).toHaveScreenshot("multi-cursoring.png");
+	}
 	finally {
 		electronApp.close();
 	}

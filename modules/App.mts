@@ -239,6 +239,17 @@ export class App {
 				stopPropagation();
 			},
 		},
+		{
+			key: "D",
+			ctrlKey: true,
+			handler: (event, stopPropagation) => {
+				const cursor = this.cursors[this.cursors.length - 1];
+				const newCursor = cursor.createCursorFromSelection(this.document);
+				if(newCursor != null) {
+					this.cursors.push(newCursor);
+				}
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
