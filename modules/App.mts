@@ -356,6 +356,7 @@ export class App {
 			this.checkRelativeKeyHandlers(event);
 			this.handleCharacterKeys(event);
 		}
+		this.activeTab.removeDuplicateCursors();
 		this.renderAndUpdate();
 	}
 	handleCharacterKeys(event: KeyboardEvent) {

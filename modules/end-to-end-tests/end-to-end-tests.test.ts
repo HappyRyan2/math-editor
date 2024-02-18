@@ -33,16 +33,12 @@ test("the user can insert various math components, including using autocomplete"
 	await page.keyboard.press("Enter");
 	await page.keyboard.press("A");
 	await page.keyboard.press("B");
-	await page.keyboard.press("Enter");
 	await page.keyboard.press("A");
 	await page.keyboard.press("B");
-	await page.keyboard.press("Enter");
 	await page.keyboard.press("A");
 	await page.keyboard.press("B");
 
-	await page.keyboard.down("Control");
 	await page.keyboard.press("ArrowLeft");
-	await page.keyboard.up("Control");
 	await page.keyboard.press("ArrowLeft");
 
 	await page.keyboard.down("Shift");
@@ -52,8 +48,20 @@ test("the user can insert various math components, including using autocomplete"
 
 	await page.keyboard.down("Control");
 	await page.keyboard.press("d");
+	await page.keyboard.up("Control");
 	try {
 		await expect(page).toHaveScreenshot("multi-cursoring.png");
+	}
+	catch {
+		electronApp.close();
+	}
+
+	await page.keyboard.press("ArrowRight");
+	await page.keyboard.type("xyz");
+	await page.keyboard.press("Control+ArrowRight");
+	await page.keyboard.type("123");
+	try {
+		await expect(page).toHaveScreenshot("typing-with-multicursors.png");
 	}
 	finally {
 		electronApp.close();
