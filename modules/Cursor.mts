@@ -42,6 +42,9 @@ export class Cursor {
 		this.container = container;
 		this.predecessor = container.components[container.components.length - 1];
 	}
+	hasSamePosition(cursor: Cursor) {
+		return this.container === cursor.container && this.predecessor === cursor.predecessor;
+	}
 
 	addComponent(component: MathComponent) {
 		this.container.components.splice(this.position(), 0, component);

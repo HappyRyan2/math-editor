@@ -245,10 +245,11 @@ export class App {
 			handler: (event, stopPropagation) => {
 				const cursor = this.cursors[this.cursors.length - 1];
 				const newCursor = cursor.createCursorFromSelection(this.document);
-				if(newCursor != null) {
+				if(newCursor != null && !this.cursors.some(c => c.hasSamePosition(newCursor))) {
 					this.cursors.push(newCursor);
 				}
 				stopPropagation();
+				Cursor.resetCursorBlink();
 			},
 		},
 	];
