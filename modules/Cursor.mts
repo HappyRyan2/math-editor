@@ -92,7 +92,7 @@ export class Cursor {
 		*/
 		while(true) {
 			const nextComponent = getNextComponent();
-			move();
+			if(nextComponent != null) { move(); }
 			if(nextComponent == null || !Cursor.isWordBoundary(nextComponent)) { break; }
 			if(nextComponent instanceof LineBreak) { break; }
 		}

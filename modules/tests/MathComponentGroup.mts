@@ -72,4 +72,9 @@ describe("MathComponentGroup.getWordGroups", () => {
 		const mathComponentGroup = new MathComponentGroup([component]);
 		assert.deepEqual(mathComponentGroup.getWordGroups(), [[component]]);
 	});
+	it("works when the first character is a word boundary", () => {
+		const component = new MathSymbol("=");
+		const group = new MathComponentGroup([component]);
+		assert.deepEqual(group.getWordGroups(), [[component]]);
+	});
 });
