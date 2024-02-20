@@ -66,6 +66,33 @@ export class Parenthese extends CompositeMathComponent {
 		cursor.replaceSelectionWith(parenthese);
 		cursor.moveToStart(parenthese.components);
 	}
+	static insertParenthese(cursor: Cursor, doc: MathDocument) {
+		if(cursor.selection == null) {
+			const parenthese = new Parenthese(new MathComponentGroup([]), "round", true);
+			cursor.addComponent(parenthese);
+			parenthese.expand(doc);
+			cursor.moveToStart(parenthese.components);
+		}
+		else {
+			Parenthese.parenthesizeSelection(cursor, "round");
+		}
+	}
+	static closeParenthese(cursor: Cursor, doc: MathDocument) {
+		const parenthese = ([cursor.predecessor, doc.containingComponentOf(cursor.container)]
+			.find(p => p instanceof Parenthese && p.isGrayedOut) as Parenthese) ?? null;
+		if(parenthese) {
+			if(parenthese.components === cursor.container) {
+				parenthese.collapseTo(cursor, doc);
+			}
+			parenthese.isGrayedOut = false;
+			cursor.moveAfter(parenthese, doc.containingGroupOf(parenthese));
+		}
+		else {
+			const parenthese = new Parenthese(new MathComponentGroup([]), "round", true);
+			cursor.addComponent(parenthese);
+			cursor.moveToStart(parenthese.components);
+		}
+	}
 
 	static parse(input: object) {
 		if(!("type" in input && typeof input.type === "string" &&
