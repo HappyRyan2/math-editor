@@ -252,6 +252,13 @@ export class App {
 				Cursor.resetCursorBlink();
 			},
 		},
+		{
+			key: "Escape",
+			handler: () => {
+				this.activeTab.cursors = [this.cursors[0]];
+				Cursor.resetCursorBlink();
+			},
+		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
