@@ -1,0 +1,12 @@
+Systems for handling keys:
+- `app.keyHandlers`: this is for when you have a key (a single key, not a keyboard shortcut) that does something regardless of where your cursor is. (For example, Enter to insert a newline, Backspace to delete, or ForwardSlash to insert a fraction).
+- `CompositeMathComponent.keyHandlers`: this is for when you have a key that does something only when your cursor is in a certain position relative to a certain component. (For example, pressing Down in the numerator of a fraction to go to the denominator, or pressing Equals after a LessThan to turn it into a LessThanOrEqualTo). The relative key handlers will have the following properties:
+	- `locations`: an array containing any of the following:
+		- `"before"`: before the component.
+		- `"after"`: after the component.
+		- `["inside", <number>]`: inside the `<number>`th component group.
+		- (Maybe) `["start", <number>]`: at the beginning of the `<number>`th component group.
+		- (Maybe) `["end", <number>]`: at the end of the `<number>`th component group.
+	- `handler`: the function to run.
+	- (Maybe) `hereditary: boolean`: whether or not it should work if the cursor is a descendant
+- `CommandPalette.commands` (or something similarly named): this is for commands in the command palette, which also may have a keyboard shortcut associated with them (like Ctrl-C to copy or ).
