@@ -369,7 +369,7 @@ export class App {
 	handleCharacterKeys(event: KeyboardEvent) {
 		for(const cursor of this.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
-				cursor.addComponent(new MathSymbol(event.key));
+				cursor.addComponentOrReplaceSelection(new MathSymbol(event.key));
 			}
 		}
 		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {

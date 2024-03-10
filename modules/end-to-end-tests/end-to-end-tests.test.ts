@@ -34,6 +34,14 @@ test("the user can insert various math components, including using autocomplete"
 		await page.keyboard.press("Control+ArrowRight");
 		await page.keyboard.type("123");
 		await expect(page).toHaveScreenshot("typing-with-multicursors.png");
+
+		await page.keyboard.press("Enter");
+		await page.keyboard.type("abc");
+		await page.keyboard.press("Shift+ArrowLeft");
+		await page.keyboard.press("Shift+ArrowLeft");
+		await page.keyboard.press("Shift+ArrowLeft");
+		await page.keyboard.type("xyz");
+		await expect(page).toHaveScreenshot("typing-with-selection.png");
 	}
 	finally {
 		electronApp.close();

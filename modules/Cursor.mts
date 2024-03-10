@@ -63,6 +63,14 @@ export class Cursor {
 		this.predecessor = components[components.length - 1] ?? previousComponent;
 		this.selection = null;
 	}
+	addComponentOrReplaceSelection(component: MathComponent) {
+		if(this.selection) {
+			this.replaceSelectionWith(component);
+		}
+		else {
+			this.addComponent(component);
+		}
+	}
 	position() {
 		return (this.predecessor == null) ? 0 : (this.container.components.indexOf(this.predecessor) + 1);
 	}
