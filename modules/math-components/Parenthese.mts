@@ -54,7 +54,7 @@ export class Parenthese extends CompositeMathComponent {
 	expand(doc: MathDocument) {
 		const containingGroup = doc.containingGroupOf(this);
 		const index = containingGroup.components.indexOf(this) + 1;
-		const nextLineBreak = containingGroup.components.findIndex((c, i) => c instanceof LineBreak && i > index);
+		const nextLineBreak = containingGroup.components.findIndex((c, i) => c instanceof LineBreak && i >= index);
 		const itemsAfter = containingGroup.components.splice(
 			index,
 			nextLineBreak === -1 ? containingGroup.components.length - index : nextLineBreak - index,

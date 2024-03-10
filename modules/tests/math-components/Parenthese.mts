@@ -35,4 +35,22 @@ describe("Parenthese.insertParenthese", () => {
 			new LineBreak(),
 		]);
 	});
+	it("works when there is a line break immediately after the cursor", () => {
+		let symbol;
+		const doc = new MathDocument([
+			new MathSymbol("A"),
+			symbol = new MathSymbol("B"),
+			new LineBreak(),
+			new MathSymbol("C"),
+		]);
+		const cursor = new Cursor(doc.componentsGroup, symbol);
+		Parenthese.insertParenthese(cursor, doc);
+		assert.deepEqual(doc.componentsGroup.components, [
+			new MathSymbol("A"),
+			new MathSymbol("B"),
+			new Parenthese(new MathComponentGroup([]), "round", true),
+			new LineBreak(),
+			new MathSymbol("C"),
+		]);
+	});
 });
