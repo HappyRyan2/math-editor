@@ -386,11 +386,14 @@ export class Cursor {
 				return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
 			},
 		);
-		if(!deepestComponent.querySelector(":not(.cursor, .word)")) {
+		if(deepestComponent.querySelector(":not(.cursor, .word)") == null) {
+			/* every descendant is either a cursor or a word -> the component is empty */
 			if(deepestComponent.classList.contains("math-component-group")) {
+				/* empty MathComponentGroup -> put cursor inside */
 				return new Cursor(inverseMap.get(deepestComponent) as MathComponentGroup, null);
 			}
 			else {
+				/* deepestComponent is an empty line (with no line break at the end) -> it must be the last line of the document. */
 				return new Cursor(
 					app.document.componentsGroup,
 					app.document.componentsGroup.components[app.document.componentsGroup.components.length - 1],
