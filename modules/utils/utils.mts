@@ -44,3 +44,15 @@ export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) =
 	}
 	return partition;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const memoize = function<ArgType, ReturnType>(func: (arg: ArgType) => ReturnType): (arg: ArgType) => ReturnType {
+	// Note: this currently only supports 1-argument functions.
+	const cache = new Map<ArgType, ReturnType>();
+	return function(arg: ArgType) {
+		if(cache.has(arg)) {
+			return cache.get(arg) as ReturnType;
+		}
+		cache.set(arg, func(arg));
+		return cache.get(arg) as ReturnType;
+	};
+};

@@ -4,7 +4,7 @@ import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
-import { invertMap, lastItem, maxItem, minItem, partitionArray, rectContains } from "./utils/utils.mjs";
+import { invertMap, lastItem, maxItem, memoize, minItem, partitionArray, rectContains } from "./utils/utils.mjs";
 import { LineBreak } from "./math-components/LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
@@ -378,16 +378,7 @@ export class Cursor {
 		return elementsClicked;
 	}
 	static fromClick(app: App, event: MouseEvent) {
-		const cachedRects: Map<Element, DOMRect> = new Map();
-		const getBoundingClientRect = (elem: Element) => {
-			if(cachedRects.has(elem)) {
-				return cachedRects.get(elem) as DOMRect;
-			}
-			const rect = elem.getBoundingClientRect();
-			cachedRects.set(elem, rect);
-			return rect;
-		};
-
+		const getBoundingClientRect = memoize((elem: Element) => elem.getBoundingClientRect());
 		const inverseMap = invertMap(app.renderingMap);
 		const deepestComponent = maxItem(
 			Cursor.elementsClicked(app, event),
