@@ -35,3 +35,12 @@ export const minItem = function<T>(array: T[], callback: (t: T) => number) {
 export const lastItem = function<T>(array: T[]) {
 	return array[array.length - 1];
 };
+export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) => boolean) {
+	const partition = [];
+	for(const [index, value] of array.entries()) {
+		if(array.slice(0, index).every(v => !callback(v, value))) {
+			partition.push(array.filter((v, i) => i >= index && callback(value, v)));
+		}
+	}
+	return partition;
+};

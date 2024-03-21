@@ -4,7 +4,7 @@ import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { Selection } from "./Selection.mjs";
 import { MathDocument } from "./MathDocument.mjs";
 import { App } from "./App.mjs";
-import { invertMap, lastItem, maxItem, minItem, rectContains } from "./utils/utils.mjs";
+import { invertMap, lastItem, maxItem, minItem, partitionArray, rectContains } from "./utils/utils.mjs";
 import { LineBreak } from "./math-components/LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
@@ -400,7 +400,18 @@ export class Cursor {
 				);
 			}
 		}
-		return Cursor.fromClosest([...deepestComponent.children].map(c => [...c.children]).flat(1) as HTMLElement[], event.clientX, app);
+		const centerY = (rect: { top: number, bottom: number }) => (rect.top + rect.bottom) / 2;
+		const TOLERANCE = 1;
+		const brokenLines = partitionArray(
+			[...deepestComponent.children].map(c => [...c.children]).flat(1).filter(c => !c.classList.contains("cursor")),
+			(a, b) => Math.abs(centerY(a.getBoundingClientRect()) - centerY(b.getBoundingClientRect())) < TOLERANCE,
+		);
+		const closestBrokenLine = minItem(brokenLines, line => {
+			const top = Math.min(...line.map((elem => elem.getBoundingClientRect().top)));
+			const bottom = Math.max(...line.map((elem => elem.getBoundingClientRect().bottom)));
+			return Math.max(0, top - event.clientY, event.clientY - bottom);
+		});
+		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX, app);
 	}
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);

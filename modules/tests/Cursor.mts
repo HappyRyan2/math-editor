@@ -657,6 +657,26 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.container, app.document.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
+	it("works when you click on a line that is broken by word wrapping", () => {
+		let symbol;
+		const app = new App(new MathDocument([
+			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
+			new MathSymbolMock(" ", new DOMRect(10, 0, 10, 10)),
+
+			symbol = new MathSymbolMock("B", new DOMRect(0, 10, 10, 10)),
+			new MathSymbolMock(" ", new DOMRect(10, 10, 10, 10)),
+
+			new MathSymbolMock("C", new DOMRect(0, 20, 10, 10)),
+			new MathSymbolMock(" ", new DOMRect(10, 20, 10, 10)),
+		]));
+		app.renderAndUpdate();
+		const line = document.querySelector(".line");
+		line!.getBoundingClientRect = () => new DOMRect(0, 0, 20, 30);
+
+		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 15 }));
+		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.predecessor, symbol);
+	});
 });
 describe("Cursor.createCursorFromSelection", () => {
 	it("works when the selection is a sequence of MathSymbols", () => {
