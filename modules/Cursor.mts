@@ -406,6 +406,7 @@ export class Cursor {
 		const brokenLines = partitionArray(
 			[...deepestComponent.children].map(c => [...c.children]).flat(1).filter(c => !c.classList.contains("cursor")),
 			(a, b) => Math.abs(centerY(getBoundingClientRect(a)) - centerY(getBoundingClientRect(b))) < TOLERANCE,
+			true,
 		);
 		const closestBrokenLine = minItem(brokenLines, line => {
 			const top = Math.min(...line.map((elem => getBoundingClientRect(elem).top)));

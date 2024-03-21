@@ -35,7 +35,7 @@ export const minItem = function<T>(array: T[], callback: (t: T) => number) {
 export const lastItem = function<T>(array: T[]) {
 	return array[array.length - 1];
 };
-export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) => boolean) {
+export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) => boolean, alreadyGrouped: boolean = false) {
 	array = [...array];
 	const partition: T[][] = [];
 	for(let i = 0; i < array.length; i ++) {
@@ -48,6 +48,7 @@ export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) =
 				j --;
 				partition[partition.length - 1].push(value2);
 			}
+			else if(alreadyGrouped) { break; }
 		}
 	}
 	return partition;

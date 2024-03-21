@@ -11,6 +11,17 @@ describe("partitionArray", () => {
 			[2, 4, 6, 8, 10],
 		]);
 	});
+	it("works when the alreadyGrouped parameter is enabled and the array is already grouped into equivalence classes", () => {
+		const numbers = [
+			1, 3, 5, 7, 9,
+			2, 4, 6, 8, 10,
+		];
+		const partition = partitionArray(numbers, (a, b) => a % 2 === b % 2);
+		assert.sameDeepOrderedMembers(partition, [
+			[1, 3, 5, 7, 9],
+			[2, 4, 6, 8, 10],
+		]);
+	});
 });
 describe("memoize", () => {
 	it("returns a memoized version of the function", () => {
