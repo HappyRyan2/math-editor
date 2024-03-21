@@ -378,6 +378,16 @@ export class Cursor {
 		return elementsClicked;
 	}
 	static fromClick(app: App, event: MouseEvent) {
+		const cachedRects: Map<Element, DOMRect> = new Map();
+		const getBoundingClientRect = (elem: Element) => {
+			if(cachedRects.has(elem)) {
+				return cachedRects.get(elem) as DOMRect;
+			}
+			const rect = elem.getBoundingClientRect();
+			cachedRects.set(elem, rect);
+			return rect;
+		};
+
 		const inverseMap = invertMap(app.renderingMap);
 		const deepestComponent = maxItem(
 			Cursor.elementsClicked(app, event),
@@ -404,11 +414,11 @@ export class Cursor {
 		const TOLERANCE = 1;
 		const brokenLines = partitionArray(
 			[...deepestComponent.children].map(c => [...c.children]).flat(1).filter(c => !c.classList.contains("cursor")),
-			(a, b) => Math.abs(centerY(a.getBoundingClientRect()) - centerY(b.getBoundingClientRect())) < TOLERANCE,
+			(a, b) => Math.abs(centerY(getBoundingClientRect(a)) - centerY(getBoundingClientRect(b))) < TOLERANCE,
 		);
 		const closestBrokenLine = minItem(brokenLines, line => {
-			const top = Math.min(...line.map((elem => elem.getBoundingClientRect().top)));
-			const bottom = Math.max(...line.map((elem => elem.getBoundingClientRect().bottom)));
+			const top = Math.min(...line.map((elem => getBoundingClientRect(elem).top)));
+			const bottom = Math.max(...line.map((elem => getBoundingClientRect(elem).bottom)));
 			return Math.max(0, top - event.clientY, event.clientY - bottom);
 		});
 		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX, app);
