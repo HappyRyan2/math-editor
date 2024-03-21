@@ -188,6 +188,9 @@ export class App {
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
 				electronAPI.openWithDialog([{ name: "Math Document", extensions: ["mathdoc"] }]).then((resolved) => {
+					if(resolved.length === 0) {
+						return; // open dialog was closed
+					}
 					const [[filePath, fileContents]] = resolved;
 					const doc = MathDocument.parse(fileContents);
 					doc.filePath = filePath;
