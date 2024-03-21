@@ -36,10 +36,18 @@ export const lastItem = function<T>(array: T[]) {
 	return array[array.length - 1];
 };
 export const partitionArray = function<T>(array: T[], callback: (t1: T, t2: T) => boolean) {
-	const partition = [];
-	for(const [index, value] of array.entries()) {
-		if(array.slice(0, index).every(v => !callback(v, value))) {
-			partition.push(array.filter((v, i) => i >= index && callback(value, v)));
+	array = [...array];
+	const partition: T[][] = [];
+	for(let i = 0; i < array.length; i ++) {
+		const value = array[i];
+		partition.push([value]);
+		for(let j = i + 1; j < array.length; j ++) {
+			const value2 = array[j];
+			if(callback(value, value2)) {
+				array.splice(j, 1);
+				j --;
+				partition[partition.length - 1].push(value2);
+			}
 		}
 	}
 	return partition;
