@@ -363,10 +363,8 @@ export class Cursor {
 		}
 	}
 
-	static fromClick(app: App, event: MouseEvent) {
+	static elementsClicked(app: App, event: MouseEvent) {
 		const rendered = document.getElementById("math-document")!;
-		const mapping = app.renderingMap;
-		const inverseMap = invertMap(mapping);
 		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
 		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
 		if(elementsClicked.length === 0) {
@@ -377,10 +375,17 @@ export class Cursor {
 			});
 			elementsClicked.push(closestLine as HTMLElement);
 		}
-		const deepestComponent = maxItem(elementsClicked, (element: HTMLElement) => {
-			if(element.classList.contains("line")) { return -1; }
-			return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
-		});
+		return elementsClicked;
+	}
+	static fromClick(app: App, event: MouseEvent) {
+		const inverseMap = invertMap(app.renderingMap);
+		const deepestComponent = maxItem(
+			Cursor.elementsClicked(app, event),
+			(element: HTMLElement) => {
+				if(element.classList.contains("line")) { return -1; }
+				return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
+			},
+		);
 		if(!deepestComponent.querySelector(":not(.cursor, .word)")) {
 			if(deepestComponent.classList.contains("math-component-group")) {
 				return new Cursor(inverseMap.get(deepestComponent) as MathComponentGroup, null);
