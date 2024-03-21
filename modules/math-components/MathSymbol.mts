@@ -11,7 +11,7 @@ export class MathSymbol extends MathComponent {
 
 	render() {
 		const span = document.createElement("span");
-		span.innerHTML = this.symbol;
+		span.textContent = this.symbol;
 		span.classList.add("symbol");
 		if(this.symbol === " ") {
 			span.innerHTML = "&nbsp";
