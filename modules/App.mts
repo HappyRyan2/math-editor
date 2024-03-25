@@ -8,6 +8,7 @@ import { RelativeKeyHandler } from "./RelativeKeyHandler.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { Selection } from "./Selection.mjs";
 import { EditorTab } from "./EditorTab.mjs";
+import { LiveRenderer } from "./LiveRenderer.mjs";
 
 export class App {
 	lastMouseDownEvent: MouseEvent | null = null;
@@ -361,18 +362,22 @@ export class App {
 	}
 
 	handleKeyDown(event: KeyboardEvent) {
-		const handled = this.handleSpecialKeys(event);
-		if(!handled) {
-			this.checkRelativeKeyHandlers(event);
+		const didSpecialKeyHandlers = this.handleSpecialKeys(event);
+		let didRelativeKeyHandlers = false;
+		if(!didSpecialKeyHandlers) {
+			didRelativeKeyHandlers = this.checkRelativeKeyHandlers(event);
 			this.handleCharacterKeys(event);
 		}
 		this.activeTab.removeDuplicateCursors();
-		this.renderAndUpdate();
+		if(didSpecialKeyHandlers || didRelativeKeyHandlers) {
+			app.renderAndUpdate();
+		}
 	}
 	handleCharacterKeys(event: KeyboardEvent) {
 		for(const cursor of this.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
-				cursor.addComponentOrReplaceSelection(new MathSymbol(event.key));
+				const symbol = new MathSymbol(event.key);
+				LiveRenderer.addComponentOrReplaceSelection(cursor, symbol, this);
 			}
 		}
 		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
@@ -399,14 +404,17 @@ export class App {
 		}
 		return false;
 	}
-	checkRelativeKeyHandlers(event: KeyboardEvent) {
+	checkRelativeKeyHandlers(event: KeyboardEvent): boolean {
+		let handled = false;
 		for(const cursor of this.cursors) {
 			const handlers = RelativeKeyHandler.getHandlers(cursor, this.document, event.key);
 			if(handlers.length !== 0) {
 				const [handler, component] = handlers[0];
+				handled = true;
 				handler.callback(cursor, component, this);
 			}
 		}
+		return handled;
 	}
 
 	handleMouseUp() {
