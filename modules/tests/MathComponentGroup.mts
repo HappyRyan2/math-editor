@@ -93,7 +93,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.addWordBreakAfter(symbol1, document.querySelector(".math-document")!, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol1, app.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 		const [word1, word2] = rendered.querySelectorAll(".word");
 		assert.equal(word1.querySelector(".symbol")?.innerHTML, "A");
@@ -111,7 +111,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 
-		MathComponentGroup.addWordBreakAfter(symbol1, document.querySelector(".math-document")!, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol1, app.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 		const [word1, word2] = rendered.querySelectorAll(".word");
 		assert.equal(word1.querySelector(".symbol")?.innerHTML, "&nbsp;");
@@ -129,7 +129,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.addWordBreakAfter(symbol2, document.querySelector(".math-document")!, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol2, app.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 		const [word] = rendered.querySelectorAll(".word");
 		const [renderedSymbol1, renderedSymbol2] = word.querySelectorAll(".symbol");

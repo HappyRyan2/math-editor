@@ -130,7 +130,7 @@ export class MathComponentGroup {
 		return this.components.length === group.components.length && this.components.every((component, index) => component.matches(group.components[index]));
 	}
 
-	static addWordBreakAfter(component: MathComponent, renderedGroup: HTMLElement, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+	static addWordBreakAfter(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
 		const word = renderingMap.get(component)!.parentElement!;
 		const indexInWord = [...word.childNodes].indexOf(renderingMap.get(component)!);
 		const componentsAfter = [...word.childNodes].slice(indexInWord + 1);
@@ -140,10 +140,10 @@ export class MathComponentGroup {
 			word.insertAdjacentElement("afterend", newWord);
 		}
 	}
-	addWordBreakBefore(component: MathComponent, renderedGroup: HTMLElement, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+	addWordBreakBefore(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
 		const previous = this.components[this.components.indexOf(component) - 1];
 		if(previous) {
-			MathComponentGroup.addWordBreakAfter(previous, renderedGroup, renderingMap);
+			MathComponentGroup.addWordBreakAfter(previous, renderingMap);
 		}
 	}
 	static removeWordBreakAfter(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
