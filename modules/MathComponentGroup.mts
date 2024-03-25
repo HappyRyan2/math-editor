@@ -157,4 +157,10 @@ export class MathComponentGroup {
 			}
 		}
 	}
+	removeWordBreakBefore(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			MathComponentGroup.removeWordBreakAfter(previous, renderingMap);
+		}
+	}
 }
