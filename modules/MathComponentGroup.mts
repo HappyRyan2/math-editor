@@ -168,4 +168,11 @@ export class MathComponentGroup {
 		if(!nextComponent) { return false; }
 		return Cursor.isWordBoundary(component) && !Cursor.isWordBoundary(nextComponent);
 	}
+	isWordBreakBefore(component: MathComponent) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			return this.isWordBreakAfter(previous);
+		}
+		else { return false; }
+	}
 }
