@@ -146,4 +146,15 @@ export class MathComponentGroup {
 			MathComponentGroup.addWordBreakAfter(previous, renderedGroup, renderingMap);
 		}
 	}
+	static removeWordBreakAfter(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const word = renderingMap.get(component)!.parentElement!;
+		const wordItems = ([...word.childNodes] as HTMLElement[]).filter(v => !v.classList.contains("cursor"));
+		if(wordItems.indexOf(renderingMap.get(component)!) === wordItems.length - 1) {
+			const nextWord = word.nextElementSibling;
+			if(nextWord) {
+				nextWord.remove();
+				word.append(...nextWord.childNodes);
+			}
+		}
+	}
 }
