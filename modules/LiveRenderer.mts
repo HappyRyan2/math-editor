@@ -57,10 +57,11 @@ export class LiveRenderer {
 	}
 
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
+		const selectedComponents = [...cursor.selectedComponents()];
 		cursor.addComponentOrReplaceSelection(component);
 		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
 
-		for(const selected of cursor.selectedComponents()) {
+		for(const selected of selectedComponents) {
 			app.renderingMap.get(selected)?.remove();
 		}
 		LiveRenderer.removeEmptyWords();

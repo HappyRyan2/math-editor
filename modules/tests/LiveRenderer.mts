@@ -6,6 +6,8 @@ import { App } from "../App.mjs";
 import { JSDOM } from "jsdom";
 import { LiveRenderer } from "../LiveRenderer.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
+import { Cursor } from "../Cursor.mjs";
+import { Selection } from "../Selection.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -75,5 +77,29 @@ describe("LiveRenderer.renderAndInsert", () => {
 		const [word2] = line2.childNodes;
 		assert.equal(word2.childNodes.length, 1);
 		assert.isTrue((word2.childNodes[0] as HTMLElement).classList.contains("symbol"));
+	});
+});
+describe("LiveRenderer.addComponentOrReplaceSelection", () => {
+	it("replaces the cursor's selection with the given component and updates the rendered document", () => {
+		let firstSymbol, lastSymbol;
+		const app = new App(new MathDocument([
+			firstSymbol = new MathSymbol("A"),
+			new MathSymbol("B"),
+			lastSymbol = new MathSymbol("C"),
+		]));
+		app.renderAndUpdate();
+		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		app.activeTab.cursors = [cursor];
+		LiveRenderer.addComponentOrReplaceSelection(cursor, new MathSymbol("D"), app);
+
+		const renderedDocument = document.getElementById("math-document")!;
+		assert.equal(renderedDocument.childElementCount, 1);
+		const [line] = renderedDocument.children;
+		assert.equal(line.childElementCount, 1);
+		const [word] = line.children;
+		assert.equal(word.childElementCount, 2);
+		const [renderedSymbol, renderedCursor] = word.children;
+		assert.isTrue(renderedSymbol.classList.contains("symbol"));
+		assert.isTrue(renderedCursor.classList.contains("cursor"));
 	});
 });
