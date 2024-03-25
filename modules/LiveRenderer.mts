@@ -6,6 +6,7 @@ import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
+import { LineBreak } from "./math-components/LineBreak.mjs";
 import { mergeMaps } from "./utils/utils.mjs";
 
 export class LiveRenderer {
@@ -37,7 +38,21 @@ export class LiveRenderer {
 		else {
 			const predecessor = containingGroup.components[containingGroup.components.indexOf(component) - 1];
 			const renderedPredecessor = app.renderingMap.get(predecessor);
-			renderedPredecessor!.insertAdjacentElement("afterend", rendered);
+			if(predecessor instanceof LineBreak) {
+				const nextLine = renderedPredecessor!.parentElement!.parentElement!.nextElementSibling;
+				const firstWord = nextLine!.firstElementChild;
+				if(firstWord) {
+					firstWord.insertAdjacentElement("afterbegin", rendered);
+				}
+				else {
+					const word = MathComponentGroup.createEmptyWord();
+					word.appendChild(rendered);
+					nextLine?.insertAdjacentElement("afterbegin", word);
+				}
+			}
+			else {
+				renderedPredecessor!.insertAdjacentElement("afterend", rendered);
+			}
 		}
 	}
 

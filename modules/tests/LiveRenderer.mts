@@ -5,6 +5,7 @@ import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { App } from "../App.mjs";
 import { JSDOM } from "jsdom";
 import { LiveRenderer } from "../LiveRenderer.mjs";
+import { LineBreak } from "../math-components/LineBreak.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -51,5 +52,28 @@ describe("LiveRenderer.renderAndInsert", () => {
 		assert.equal(element2.innerHTML, "B");
 		assert.equal(app.renderingMap.get(oldSymbol), element1);
 		assert.equal(app.renderingMap.get(newSymbol), element2);
+	});
+	it("inserts it on the next line if the component is directly after a line break", () => {
+		const app = new App(new MathDocument([
+			new LineBreak(),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		const newSymbol = new MathSymbol("A");
+		app.document.componentsGroup.components.push(newSymbol);
+		LiveRenderer["renderAndInsert"](newSymbol, app, app.renderingMap);
+
+		const [line1, line2] = document.querySelectorAll(".line");
+		assert.equal(line1.childNodes.length, 1);
+		assert.equal(line2.childNodes.length, 1);
+
+		const [word1] = line1.childNodes;
+		assert.equal(word1.childNodes.length, 1);
+		assert.isTrue((word1.childNodes[0] as HTMLElement).classList.contains("line-break"));
+
+		const [word2] = line2.childNodes;
+		assert.equal(word2.childNodes.length, 1);
+		assert.isTrue((word2.childNodes[0] as HTMLElement).classList.contains("symbol"));
 	});
 });
