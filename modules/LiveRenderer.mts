@@ -1,5 +1,5 @@
 /*
-This file contains methods that perform an operation on the MathDocument and also update the rendered view, in order to prevent re-renderings of the entire document for performance reasons.
+This file contains methods that perform an operation on the MathDocument and also update the rendered view and the rendering map, in order to prevent re-renderings of the entire document for performance reasons.
 */
 
 import { App } from "./App.mjs";
@@ -56,8 +56,9 @@ export class LiveRenderer {
 		}
 	}
 
-	static delete(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
-		renderingMap.get(component)?.remove();
+	static delete(component: MathComponent, app: App) {
+		app.renderingMap.get(component)?.remove();
+		app.renderingMap.delete(component);
 	}
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];
@@ -65,7 +66,7 @@ export class LiveRenderer {
 		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
 
 		for(const selected of selectedComponents) {
-			LiveRenderer.delete(selected, app.renderingMap);
+			LiveRenderer.delete(selected, app);
 		}
 		LiveRenderer.removeEmptyWords();
 		LiveRenderer.removeEmptyLines();

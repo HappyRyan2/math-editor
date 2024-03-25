@@ -79,6 +79,19 @@ describe("LiveRenderer.renderAndInsert", () => {
 		assert.isTrue((word2.childNodes[0] as HTMLElement).classList.contains("symbol"));
 	});
 });
+describe("LiveRenderer.delete", () => {
+	it("deletes the component and updates the rendering map", () => {
+		let symbol: MathSymbol;
+		const app = new App(new MathDocument([
+			symbol = new MathSymbol("A"),
+			new MathSymbol("B"),
+		]));
+		app.renderAndUpdate();
+		assert.equal(app.renderingMap.size, 2);
+		LiveRenderer.delete(symbol, app);
+		assert.equal(app.renderingMap.size, 1);
+	});
+});
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	it("replaces the cursor's selection with the given component and updates the rendered document", () => {
 		let firstSymbol, lastSymbol;
@@ -101,5 +114,21 @@ describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 		const [renderedSymbol, renderedCursor] = word.children;
 		assert.isTrue(renderedSymbol.classList.contains("symbol"));
 		assert.isTrue(renderedCursor.classList.contains("cursor"));
+	});
+	it("updates the rendering map, removing the deleted components and adding the new component", () => {
+		let firstSymbol, lastSymbol;
+		const app = new App(new MathDocument([
+			firstSymbol = new MathSymbol("A"),
+			new MathSymbol("B"),
+			lastSymbol = new MathSymbol("C"),
+		]));
+		app.renderAndUpdate();
+		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		app.activeTab.cursors = [cursor];
+		const newSymbol = new MathSymbol("D");
+		LiveRenderer.addComponentOrReplaceSelection(cursor, newSymbol, app);
+
+		assert.equal(app.renderingMap.size, 1);
+		assert.isTrue(app.renderingMap.get(newSymbol)?.classList.contains("symbol"));
 	});
 });
