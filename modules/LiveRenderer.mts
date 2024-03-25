@@ -56,13 +56,16 @@ export class LiveRenderer {
 		}
 	}
 
+	static delete(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		renderingMap.get(component)?.remove();
+	}
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];
 		cursor.addComponentOrReplaceSelection(component);
 		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
 
 		for(const selected of selectedComponents) {
-			app.renderingMap.get(selected)?.remove();
+			LiveRenderer.delete(selected, app.renderingMap);
 		}
 		LiveRenderer.removeEmptyWords();
 		LiveRenderer.removeEmptyLines();
