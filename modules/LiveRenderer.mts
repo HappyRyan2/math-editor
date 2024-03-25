@@ -5,6 +5,8 @@ This file contains methods that perform an operation on the MathDocument and als
 import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponent } from "./MathComponent.mjs";
+import { MathComponentGroup } from "./MathComponentGroup.mjs";
+import { mergeMaps } from "./utils/utils.mjs";
 
 export class LiveRenderer {
 	private static removeEmptyWords() {
@@ -19,9 +21,29 @@ export class LiveRenderer {
 		) { line.remove(); }
 	}
 
+	private static renderAndInsert(component: MathComponent, app: App, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const containingGroup = app.document.containingGroupOf(component);
+		const [rendered, map] = component.renderWithMapping(app);
+		mergeMaps(renderingMap, map);
+		if(containingGroup.components.indexOf(component) === 0 && containingGroup === app.document.componentsGroup) {
+			const firstWord = document.querySelector(".word");
+			firstWord?.insertAdjacentElement("afterbegin", rendered);
+		}
+		else if(containingGroup.components.indexOf(component) === 0 && containingGroup !== app.document.componentsGroup){
+			const container = app.renderingMap.get(containingGroup);
+			const firstWord = container!.querySelector(".word");
+			firstWord!.insertAdjacentElement("afterbegin", rendered);
+		}
+		else {
+			const predecessor = containingGroup.components[containingGroup.components.indexOf(component) - 1];
+			const renderedPredecessor = app.renderingMap.get(predecessor);
+			renderedPredecessor!.insertAdjacentElement("afterend", rendered);
+		}
+	}
+
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		cursor.addComponentOrReplaceSelection(component);
-		component.renderAndInsert(app, app.renderingMap);
+		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
 
 		for(const selected of cursor.selectedComponents()) {
 			app.renderingMap.get(selected)?.remove();

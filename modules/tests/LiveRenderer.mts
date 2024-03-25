@@ -4,6 +4,7 @@ import { MathDocument } from "../MathDocument.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { App } from "../App.mjs";
 import { JSDOM } from "jsdom";
+import { LiveRenderer } from "../LiveRenderer.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -15,7 +16,7 @@ beforeEach(() => {
 });
 
 
-describe("MathComponent.renderAndInsert", () => {
+describe("LiveRenderer.renderAndInsert", () => {
 	it("inserts it at the beginning of the parent if it is the first component in its group", () => {
 		let oldSymbol, newSymbol;
 		const app = new App(new MathDocument([
@@ -24,7 +25,7 @@ describe("MathComponent.renderAndInsert", () => {
 		app.renderAndUpdate();
 
 		app.document.componentsGroup.components.unshift(newSymbol = new MathSymbol("A"));
-		app.document.componentsGroup.components[0].renderAndInsert(app, app.renderingMap);
+		LiveRenderer["renderAndInsert"](app.document.componentsGroup.components[0], app, app.renderingMap);
 
 		const word = document.querySelector(".word")!;
 		const [element1, element2] = word.querySelectorAll(".symbol");
@@ -42,7 +43,7 @@ describe("MathComponent.renderAndInsert", () => {
 
 		const newSymbol = new MathSymbol("B");
 		app.document.componentsGroup.components.push(newSymbol);
-		newSymbol.renderAndInsert(app, app.renderingMap);
+		LiveRenderer["renderAndInsert"](newSymbol, app, app.renderingMap);
 
 		const word = document.querySelector(".word");
 		const [element1, element2] = word!.querySelectorAll(".symbol");
