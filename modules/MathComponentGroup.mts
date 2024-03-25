@@ -175,4 +175,19 @@ export class MathComponentGroup {
 		}
 		else { return false; }
 	}
+	checkWordBreaks(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		if(this.isWordBreakAfter(component)) {
+			MathComponentGroup.addWordBreakAfter(component, renderingMap);
+		}
+		else {
+			MathComponentGroup.removeWordBreakAfter(component, renderingMap);
+		}
+
+		if(this.isWordBreakBefore(component)) {
+			this.addWordBreakBefore(component, renderingMap);
+		}
+		else {
+			this.removeWordBreakBefore(component, renderingMap);
+		}
+	}
 }
