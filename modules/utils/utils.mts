@@ -11,6 +11,11 @@ export const invertMap = function<K, V>(map: Map<K, V>) {
 	}
 	return result;
 };
+export const mergeMaps = function<K, V>(map1: Map<K, V>, map2: Map<K, V>) {
+	for(const [key, value] of map2) {
+		map1.set(key, value);
+	}
+};
 export const maxItem = function<T>(array: T[], callback: (t: T) => number) {
 	if(array.length === 0) {
 		throw new Error("Cannot get the highest item of an empty array.");

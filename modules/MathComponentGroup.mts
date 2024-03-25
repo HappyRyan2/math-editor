@@ -53,10 +53,14 @@ export class MathComponentGroup {
 		}
 		return [result, resultMap];
 	}
-	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+	static createEmptyWord() {
 		const result = document.createElement("span");
 		result.classList.add("word");
+		return result;
+	}
+	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+		const result = MathComponentGroup.createEmptyWord();
 		for(const component of MathComponentGroup.componentsAndCursors(word, cursors)) {
 			if(component instanceof MathComponent) {
 				const [renderedComponent, map] = component.renderWithMapping(app);
@@ -124,5 +128,66 @@ export class MathComponentGroup {
 
 	matches(group: MathComponentGroup) {
 		return this.components.length === group.components.length && this.components.every((component, index) => component.matches(group.components[index]));
+	}
+
+	static addWordBreakAfter(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const word = renderingMap.get(component)!.parentElement!;
+		const indexInWord = [...word.childNodes].indexOf(renderingMap.get(component)!);
+		const componentsAfter = [...word.childNodes].slice(indexInWord + 1);
+		if(componentsAfter.length !== 0) {
+			const newWord = MathComponentGroup.createEmptyWord();
+			newWord.append(...componentsAfter);
+			word.insertAdjacentElement("afterend", newWord);
+		}
+	}
+	addWordBreakBefore(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			MathComponentGroup.addWordBreakAfter(previous, renderingMap);
+		}
+	}
+	static removeWordBreakAfter(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const word = renderingMap.get(component)!.parentElement!;
+		const wordItems = ([...word.childNodes] as HTMLElement[]).filter(v => !v.classList.contains("cursor"));
+		if(wordItems.indexOf(renderingMap.get(component)!) === wordItems.length - 1) {
+			const nextWord = word.nextElementSibling;
+			if(nextWord) {
+				nextWord.remove();
+				word.append(...nextWord.childNodes);
+			}
+		}
+	}
+	removeWordBreakBefore(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			MathComponentGroup.removeWordBreakAfter(previous, renderingMap);
+		}
+	}
+	isWordBreakAfter(component: MathComponent) {
+		const nextComponent = this.components[this.components.indexOf(component) + 1];
+		if(!nextComponent) { return false; }
+		return Cursor.isWordBoundary(component) && !Cursor.isWordBoundary(nextComponent);
+	}
+	isWordBreakBefore(component: MathComponent) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			return this.isWordBreakAfter(previous);
+		}
+		else { return false; }
+	}
+	checkWordBreaks(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		if(this.isWordBreakAfter(component)) {
+			MathComponentGroup.addWordBreakAfter(component, renderingMap);
+		}
+		else {
+			MathComponentGroup.removeWordBreakAfter(component, renderingMap);
+		}
+
+		if(this.isWordBreakBefore(component)) {
+			this.addWordBreakBefore(component, renderingMap);
+		}
+		else {
+			this.removeWordBreakBefore(component, renderingMap);
+		}
 	}
 }
