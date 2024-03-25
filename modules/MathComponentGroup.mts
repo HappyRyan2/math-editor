@@ -53,10 +53,14 @@ export class MathComponentGroup {
 		}
 		return [result, resultMap];
 	}
-	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+	static createEmptyWord() {
 		const result = document.createElement("span");
 		result.classList.add("word");
+		return result;
+	}
+	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+		const result = MathComponentGroup.createEmptyWord();
 		for(const component of MathComponentGroup.componentsAndCursors(word, cursors)) {
 			if(component instanceof MathComponent) {
 				const [renderedComponent, map] = component.renderWithMapping(app);
@@ -124,5 +128,16 @@ export class MathComponentGroup {
 
 	matches(group: MathComponentGroup) {
 		return this.components.length === group.components.length && this.components.every((component, index) => component.matches(group.components[index]));
+	}
+
+	static addWordBreakAfter(component: MathComponent, renderedGroup: HTMLElement, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const word = renderingMap.get(component)!.parentElement!;
+		const indexInWord = [...word.childNodes].indexOf(renderingMap.get(component)!);
+		const componentsAfter = [...word.childNodes].slice(indexInWord + 1);
+		if(componentsAfter.length !== 0) {
+			const newWord = MathComponentGroup.createEmptyWord();
+			newWord.append(...componentsAfter);
+			word.insertAdjacentElement("afterend", newWord);
+		}
 	}
 }
