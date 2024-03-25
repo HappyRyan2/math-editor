@@ -196,3 +196,19 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 		assert.equal(renderedSymbol2.innerHTML, "B");
 	});
 });
+describe("MathComponentGroup.isWordBreakAfter", () => {
+	it("returns true when there is a word break after the component", () => {
+		const group = new MathComponentGroup([
+			new MathSymbol(" "),
+			new MathSymbol("A"),
+		]);
+		assert.isTrue(group.isWordBreakAfter(group.components[0]));
+	});
+	it("returns false when there is not a word break after the component", () => {
+		const group = new MathComponentGroup([
+			new MathSymbol("A"),
+			new MathSymbol("B"),
+		]);
+		assert.isFalse(group.isWordBreakAfter(group.components[0]));
+	});
+});

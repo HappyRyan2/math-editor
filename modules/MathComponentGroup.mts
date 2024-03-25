@@ -163,4 +163,9 @@ export class MathComponentGroup {
 			MathComponentGroup.removeWordBreakAfter(previous, renderingMap);
 		}
 	}
+	isWordBreakAfter(component: MathComponent) {
+		const nextComponent = this.components[this.components.indexOf(component) + 1];
+		if(!nextComponent) { return false; }
+		return Cursor.isWordBoundary(component) && !Cursor.isWordBoundary(nextComponent);
+	}
 }
