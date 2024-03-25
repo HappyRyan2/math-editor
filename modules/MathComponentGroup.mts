@@ -140,4 +140,10 @@ export class MathComponentGroup {
 			word.insertAdjacentElement("afterend", newWord);
 		}
 	}
+	addWordBreakBefore(component: MathComponent, renderedGroup: HTMLElement, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const previous = this.components[this.components.indexOf(component) - 1];
+		if(previous) {
+			MathComponentGroup.addWordBreakAfter(previous, renderedGroup, renderingMap);
+		}
+	}
 }
