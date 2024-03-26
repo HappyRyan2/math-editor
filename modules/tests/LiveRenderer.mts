@@ -97,6 +97,23 @@ describe("LiveRenderer.delete", () => {
 		assert.equal([...document.querySelectorAll(".symbol")].length, 1);
 		assert.equal(app.document.componentsGroup.components.length, 1);
 	});
+	it("works when deleting the component results in two words combining into one", () => {
+		let space;
+		const app = new App(new MathDocument([
+			new MathSymbol("A"),
+			space = new MathSymbol(" "),
+			new MathSymbol("B"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		assert.equal([...document.querySelectorAll(".word")].length, 2);
+
+		LiveRenderer.delete(space, app);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		const word = document.querySelector(".word");
+		assert.equal(word?.children[0].innerHTML, "A");
+		assert.equal(word?.children[1].innerHTML, "B");
+	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {

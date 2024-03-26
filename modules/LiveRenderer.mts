@@ -56,12 +56,18 @@ export class LiveRenderer {
 		}
 	}
 
-	static delete(component: MathComponent, app: App) {
+	static delete(component: Exclude<MathComponent, LineBreak>, app: App) {
+		const previousComponent = app.document.getPreviousComponent(component);
+
 		app.renderingMap.get(component)?.remove();
 		app.renderingMap.delete(component);
 
 		const container = app.document.containingGroupOf(component);
 		container.components = container.components.filter(c => c !== component);
+
+		if(previousComponent != null) {
+			container.checkWordBreaks(previousComponent, app.renderingMap);
+		}
 	}
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];

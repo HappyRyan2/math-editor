@@ -112,6 +112,16 @@ export class MathDocument {
 		}
 		return this.depth(this.containingComponentOf(component) as CompositeMathComponent) + 1;
 	}
+	getPreviousComponent(component: MathComponent) {
+		const container = this.containingGroupOf(component);
+		const index = container.components.indexOf(component);
+		return (index === 0) ? null : container.components[index - 1];
+	}
+	getNextComponent(component: MathComponent) {
+		const container = this.containingGroupOf(component);
+		const index = container.components.indexOf(component);
+		return (index === container.components.length - 1) ? null : container.components[index + 1];
+	}
 
 	static parse(serialized: string): MathDocument {
 		const parsed = JSON.parse(serialized) as object;
