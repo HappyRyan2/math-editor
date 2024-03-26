@@ -88,8 +88,14 @@ describe("LiveRenderer.delete", () => {
 		]));
 		app.renderAndUpdate();
 		assert.equal(app.renderingMap.size, 2);
+		assert.equal(app.document.componentsGroup.components.length, 2);
+		assert.equal([...document.querySelectorAll(".symbol")].length, 2);
+
+
 		LiveRenderer.delete(symbol, app);
 		assert.equal(app.renderingMap.size, 1);
+		assert.equal([...document.querySelectorAll(".symbol")].length, 1);
+		assert.equal(app.document.componentsGroup.components.length, 1);
 	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {

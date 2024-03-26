@@ -59,6 +59,9 @@ export class LiveRenderer {
 	static delete(component: MathComponent, app: App) {
 		app.renderingMap.get(component)?.remove();
 		app.renderingMap.delete(component);
+
+		const container = app.document.containingGroupOf(component);
+		container.components = container.components.filter(c => c !== component);
 	}
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];
