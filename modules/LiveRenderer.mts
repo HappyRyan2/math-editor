@@ -94,6 +94,29 @@ export class LiveRenderer {
 			container.checkWordBreaks(previousComponent, app.renderingMap);
 		}
 	}
+	static insertAtIndex(component: Exclude<MathComponent, LineBreak>, container: MathComponentGroup, index: number, app: App) {
+		// TODO: IMPLEMENT THIS!
+	}
+	static insert(component: Exclude<MathComponent, LineBreak>, position: "before" | "after", target: MathComponent, app: App): void;
+	static insert(component: Exclude<MathComponent, LineBreak>, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
+	static insert(component: Exclude<MathComponent, LineBreak>, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
+		const container = (target instanceof MathComponentGroup ? target : app.document.containingGroupOf(target));
+		if(position === "beginning" || position === "end") {
+			LiveRenderer.insertAtIndex(
+				component, container,
+				(position === "beginning") ? 0 : container.components.length,
+				app,
+			);
+		}
+		else {
+			LiveRenderer.insertAtIndex(
+				component, container,
+				container.components.indexOf(component) + (position === "before" ? 0 : 1),
+				app,
+			);
+		}
+	}
+
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];
 		cursor.addComponentOrReplaceSelection(component);
