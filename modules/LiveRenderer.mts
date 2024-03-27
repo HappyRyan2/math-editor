@@ -3,6 +3,7 @@ This file contains methods that perform an operation on the MathDocument and als
 */
 
 import { App } from "./App.mjs";
+import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
@@ -58,9 +59,33 @@ export class LiveRenderer {
 
 	static delete(component: Exclude<MathComponent, LineBreak>, app: App) {
 		const previousComponent = app.document.getPreviousComponent(component);
+		const nextComponent = app.document.getNextComponent(component);
 
 		app.renderingMap.get(component)?.remove();
 		app.renderingMap.delete(component);
+		if(component instanceof CompositeMathComponent) {
+			for(const descendant of [...component.descendants(), ...component.groupDescendants()]) {
+				app.renderingMap.delete(descendant);
+			}
+		}
+
+		app.activeTab.cursors = app.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
+		for(const cursor of app.cursors) {
+			if(cursor.predecessor === component) {
+				cursor.predecessor = previousComponent;
+			}
+			if(cursor.selection?.start === component && cursor.selection?.end === component) {
+				cursor.selection = null;
+			}
+			if(cursor.selection?.start === component) {
+				if(nextComponent != null) { cursor.selection.start = nextComponent; }
+				else { cursor.selection = null; }
+			}
+			if(cursor.selection?.end === component) {
+				if(previousComponent != null) { cursor.selection.end = previousComponent; }
+				else { cursor.selection = null; }
+			}
+		}
 
 		const container = app.document.containingGroupOf(component);
 		container.components = container.components.filter(c => c !== component);

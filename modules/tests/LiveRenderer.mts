@@ -8,6 +8,7 @@ import { LiveRenderer } from "../LiveRenderer.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { Selection } from "../Selection.mjs";
+import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -113,6 +114,66 @@ describe("LiveRenderer.delete", () => {
 		const word = document.querySelector(".word");
 		assert.equal(word?.children[0].innerHTML, "A");
 		assert.equal(word?.children[1].innerHTML, "B");
+	});
+	it("works when the component is a CompositeMathComponent", () => {
+		let component;
+		const app = new App(new MathDocument([
+			component = new CompositeMathComponentMock([
+				new MathSymbol("A"),
+			]),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		LiveRenderer.delete(component, app);
+		const lines = [...document.querySelectorAll(".line")];
+		assert.equal(lines.length, 1);
+		const words = [...lines[0].querySelectorAll(".word")];
+		assert.equal(words.length, 1);
+		const components = words[0].querySelectorAll("*");
+		assert.equal(components.length, 0);
+
+		assert.equal(app.renderingMap.size, 0);
+	});
+	it("works when there are cursors after/inside the component, or including the component in their selection", () => {
+		let composite, composite2, symbol1, symbol2;
+		const app = new App(new MathDocument([
+			symbol1 = new MathSymbol("1"),
+			composite = new CompositeMathComponentMock([
+				composite2 = new CompositeMathComponentMock([]),
+			]),
+			symbol2 = new MathSymbol("2"),
+		]));
+		const cursor1 = new Cursor(composite.componentsGroup, null);
+		const cursor2 = new Cursor(app.document.componentsGroup, composite);
+		const cursor3 = new Cursor(app.document.componentsGroup, composite, new Selection(composite, composite));
+		const cursor4 = new Cursor(app.document.componentsGroup, null, new Selection(symbol1, composite));
+		const cursor5 = new Cursor(app.document.componentsGroup, symbol1, new Selection(composite, symbol2));
+		const cursor6 = new Cursor(composite2.componentsGroup, null);
+		app.activeTab.cursors = [cursor1, cursor2, cursor3, cursor4, cursor5, cursor6];
+		app.renderAndUpdate();
+		LiveRenderer.delete(composite, app);
+
+
+		assert.sameOrderedMembers(app.cursors, [cursor2, cursor3, cursor4, cursor5]);
+
+		assert.equal(cursor2.container, app.document.componentsGroup);
+		assert.equal(cursor2.predecessor, symbol1);
+		assert.equal(cursor2.selection, null);
+
+		assert.equal(cursor3.container, app.document.componentsGroup);
+		assert.equal(cursor3.predecessor, symbol1);
+		assert.equal(cursor3.selection, null);
+
+		assert.equal(cursor4.container, app.document.componentsGroup);
+		assert.equal(cursor4.predecessor, null);
+		assert.equal(cursor4.selection?.start, symbol1);
+		assert.equal(cursor4.selection?.end, symbol1);
+
+		assert.equal(cursor5.container, app.document.componentsGroup);
+		assert.equal(cursor5.predecessor, symbol1);
+		assert.equal(cursor5.selection?.start, symbol2);
+		assert.equal(cursor5.selection?.end, symbol2);
 	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {

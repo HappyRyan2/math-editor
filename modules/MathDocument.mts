@@ -122,6 +122,16 @@ export class MathDocument {
 		const index = container.components.indexOf(component);
 		return (index === container.components.length - 1) ? null : container.components[index + 1];
 	}
+	isDescendantOf(component1: MathComponent | MathComponentGroup, component2: MathComponent | MathComponentGroup) {
+		/* Returns whether component1 is a descendant of component2 (or they are equal). */
+		if(component2 instanceof MathComponent && !(component2 instanceof CompositeMathComponent)) {
+			return false;
+		}
+		if(component1 instanceof MathComponent) {
+			return [component2, ...component2.descendants()].includes(component1);
+		}
+		return [component2, ...component2.groupDescendants()].includes(component1);
+	}
 
 	static parse(serialized: string): MathDocument {
 		const parsed = JSON.parse(serialized) as object;
