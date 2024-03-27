@@ -23,10 +23,10 @@ export class LiveRenderer {
 		) { line.remove(); }
 	}
 
-	private static renderAndInsert(component: MathComponent, app: App, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+	private static renderAndInsert(component: MathComponent, app: App) {
 		const containingGroup = app.document.containingGroupOf(component);
 		const [rendered, map] = component.renderWithMapping(app);
-		mergeMaps(renderingMap, map);
+		mergeMaps(app.renderingMap, map);
 		if(containingGroup.components.indexOf(component) === 0 && containingGroup === app.document.componentsGroup) {
 			const firstWord = document.querySelector(".word");
 			firstWord?.insertAdjacentElement("afterbegin", rendered);
@@ -105,7 +105,7 @@ export class LiveRenderer {
 			throw new Error("Cannot remove line breaks with LiveRenderer.insertAtIndex.");
 		}
 		container.components.splice(index, 0, component);
-		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
+		LiveRenderer.renderAndInsert(component, app);
 		container.checkWordBreaks(component, app.renderingMap);
 	}
 	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
@@ -134,7 +134,7 @@ export class LiveRenderer {
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
 		const selectedComponents = [...cursor.selectedComponents()];
 		cursor.addComponentOrReplaceSelection(component);
-		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
+		LiveRenderer.renderAndInsert(component, app);
 
 		for(const selected of selectedComponents) {
 			LiveRenderer.delete(selected, app);

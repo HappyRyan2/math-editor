@@ -29,7 +29,7 @@ describe("LiveRenderer.renderAndInsert", () => {
 		app.renderAndUpdate();
 
 		app.document.componentsGroup.components.unshift(newSymbol = new MathSymbol("A"));
-		LiveRenderer["renderAndInsert"](app.document.componentsGroup.components[0], app, app.renderingMap);
+		LiveRenderer["renderAndInsert"](app.document.componentsGroup.components[0], app);
 
 		const word = document.querySelector(".word")!;
 		const [element1, element2] = word.querySelectorAll(".symbol");
@@ -47,7 +47,7 @@ describe("LiveRenderer.renderAndInsert", () => {
 
 		const newSymbol = new MathSymbol("B");
 		app.document.componentsGroup.components.push(newSymbol);
-		LiveRenderer["renderAndInsert"](newSymbol, app, app.renderingMap);
+		LiveRenderer["renderAndInsert"](newSymbol, app);
 
 		const word = document.querySelector(".word");
 		const [element1, element2] = word!.querySelectorAll(".symbol");
@@ -65,7 +65,7 @@ describe("LiveRenderer.renderAndInsert", () => {
 
 		const newSymbol = new MathSymbol("A");
 		app.document.componentsGroup.components.push(newSymbol);
-		LiveRenderer["renderAndInsert"](newSymbol, app, app.renderingMap);
+		LiveRenderer["renderAndInsert"](newSymbol, app);
 
 		const [line1, line2] = document.querySelectorAll(".line");
 		assert.equal(line1.childNodes.length, 1);
