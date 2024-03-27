@@ -22,6 +22,28 @@ export class LiveRenderer {
 			.filter(line => ([...line.childNodes] as HTMLElement[]).every(child => child.classList.contains("cursor")))
 		) { line.remove(); }
 	}
+	private static disconnectCursors(component: MathComponent, app: App) {
+		const previousComponent = app.document.getPreviousComponent(component);
+		const nextComponent = app.document.getNextComponent(component);
+
+		app.activeTab.cursors = app.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
+		for(const cursor of app.cursors) {
+			if(cursor.predecessor === component) {
+				cursor.predecessor = previousComponent;
+			}
+			if(cursor.selection?.start === component && cursor.selection?.end === component) {
+				cursor.selection = null;
+			}
+			if(cursor.selection?.start === component) {
+				if(nextComponent != null) { cursor.selection.start = nextComponent; }
+				else { cursor.selection = null; }
+			}
+			if(cursor.selection?.end === component) {
+				if(previousComponent != null) { cursor.selection.end = previousComponent; }
+				else { cursor.selection = null; }
+			}
+		}
+	}
 
 	private static renderAndInsert(component: MathComponent, app: App) {
 		const containingGroup = app.document.containingGroupOf(component);
@@ -72,23 +94,7 @@ export class LiveRenderer {
 			}
 		}
 
-		app.activeTab.cursors = app.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
-		for(const cursor of app.cursors) {
-			if(cursor.predecessor === component) {
-				cursor.predecessor = previousComponent;
-			}
-			if(cursor.selection?.start === component && cursor.selection?.end === component) {
-				cursor.selection = null;
-			}
-			if(cursor.selection?.start === component) {
-				if(nextComponent != null) { cursor.selection.start = nextComponent; }
-				else { cursor.selection = null; }
-			}
-			if(cursor.selection?.end === component) {
-				if(previousComponent != null) { cursor.selection.end = previousComponent; }
-				else { cursor.selection = null; }
-			}
-		}
+		LiveRenderer.disconnectCursors(component, app);
 
 		const container = app.document.containingGroupOf(component);
 		container.components = container.components.filter(c => c !== component);
