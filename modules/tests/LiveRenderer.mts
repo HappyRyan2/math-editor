@@ -175,6 +175,27 @@ describe("LiveRenderer.delete", () => {
 		assert.equal(cursor5.selection?.start, symbol2);
 		assert.equal(cursor5.selection?.end, symbol2);
 	});
+	it("removes any empty words that are created as a result of the deletion, when there is a component before it", () => {
+		let lastSymbol;
+		const app = new App(new MathDocument([
+			new MathSymbol("A"),
+			new MathSymbol(" "),
+			lastSymbol = new MathSymbol("B"),
+		]));
+		app.renderAndUpdate();
+		LiveRenderer.delete(lastSymbol, app);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+	});
+	it("removes any empty words that are created as a result of the deletion, when there is no component before it", () => {
+		let firstSymbol;
+		const app = new App(new MathDocument([
+			firstSymbol = new MathSymbol(" "),
+			new MathSymbol("B"),
+		]));
+		app.renderAndUpdate();
+		LiveRenderer.delete(firstSymbol, app);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {

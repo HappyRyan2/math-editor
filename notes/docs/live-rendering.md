@@ -7,7 +7,7 @@ A live-rendering modification consists of the following:
 
 When performing a live-rendering modification, be sure to remember to consider the following (or else you'll introduce bugs):
 - **The Rendering Map**: This is a map that lets you get the rendered version of a `MathComponent` or the `MathComponent` corresponding to a rendered HTML element. When adding, removing, or re-rendering a component, don't forget to update the rendering map.
-- **Words**: When inserting or deleting a component, you could end up splitting a word in two, or merging two words together. To make sure everything is still correct, call the method `MathComponentGroup.checkWordBreaks` around the affected region.
+- **Words**: When inserting or deleting a component, you could end up splitting a word in two, merging two words together, or creating some empty words that need to be deleted. To make sure everything is still correct, call the method `MathComponentGroup.checkWordBreaks` around the affected region.
 - **Lines**: If your change involves adding or deleting a line break, you'll need to make sure that the lines are still correct.
 - **Rendered Cursors**
 - **Cursors**: If your change involves deleting a component, consider that the component might be the predecessor, container, selection start, or selection end of a cursor. In these cases, if the component is deleted, bugs will probably occur.

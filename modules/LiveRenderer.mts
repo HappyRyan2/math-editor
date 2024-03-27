@@ -96,6 +96,9 @@ export class LiveRenderer {
 		if(previousComponent != null) {
 			container.checkWordBreaks(previousComponent, app.renderingMap);
 		}
+		if(nextComponent != null) {
+			container.checkWordBreaks(nextComponent, app.renderingMap);
+		}
 	}
 	static insertAtIndex(component: MathComponent, container: MathComponentGroup, index: number, app: App) {
 		if(component instanceof LineBreak) {

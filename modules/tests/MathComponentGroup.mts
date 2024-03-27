@@ -212,3 +212,46 @@ describe("MathComponentGroup.isWordBreakAfter", () => {
 		assert.isFalse(group.isWordBreakAfter(group.components[0]));
 	});
 });
+describe("MathComponentGroup.deleteEmptyWords", () => {
+	it("removes any empty words adjacent to the component", () => {
+		let symbol;
+		const app = new App(new MathDocument([
+			symbol = new MathSymbol("A"),
+		]));
+		app.renderAndUpdate();
+		const emptyWord1 = MathComponentGroup.createEmptyWord();
+		const emptyWord2 = MathComponentGroup.createEmptyWord();
+		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", emptyWord1);
+		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", emptyWord2);
+
+		assert.equal([...document.querySelectorAll(".word")].length, 3);
+		app.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+	});
+	it("removes any words containing only cursors and puts the cursors inside the current word", () => {
+		let symbol;
+		const app = new App(new MathDocument([
+			symbol = new MathSymbol("A"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		const cursor1 = new Cursor(app.document.componentsGroup, null);
+		const word1 = MathComponentGroup.createEmptyWord();
+		word1.appendChild(cursor1.render());
+		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", word1);
+
+		const word2 = MathComponentGroup.createEmptyWord();
+		const cursor2 = new Cursor(app.document.componentsGroup, symbol);
+		word2.appendChild(cursor2.render());
+		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", word2);
+
+		app.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		const word = document.querySelector(".word");
+		const [element1, element2, element3] = word!.children;
+		assert.isTrue(element1.classList.contains("cursor"));
+		assert.isTrue(element2.classList.contains("symbol"));
+		assert.isTrue(element3.classList.contains("cursor"));
+	});
+});

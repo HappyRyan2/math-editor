@@ -175,6 +175,17 @@ export class MathComponentGroup {
 		}
 		else { return false; }
 	}
+	deleteEmptyWords(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
+		const word = renderingMap.get(component)!.parentElement!;
+		for(const adjacentWord of [word.previousElementSibling, word.nextElementSibling]) {
+			if(adjacentWord && [...adjacentWord.children].every(c => c.classList.contains("cursor"))) {
+				for(const cursor of adjacentWord.children) {
+					word.insertAdjacentElement((adjacentWord === word.previousElementSibling) ? "afterbegin" : "beforeend", cursor);
+				}
+				adjacentWord.remove();
+			}
+		}
+	}
 	checkWordBreaks(component: MathComponent, renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement>) {
 		if(this.isWordBreakAfter(component)) {
 			MathComponentGroup.addWordBreakAfter(component, renderingMap);
@@ -189,5 +200,6 @@ export class MathComponentGroup {
 		else {
 			this.removeWordBreakBefore(component, renderingMap);
 		}
+		this.deleteEmptyWords(component, renderingMap);
 	}
 }
