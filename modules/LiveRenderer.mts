@@ -104,7 +104,9 @@ export class LiveRenderer {
 		if(component instanceof LineBreak) {
 			throw new Error("Cannot remove line breaks with LiveRenderer.insertAtIndex.");
 		}
-		// TODO: IMPLEMENT THIS!
+		container.components.splice(index, 0, component);
+		LiveRenderer.renderAndInsert(component, app, app.renderingMap);
+		container.checkWordBreaks(component, app.renderingMap);
 	}
 	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;

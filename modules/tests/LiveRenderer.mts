@@ -197,6 +197,80 @@ describe("LiveRenderer.delete", () => {
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 	});
 });
+describe("LiveRenderer.insertAtIndex", () => {
+	it("inserts the component in the MathDocument and in the HTML document, and adds it to the rendering map", () => {
+		let oldSymbol, newSymbol;
+		const app = new App(new MathDocument([
+			oldSymbol = new MathSymbol("A"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		LiveRenderer.insertAtIndex(newSymbol = new MathSymbol("B"), app.document.componentsGroup, 1, app);
+
+		assert.sameOrderedMembers(app.document.componentsGroup.components, [oldSymbol, newSymbol]);
+		assert.equal(app.renderingMap.size, 2);
+		assert.equal([...document.querySelectorAll(".line")].length, 1);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers(
+			[...document.querySelector(".word")!.childNodes],
+			[app.renderingMap.get(oldSymbol), app.renderingMap.get(newSymbol)],
+		);
+	});
+	it("correctly handles words adjacent to the inserted component", () => {
+		let symbol1, symbol2;
+		const app = new App(new MathDocument([
+			symbol1 = new MathSymbol("1"),
+			symbol2 = new MathSymbol("2"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		const space = new MathSymbol(" ");
+		LiveRenderer.insertAtIndex(space, app.document.componentsGroup, 1, app);
+
+		assert.equal([...document.querySelectorAll(".word")].length, 2);
+		const [word1, word2] = document.querySelectorAll(".word");
+		assert.sameOrderedMembers(
+			[...word1.childNodes],
+			[app.renderingMap.get(symbol1), app.renderingMap.get(space)],
+		);
+		assert.sameOrderedMembers(
+			[...word2.childNodes],
+			[app.renderingMap.get(symbol2)],
+		);
+	});
+	it("also adds all of the descendants of the component to the rendering map", () => {
+		const app = new App(new MathDocument([]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		const newSymbol = new MathSymbol("A");
+		const newComponent = new CompositeMathComponentMock([newSymbol]);
+		LiveRenderer.insertAtIndex(newComponent, app.document.componentsGroup, 0, app);
+
+		assert.equal(app.renderingMap.size, 3);
+		assert.containsAllKeys(app.renderingMap, [
+			newComponent,
+			newComponent.componentsGroup,
+			newSymbol,
+		]);
+	});
+	it("works when the previous component is a line break", () => {
+		let lineBreak, newComponent;
+		const app = new App(new MathDocument([
+			lineBreak = new LineBreak(),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		LiveRenderer.insertAtIndex(newComponent = new MathSymbol("A"), app.document.componentsGroup, 1, app);
+
+		assert.equal([...document.querySelectorAll(".line")].length, 2);
+		assert.equal([...document.querySelectorAll(".word")].length, 2);
+		const [line1, line2] = document.querySelectorAll(".line");
+		const word1 = line1.querySelector(".word");
+		assert.sameOrderedMembers([...word1!.childNodes], [app.renderingMap.get(lineBreak)]);
+		const word2 = line2.querySelector(".word");
+		assert.sameOrderedMembers([...word2!.childNodes], [app.renderingMap.get(newComponent)]);
+	});
+});
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {
 	// 	let firstSymbol, lastSymbol;
