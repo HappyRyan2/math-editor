@@ -57,7 +57,10 @@ export class LiveRenderer {
 		}
 	}
 
-	static delete(component: Exclude<MathComponent, LineBreak>, app: App) {
+	static delete(component: MathComponent, app: App) {
+		if(component instanceof LineBreak) {
+			throw new Error("Cannot remove line breaks with LiveRenderer.delete.");
+		}
 		const previousComponent = app.document.getPreviousComponent(component);
 		const nextComponent = app.document.getNextComponent(component);
 
@@ -94,12 +97,18 @@ export class LiveRenderer {
 			container.checkWordBreaks(previousComponent, app.renderingMap);
 		}
 	}
-	static insertAtIndex(component: Exclude<MathComponent, LineBreak>, container: MathComponentGroup, index: number, app: App) {
+	static insertAtIndex(component: MathComponent, container: MathComponentGroup, index: number, app: App) {
+		if(component instanceof LineBreak) {
+			throw new Error("Cannot remove line breaks with LiveRenderer.insertAtIndex.");
+		}
 		// TODO: IMPLEMENT THIS!
 	}
-	static insert(component: Exclude<MathComponent, LineBreak>, position: "before" | "after", target: MathComponent, app: App): void;
-	static insert(component: Exclude<MathComponent, LineBreak>, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
-	static insert(component: Exclude<MathComponent, LineBreak>, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
+	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
+	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
+	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
+		if(component instanceof LineBreak) {
+			throw new Error("Cannot remove line breaks with LiveRenderer.insert.");
+		}
 		const container = (target instanceof MathComponentGroup ? target : app.document.containingGroupOf(target));
 		if(position === "beginning" || position === "end") {
 			LiveRenderer.insertAtIndex(
