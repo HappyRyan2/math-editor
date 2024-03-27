@@ -197,6 +197,101 @@ describe("LiveRenderer.delete", () => {
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 	});
 });
+describe("LiveRenderer.deleteLineBreak", () => {
+	it("removes the line break from the MathDocument", () => {
+		let lineBreak;
+		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		assert.equal(app.document.componentsGroup.components.length, 1);
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal(app.document.componentsGroup.components.length, 0);
+	});
+	it("removes the line break from the HTML document", () => {
+		let lineBreak;
+		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		assert.isNotNull(document.querySelector(".line-break"));
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.isNull(document.querySelector(".line-break"));
+	});
+	it("removes the line break from the rendering map", () => {
+		let lineBreak;
+		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		assert.equal(app.renderingMap.size, 1);
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal(app.renderingMap.size, 0);
+	});
+	it("combines the adjacent lines into one line", () => {
+		let symbol1, lineBreak, symbol2;
+		const app = new App(new MathDocument([
+			symbol1 = new MathSymbol(" "),
+			lineBreak = new LineBreak(),
+			symbol2 = new MathSymbol("A"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal([...document.querySelectorAll(".line")].length, 1);
+		const words = [...document.querySelectorAll(".word")];
+		assert.equal(words.length, 2);
+		assert.sameOrderedMembers([...words[0].children], [app.renderingMap.get(symbol1)]);
+		assert.sameOrderedMembers([...words[1].children], [app.renderingMap.get(symbol2)]);
+	});
+	it("combines the adjacent words into one word if necessary", () => {
+		let symbol1, lineBreak, symbol2;
+		const app = new App(new MathDocument([
+			symbol1 = new MathSymbol("1"),
+			lineBreak = new LineBreak(),
+			symbol2 = new MathSymbol("2"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal([...document.querySelectorAll(".line")].length, 1);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers(
+			[...document.querySelector(".word")!.children],
+			[app.renderingMap.get(symbol1), app.renderingMap.get(symbol2)],
+		);
+	});
+	it("works when there is a cursor after the line break", () => {
+		let lineBreak;
+		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
+		const cursor = new Cursor(app.document.componentsGroup, lineBreak);
+		app.activeTab.cursors = [cursor];
+		app.renderAndUpdate();
+
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal(cursor.predecessor, null);
+		assert.equal([...document.querySelectorAll(".line")].length, 1);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		assert.equal([...document.querySelector(".word")!.children].length, 1);
+		assert.isTrue(document.querySelector(".word")!.firstElementChild!.classList.contains("cursor"));
+	});
+	it("works when there is a cursor before the line break", () => {
+		let lineBreak;
+		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
+		const cursor = new Cursor(app.document.componentsGroup, null);
+		app.activeTab.cursors = [cursor];
+		app.renderAndUpdate();
+
+		LiveRenderer["deleteLineBreak"](lineBreak, app);
+		assert.equal(cursor.predecessor, null);
+		assert.equal([...document.querySelectorAll(".line")].length, 1);
+		assert.equal([...document.querySelectorAll(".word")].length, 1);
+		assert.equal([...document.querySelector(".word")!.children].length, 1);
+		assert.isTrue(document.querySelector(".word")!.firstElementChild!.classList.contains("cursor"));
+	});
+});
 describe("LiveRenderer.insertAtIndex", () => {
 	it("inserts the component in the MathDocument and in the HTML document, and adds it to the rendering map", () => {
 		let oldSymbol, newSymbol;

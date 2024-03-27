@@ -79,9 +79,39 @@ export class LiveRenderer {
 		}
 	}
 
+	static deleteLineBreak(lineBreak: LineBreak, app: App) {
+		const renderedLine = app.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
+		const renderedNextLine = renderedLine.nextElementSibling;
+		const previousComponent = app.document.getPreviousComponent(lineBreak);
+		const nextComponent = app.document.getPreviousComponent(lineBreak);
+		app.renderingMap.get(lineBreak)!.remove();
+		app.renderingMap.delete(lineBreak);
+		LiveRenderer.disconnectCursors(lineBreak, app);
+		app.document.componentsGroup.components = app.document.componentsGroup.components.filter(c => c !== lineBreak);
+		if(renderedNextLine) {
+			for(const element of renderedNextLine.children) {
+				renderedLine.appendChild(element);
+			}
+			renderedNextLine.remove();
+		}
+		if(previousComponent) {
+			app.document.componentsGroup.checkWordBreaks(previousComponent, app.renderingMap);
+		}
+		else if(nextComponent) {
+			app.document.componentsGroup.checkWordBreaks(nextComponent, app.renderingMap);
+		}
+		else {
+			const [word1, word2] = renderedLine.children;
+			for(const element of word1.children) {
+				word2.insertAdjacentElement("afterbegin", element);
+			}
+			word1.remove();
+		}
+	}
+
 	static delete(component: MathComponent, app: App) {
 		if(component instanceof LineBreak) {
-			throw new Error("Cannot remove line breaks with LiveRenderer.delete.");
+			LiveRenderer.deleteLineBreak(component, app);
 		}
 		const previousComponent = app.document.getPreviousComponent(component);
 		const nextComponent = app.document.getNextComponent(component);
