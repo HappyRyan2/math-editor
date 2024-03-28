@@ -175,19 +175,39 @@ export class LiveRenderer {
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
 	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
 		const container = (target instanceof MathComponentGroup ? target : app.document.containingGroupOf(target));
-		if(position === "beginning" || position === "end") {
+		if(target instanceof MathComponentGroup) {
 			LiveRenderer.insertAtIndex(
 				component, container,
 				(position === "beginning") ? 0 : container.components.length,
 				app,
 			);
+			if(position === "beginning") {
+				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === null)) {
+					cursor.predecessor = component;
+				}
+			}
+			else {
+				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
+					cursor.moveBefore(component, container);
+				}
+			}
 		}
 		else {
 			LiveRenderer.insertAtIndex(
 				component, container,
-				container.components.indexOf(component) + (position === "before" ? 0 : 1),
+				container.components.indexOf(target) + (position === "before" ? 0 : 1),
 				app,
 			);
+			if(position === "before") {
+				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
+					cursor.moveBefore(component, container);
+				}
+			}
+			else {
+				for(const cursor of app.cursors.filter(c => c.container === container && c.nextComponent() === component)) {
+					cursor.predecessor = component;
+				}
+			}
 		}
 	}
 

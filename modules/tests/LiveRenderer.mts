@@ -431,6 +431,61 @@ describe("LiveRenderer.insertAtIndex", () => {
 		assert.equal(cursor.predecessor, newComponent);
 	});
 });
+describe("LiveRenderer.insert", () => {
+	it("places the component before any cursors if it is placed at the beginning of a group", () => {
+		const app = new App(new MathDocument([]));
+		const component = new MathSymbol("A");
+		app.renderAndUpdate();
+		LiveRenderer.insert(component, "beginning", app.document.componentsGroup, app);
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("symbol"));
+		assert.isTrue(element2.classList.contains("cursor"));
+		assert.equal(app.cursors[0].predecessor, component);
+	});
+	it("places the component after any cursors if it is placed at the end of a group", () => {
+		const app = new App(new MathDocument([]));
+		const component = new MathSymbol("A");
+		app.renderAndUpdate();
+		LiveRenderer.insert(component, "end", app.document.componentsGroup, app);
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("cursor"));
+		assert.isTrue(element2.classList.contains("symbol"));
+		assert.equal(app.cursors[0].predecessor, null);
+	});
+	it("places the component before any cursors if it is placed after a component", () => {
+		let oldComponent, newComponent;
+		const app = new App(new MathDocument([ oldComponent = new MathSymbol("A")] ));
+		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, oldComponent)];
+		app.renderAndUpdate();
+		LiveRenderer.insert(newComponent = new MathSymbol("B"), "after", oldComponent, app);
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2, element3] = document.querySelector(".word")!.children;
+		assert.equal(element1, app.renderingMap.get(oldComponent));
+		assert.equal(element2, app.renderingMap.get(newComponent));
+		assert.isTrue(element3.classList.contains("cursor"));
+		assert.equal(app.cursors[0].predecessor, newComponent);
+
+	});
+	it("places the component after any cursors if it is placed before a component", () => {
+		let oldComponent, newComponent;
+		const app = new App(new MathDocument([ oldComponent = new MathSymbol("B")] ));
+		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, null)];
+		app.renderAndUpdate();
+		LiveRenderer.insert(newComponent = new MathSymbol("A"), "before", oldComponent, app);
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2, element3] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("cursor"));
+		assert.equal(element2, app.renderingMap.get(newComponent));
+		assert.equal(element3, app.renderingMap.get(oldComponent));
+		assert.equal(app.cursors[0].predecessor, null);
+	});
+});
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {
 	// 	let firstSymbol, lastSymbol;
