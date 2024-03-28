@@ -9,6 +9,7 @@ import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Selection } from "../Selection.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { EditorTab } from "../EditorTab.mjs";
+import { LineBreak } from "../math-components/LineBreak.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -76,5 +77,47 @@ describe("App.renderTabs", () => {
 		assert.equal(tab2.id, "");
 		assert.equal(text2.wholeText, "file2.mathdoc");
 		assert.isTrue(button2.classList.contains("tab-close-button"));
+	});
+});
+describe("App.updateCursors", () => {
+	it("places the cursor at the beginning of the first word when the cursor is at the beginning of its container", () => {
+		const app = new App();
+		app.renderAndUpdate();
+		app.updateCursors();
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const word = document.querySelector(".word")!;
+		assert.equal(word.childElementCount, 1);
+		assert.isTrue(word.children[0].classList.contains("cursor"));
+	});
+	it("places the cursor in the first word of the next line if the cursor is after a line break", () => {
+		const lineBreak = new LineBreak();
+		const app = new App(new MathDocument([ lineBreak ]));
+		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, lineBreak)];
+		app.renderAndUpdate();
+		app.updateCursors();
+
+		assert.equal(document.querySelectorAll(".line").length, 2);
+		const [line1, line2] = document.querySelectorAll(".line");
+		assert.equal(line1.querySelectorAll(".word").length, 1);
+		assert.equal(line1.querySelector(".word")!.children.length, 1);
+		assert.isTrue(line1.querySelector(".word")!.children[0].classList.contains("line-break"));
+
+		assert.equal(line2.querySelectorAll(".word").length, 1);
+		assert.equal(line2.querySelector(".word")!.children.length, 1);
+		assert.isTrue(line2.querySelector(".word")!.children[0].classList.contains("cursor"));
+	});
+	it("places the cursor after the previous component if the previous component is not a line break", () => {
+		const component = new MathSymbol("A");
+		const app = new App(new MathDocument([ component ]));
+		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, component)];
+		app.renderAndUpdate();
+		app.updateCursors();
+
+		assert.equal(document.querySelectorAll(".line").length, 1);
+		assert.equal(document.querySelector(".line")!.querySelectorAll(".word").length, 1);
+		assert.equal(document.querySelector(".line")!.querySelector(".word")!.childElementCount, 2);
+		assert.isTrue(document.querySelector(".line")!.querySelector(".word")!.children[0].classList.contains("symbol"));
+		assert.isTrue(document.querySelector(".line")!.querySelector(".word")!.children[1].classList.contains("cursor"));
 	});
 });

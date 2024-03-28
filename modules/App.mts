@@ -346,13 +346,15 @@ export class App {
 		for(const cursor of this.cursors) {
 			const containerElement = this.renderingMap.get(cursor.container) ?? document.querySelector(".line")!;
 			if(cursor.predecessor == null) {
-				containerElement.insertBefore(cursor.render(), containerElement.firstChild);
+				const firstWord = containerElement.firstElementChild!;
+				firstWord.insertAdjacentElement("afterbegin", cursor.render());
 			}
 			else {
 				const predecessorElement = this.renderingMap.get(cursor.predecessor)!;
 				if(predecessorElement.classList.contains("line-break")) {
-					const nextLine = predecessorElement.parentElement!.nextElementSibling;
-					nextLine?.insertAdjacentElement("afterbegin", cursor.render());
+					const nextLine = predecessorElement.parentElement!.parentElement!.nextElementSibling!;
+					const firstWord = nextLine.firstElementChild!;
+					firstWord.insertAdjacentElement("afterbegin", cursor.render());
 				}
 				else {
 					predecessorElement.insertAdjacentElement("afterend", cursor.render());
