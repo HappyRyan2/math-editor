@@ -108,6 +108,25 @@ export class LiveRenderer {
 			word1.remove();
 		}
 	}
+	static insertLineBreak(lineBreak: LineBreak, index: number, app: App) {
+		app.document.componentsGroup.components.splice(index, 0, lineBreak);
+		LiveRenderer.renderAndInsert(lineBreak, app);
+		const previousLine = app.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
+		const newLine = document.createElement("div");
+		newLine.classList.add("line");
+		previousLine.insertAdjacentElement("afterend", newLine);
+		let currentWordInPreviousLine = null;
+		let currentWordInNewLine = null;
+		for(const component of app.document.componentsGroup.components.slice(index + 1)) {
+			const renderedComponent = app.renderingMap.get(component)!;
+			if(renderedComponent.parentElement !== currentWordInPreviousLine) {
+				currentWordInPreviousLine = renderedComponent.parentElement;
+				newLine.appendChild(currentWordInNewLine = MathComponentGroup.createEmptyWord());
+			}
+			currentWordInNewLine?.appendChild(renderedComponent);
+			if(component instanceof LineBreak) { break; }
+		}
+	}
 
 	static delete(component: MathComponent, app: App) {
 		if(component instanceof LineBreak) {
@@ -138,7 +157,12 @@ export class LiveRenderer {
 	}
 	static insertAtIndex(component: MathComponent, container: MathComponentGroup, index: number, app: App) {
 		if(component instanceof LineBreak) {
-			throw new Error("Cannot remove line breaks with LiveRenderer.insertAtIndex.");
+			if(container === app.document.componentsGroup) {
+				LiveRenderer.insertLineBreak(component, index, app);
+			}
+			else {
+				throw new Error("Line breaks can only be inserted in the document's MathComponentGroup.");
+			}
 		}
 		container.components.splice(index, 0, component);
 		LiveRenderer.renderAndInsert(component, app);
@@ -147,9 +171,6 @@ export class LiveRenderer {
 	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
 	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
-		if(component instanceof LineBreak) {
-			throw new Error("Cannot remove line breaks with LiveRenderer.insert.");
-		}
 		const container = (target instanceof MathComponentGroup ? target : app.document.containingGroupOf(target));
 		if(position === "beginning" || position === "end") {
 			LiveRenderer.insertAtIndex(

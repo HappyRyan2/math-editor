@@ -292,6 +292,58 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		assert.isTrue(document.querySelector(".word")!.firstElementChild!.classList.contains("cursor"));
 	});
 });
+describe("LiveRenderer.insertLineBreak", () => {
+	it("adds the line break to the MathDocument", () => {
+		const app = new App(new MathDocument([]));
+		app.renderAndUpdate();
+		let lineBreak;
+		LiveRenderer.insertLineBreak(lineBreak = new LineBreak(), 0, app);
+		assert.sameOrderedMembers(app.document.componentsGroup.components, [lineBreak]);
+	});
+	it("adds the line break to the rendering map", () => {
+		const app = new App(new MathDocument([]));
+		app.renderAndUpdate();
+		let lineBreak;
+		LiveRenderer.insertLineBreak(lineBreak = new LineBreak(), 0, app);
+		assert.hasAllKeys(app.renderingMap, [lineBreak]);
+	});
+	it("adds the line break to the HTML document and splits the line into two lines", () => {
+		let symbol1, symbol2, lineBreak;
+		const app = new App(new MathDocument([
+			symbol1 = new MathSymbol("1"),
+			symbol2 = new MathSymbol("2"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		LiveRenderer.insertLineBreak(lineBreak = new LineBreak(), 1, app);
+
+		assert.equal([...document.querySelectorAll(".line")].length, 2);
+		const [line1, line2] = document.querySelectorAll(".line");
+		assert.equal([...line1.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [app.renderingMap.get(symbol1), app.renderingMap.get(lineBreak)]);
+		assert.equal([...line2.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [app.renderingMap.get(symbol2)]);
+	});
+	it("adds a new empty line if the previous component is also a LineBreak", () => {
+		let oldLineBreak, newLineBreak, symbol;
+		const app = new App(new MathDocument([
+			oldLineBreak = new LineBreak(),
+			symbol = new MathSymbol("A"),
+		]));
+		app.activeTab.cursors = [];
+		app.renderAndUpdate();
+		LiveRenderer.insertLineBreak(newLineBreak = new LineBreak(), 1, app);
+
+		assert.equal([...document.querySelectorAll(".line")].length, 3);
+		const [line1, line2, line3] = document.querySelectorAll(".line");
+		assert.equal([...line1.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [app.renderingMap.get(oldLineBreak)]);
+		assert.equal([...line2.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [app.renderingMap.get(newLineBreak)]);
+		assert.equal([...line3.querySelectorAll(".word")].length, 1);
+		assert.sameOrderedMembers([...line3.querySelector(".word")!.children], [app.renderingMap.get(symbol)]);
+	});
+});
 describe("LiveRenderer.insertAtIndex", () => {
 	it("inserts the component in the MathDocument and in the HTML document, and adds it to the rendering map", () => {
 		let oldSymbol, newSymbol;
