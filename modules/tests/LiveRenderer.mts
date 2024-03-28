@@ -485,6 +485,32 @@ describe("LiveRenderer.insert", () => {
 		assert.equal(element3, app.renderingMap.get(oldComponent));
 		assert.equal(app.cursors[0].predecessor, null);
 	});
+	it("can insert a component before a cursor", () => {
+		const app = new App(new MathDocument([]));
+		const cursor = app.cursors[0];
+		app.renderAndUpdate();
+
+		const component = new MathSymbol("A");
+		LiveRenderer.insert(component, "before", cursor, app);
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("symbol"));
+		assert.isTrue(element2.classList.contains("cursor"));
+		assert.equal(cursor.predecessor, component);
+	});
+	it("can insert a component after a cursor", () => {
+		const app = new App(new MathDocument([]));
+		const cursor = app.cursors[0];
+		app.renderAndUpdate();
+
+		const component = new MathSymbol("A");
+		LiveRenderer.insert(component, "after", cursor, app);
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("cursor"));
+		assert.isTrue(element2.classList.contains("symbol"));
+		assert.equal(cursor.predecessor, null);
+	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {

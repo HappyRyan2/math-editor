@@ -171,10 +171,13 @@ export class LiveRenderer {
 			cursor.predecessor = component;
 		}
 	}
-	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
+	static insert(component: MathComponent, position: "before" | "after", target: MathComponent | Cursor, app: App): void;
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
-	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup, app: App) {
-		const container = (target instanceof MathComponentGroup ? target : app.document.containingGroupOf(target));
+	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup | Cursor, app: App) {
+		const container = (
+			target instanceof MathComponentGroup ? target :
+				target instanceof MathComponent ? app.document.containingGroupOf(target) : target.container
+		);
 		if(target instanceof MathComponentGroup) {
 			LiveRenderer.insertAtIndex(
 				component, container,
@@ -192,7 +195,7 @@ export class LiveRenderer {
 				}
 			}
 		}
-		else {
+		else if(target instanceof MathComponent) {
 			LiveRenderer.insertAtIndex(
 				component, container,
 				container.components.indexOf(target) + (position === "before" ? 0 : 1),
@@ -209,6 +212,26 @@ export class LiveRenderer {
 				}
 			}
 		}
+		else {
+			if(position === "before") {
+				if(target.predecessor === null) {
+					LiveRenderer.insert(component, "beginning", container, app);
+				}
+				else {
+					LiveRenderer.insert(component, "after", target.predecessor, app);
+				}
+			}
+			else {
+				const nextComponent = target.nextComponent();
+				if(nextComponent === null) {
+					LiveRenderer.insert(component, "end", container, app);
+				}
+				else {
+					LiveRenderer.insert(component, "before", nextComponent, app);
+				}
+			}
+		}
+		app.updateCursors();
 	}
 
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
