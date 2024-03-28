@@ -167,6 +167,9 @@ export class LiveRenderer {
 		container.components.splice(index, 0, component);
 		LiveRenderer.renderAndInsert(component, app);
 		container.checkWordBreaks(component, app.renderingMap);
+		for(const cursor of app.cursors.filter(c => c.nextComponent() === component)) {
+			cursor.predecessor = component;
+		}
 	}
 	static insert(component: MathComponent, position: "before" | "after", target: MathComponent, app: App): void;
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;

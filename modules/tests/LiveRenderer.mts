@@ -417,6 +417,19 @@ describe("LiveRenderer.insertAtIndex", () => {
 		const word2 = line2.querySelector(".word");
 		assert.sameOrderedMembers([...word2!.childNodes], [app.renderingMap.get(newComponent)]);
 	});
+	it("places the component before any cursors at the specified position", () => {
+		const app = new App(new MathDocument([]));
+		const cursor = app.cursors[0];
+		app.renderAndUpdate();
+		const newComponent = new MathSymbol("A");
+		LiveRenderer.insertAtIndex(newComponent, app.document.componentsGroup, 0, app);
+
+		assert.equal(document.querySelectorAll(".word").length, 1);
+		const [element1, element2] = document.querySelector(".word")!.children;
+		assert.isTrue(element1.classList.contains("symbol"));
+		assert.isTrue(element2.classList.contains("cursor"));
+		assert.equal(cursor.predecessor, newComponent);
+	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {
