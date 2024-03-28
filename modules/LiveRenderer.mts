@@ -11,17 +11,6 @@ import { LineBreak } from "./math-components/LineBreak.mjs";
 import { mergeMaps } from "./utils/utils.mjs";
 
 export class LiveRenderer {
-	private static removeEmptyWords() {
-		for(const word of [...document.querySelectorAll(".word")]
-			.filter(word => ([...word.childNodes] as HTMLElement[]).every(child => child.classList.contains("cursor")))
-		) { word.remove(); }
-	}
-	private static removeEmptyLines() {
-		for(const line of [...document.querySelectorAll(".line")]
-			.slice(0, -1)
-			.filter(line => ([...line.childNodes] as HTMLElement[]).every(child => child.classList.contains("cursor")))
-		) { line.remove(); }
-	}
 	private static disconnectCursors(component: MathComponent, app: App) {
 		const previousComponent = app.document.getPreviousComponent(component);
 		const nextComponent = app.document.getNextComponent(component);
@@ -241,17 +230,9 @@ export class LiveRenderer {
 	}
 
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent, app: App) {
-		const selectedComponents = [...cursor.selectedComponents()];
-		cursor.addComponentOrReplaceSelection(component);
-		LiveRenderer.renderAndInsert(component, app);
-
-		for(const selected of selectedComponents) {
+		for(const selected of cursor.selectedComponents()) {
 			LiveRenderer.delete(selected, app);
 		}
-		LiveRenderer.removeEmptyWords();
-		LiveRenderer.removeEmptyLines();
-
-		cursor.predecessor = component;
-		app.updateCursors();
+		LiveRenderer.insert(component, "before", cursor, app);
 	}
 }

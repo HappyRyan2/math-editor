@@ -513,42 +513,42 @@ describe("LiveRenderer.insert", () => {
 	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {
-	// it("replaces the cursor's selection with the given component and updates the rendered document", () => {
-	// 	let firstSymbol, lastSymbol;
-	// 	const app = new App(new MathDocument([
-	// 		firstSymbol = new MathSymbol("A"),
-	// 		new MathSymbol("B"),
-	// 		lastSymbol = new MathSymbol("C"),
-	// 	]));
-	// 	app.renderAndUpdate();
-	// 	const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
-	// 	app.activeTab.cursors = [cursor];
-	// 	LiveRenderer.addComponentOrReplaceSelection(cursor, new MathSymbol("D"), app);
+	it("replaces the cursor's selection with the given component and updates the rendered document", () => {
+		let firstSymbol, lastSymbol;
+		const app = new App(new MathDocument([
+			firstSymbol = new MathSymbol("A"),
+			new MathSymbol("B"),
+			lastSymbol = new MathSymbol("C"),
+		]));
+		app.renderAndUpdate();
+		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		app.activeTab.cursors = [cursor];
+		LiveRenderer.addComponentOrReplaceSelection(cursor, new MathSymbol("D"), app);
 
-	// 	const renderedDocument = document.getElementById("math-document")!;
-	// 	assert.equal(renderedDocument.childElementCount, 1);
-	// 	const [line] = renderedDocument.children;
-	// 	assert.equal(line.childElementCount, 1);
-	// 	const [word] = line.children;
-	// 	assert.equal(word.childElementCount, 2);
-	// 	const [renderedSymbol, renderedCursor] = word.children;
-	// 	assert.isTrue(renderedSymbol.classList.contains("symbol"));
-	// 	assert.isTrue(renderedCursor.classList.contains("cursor"));
-	// });
-	// it("updates the rendering map, removing the deleted components and adding the new component", () => {
-	// 	let firstSymbol, lastSymbol;
-	// 	const app = new App(new MathDocument([
-	// 		firstSymbol = new MathSymbol("A"),
-	// 		new MathSymbol("B"),
-	// 		lastSymbol = new MathSymbol("C"),
-	// 	]));
-	// 	app.renderAndUpdate();
-	// 	const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
-	// 	app.activeTab.cursors = [cursor];
-	// 	const newSymbol = new MathSymbol("D");
-	// 	LiveRenderer.addComponentOrReplaceSelection(cursor, newSymbol, app);
+		const renderedDocument = document.getElementById("math-document")!;
+		assert.equal(renderedDocument.childElementCount, 1);
+		const [line] = renderedDocument.children;
+		assert.equal(line.childElementCount, 1);
+		const [word] = line.children;
+		assert.equal(word.childElementCount, 2);
+		const [renderedSymbol, renderedCursor] = word.children;
+		assert.isTrue(renderedSymbol.classList.contains("symbol"));
+		assert.isTrue(renderedCursor.classList.contains("cursor"));
+	});
+	it("updates the rendering map, removing the deleted components and adding the new component", () => {
+		let firstSymbol, lastSymbol;
+		const app = new App(new MathDocument([
+			firstSymbol = new MathSymbol("A"),
+			new MathSymbol("B"),
+			lastSymbol = new MathSymbol("C"),
+		]));
+		app.renderAndUpdate();
+		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		app.activeTab.cursors = [cursor];
+		const newSymbol = new MathSymbol("D");
+		LiveRenderer.addComponentOrReplaceSelection(cursor, newSymbol, app);
 
-	// 	assert.equal(app.renderingMap.size, 1);
-	// 	assert.isTrue(app.renderingMap.get(newSymbol)?.classList.contains("symbol"));
-	// });
+		assert.equal(app.renderingMap.size, 1);
+		assert.isTrue(app.renderingMap.get(newSymbol)?.classList.contains("symbol"));
+	});
 });
