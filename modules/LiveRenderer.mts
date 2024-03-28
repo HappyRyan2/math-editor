@@ -78,6 +78,60 @@ export class LiveRenderer {
 			}
 		}
 	}
+	private static insertRelativeToComponent(component: MathComponent, position: "before" | "after", target: MathComponent, app: App) {
+		const container = app.document.containingGroupOf(target);
+		LiveRenderer.insertAtIndex(
+			component, container,
+			container.components.indexOf(target) + (position === "before" ? 0 : 1),
+			app,
+		);
+		if(position === "before") {
+			for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
+				cursor.moveBefore(component, container);
+			}
+		}
+		else {
+			for(const cursor of app.cursors.filter(c => c.container === container && c.nextComponent() === component)) {
+				cursor.predecessor = component;
+			}
+		}
+	}
+	private static insertRelativeToGroup(component: MathComponent, position: "beginning" | "end", group: MathComponentGroup, app: App) {
+		LiveRenderer.insertAtIndex(
+			component, group,
+			(position === "beginning") ? 0 : group.components.length,
+			app,
+		);
+		if(position === "beginning") {
+			for(const cursor of app.cursors.filter(c => c.container === group && c.predecessor === null)) {
+				cursor.predecessor = component;
+			}
+		}
+		else {
+			for(const cursor of app.cursors.filter(c => c.container === group && c.predecessor === component)) {
+				cursor.moveBefore(component, group);
+			}
+		}
+	}
+	private static insertRelativeToCursor(component: MathComponent, position: "before" | "after", cursor: Cursor, app: App) {
+		if(position === "before") {
+			if(cursor.predecessor === null) {
+				LiveRenderer.insert(component, "beginning", cursor.container, app);
+			}
+			else {
+				LiveRenderer.insert(component, "after", cursor.predecessor, app);
+			}
+		}
+		else {
+			const nextComponent = cursor.nextComponent();
+			if(nextComponent === null) {
+				LiveRenderer.insert(component, "end", cursor.container, app);
+			}
+			else {
+				LiveRenderer.insert(component, "before", nextComponent, app);
+			}
+		}
+	}
 
 	static deleteLineBreak(lineBreak: LineBreak, app: App) {
 		const renderedLine = app.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
@@ -174,62 +228,14 @@ export class LiveRenderer {
 	static insert(component: MathComponent, position: "before" | "after", target: MathComponent | Cursor, app: App): void;
 	static insert(component: MathComponent, position: "beginning" | "end", target: MathComponentGroup, app: App): void;
 	static insert(component: MathComponent, position: "before" | "after" | "beginning" | "end", target: MathComponent | MathComponentGroup | Cursor, app: App) {
-		const container = (
-			target instanceof MathComponentGroup ? target :
-				target instanceof MathComponent ? app.document.containingGroupOf(target) : target.container
-		);
 		if(target instanceof MathComponentGroup) {
-			LiveRenderer.insertAtIndex(
-				component, container,
-				(position === "beginning") ? 0 : container.components.length,
-				app,
-			);
-			if(position === "beginning") {
-				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === null)) {
-					cursor.predecessor = component;
-				}
-			}
-			else {
-				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
-					cursor.moveBefore(component, container);
-				}
-			}
+			LiveRenderer.insertRelativeToGroup(component, position as "beginning" | "end", target, app);
 		}
 		else if(target instanceof MathComponent) {
-			LiveRenderer.insertAtIndex(
-				component, container,
-				container.components.indexOf(target) + (position === "before" ? 0 : 1),
-				app,
-			);
-			if(position === "before") {
-				for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
-					cursor.moveBefore(component, container);
-				}
-			}
-			else {
-				for(const cursor of app.cursors.filter(c => c.container === container && c.nextComponent() === component)) {
-					cursor.predecessor = component;
-				}
-			}
+			LiveRenderer.insertRelativeToComponent(component, position as "before" | "after", target, app);
 		}
 		else {
-			if(position === "before") {
-				if(target.predecessor === null) {
-					LiveRenderer.insert(component, "beginning", container, app);
-				}
-				else {
-					LiveRenderer.insert(component, "after", target.predecessor, app);
-				}
-			}
-			else {
-				const nextComponent = target.nextComponent();
-				if(nextComponent === null) {
-					LiveRenderer.insert(component, "end", container, app);
-				}
-				else {
-					LiveRenderer.insert(component, "before", nextComponent, app);
-				}
-			}
+			LiveRenderer.insertRelativeToCursor(component, position as "before" | "after", target, app);
 		}
 		app.updateCursors();
 	}
