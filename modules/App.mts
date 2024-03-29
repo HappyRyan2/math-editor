@@ -11,8 +11,8 @@ import { EditorTab } from "./EditorTab.mjs";
 import { LiveRenderer } from "./LiveRenderer.mjs";
 
 export class App {
-	lastMouseDownEvent: MouseEvent | null = null;
-	isMousePressed: boolean = false;
+	static lastMouseDownEvent: MouseEvent | null = null;
+	static isMousePressed: boolean = false;
 
 	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void, preventDefault: () => void) => void })[] = [
 		{
@@ -420,11 +420,11 @@ export class App {
 	}
 
 	handleMouseUp() {
-		this.isMousePressed = false;
+		App.isMousePressed = false;
 	}
 	handleMouseDown(event: MouseEvent) {
-		this.lastMouseDownEvent = event;
-		this.isMousePressed = true;
+		App.lastMouseDownEvent = event;
+		App.isMousePressed = true;
 
 		this.activeTab.cursors = [Cursor.fromClick(this, event)];
 		Cursor.resetCursorBlink();
@@ -432,8 +432,8 @@ export class App {
 		this.renderAndUpdate();
 	}
 	handleMouseMove(event: MouseEvent) {
-		if(this.isMousePressed) {
-			this.activeTab.cursors = [Cursor.fromDrag(this, this.lastMouseDownEvent!, event)];
+		if(App.isMousePressed) {
+			this.activeTab.cursors = [Cursor.fromDrag(this, App.lastMouseDownEvent!, event)];
 			Cursor.resetCursorBlink();
 			this.updateCursors();
 		}
