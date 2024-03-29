@@ -54,11 +54,11 @@ export class MathDocument {
 		closeButton.innerHTML = "×";
 		result.appendChild(closeButton);
 		closeButton.addEventListener("click", (event) => {
-			if(this === app.activeTab.document) {
+			if(this === App.activeTab.document) {
 				app.closeTab();
 			}
 			else {
-				app.editorTabs = app.editorTabs.filter(e => e.document !== this);
+				App.editorTabs = App.editorTabs.filter(e => e.document !== this);
 			}
 			app.renderAndUpdate();
 			event.stopImmediatePropagation();

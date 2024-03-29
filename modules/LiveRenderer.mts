@@ -15,7 +15,7 @@ export class LiveRenderer {
 		const previousComponent = app.document.getPreviousComponent(component);
 		const nextComponent = app.document.getNextComponent(component);
 
-		app.activeTab.cursors = app.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
+		App.activeTab.cursors = App.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
 		for(const cursor of app.cursors) {
 			if(cursor.predecessor === component) {
 				cursor.predecessor = previousComponent;

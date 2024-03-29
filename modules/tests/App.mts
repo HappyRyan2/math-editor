@@ -43,9 +43,9 @@ describe("App.renderWithMapping", () => {
 				symbol = new MathSymbol("A"),
 			])),
 		]);
-		app.activeTab = new EditorTab(doc, []);
-		app.editorTabs = [app.activeTab];
-		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, mock, new Selection(mock, mock))];
+		App.activeTab = new EditorTab(doc, []);
+		App.editorTabs = [App.activeTab];
+		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, mock, new Selection(mock, mock))];
 		const [rendered, map] = app.renderWithMapping();
 
 		const expectedMock = mock.render(app);
@@ -60,11 +60,11 @@ describe("App.renderWithMapping", () => {
 describe("App.renderTabs", () => {
 	it("renders the tabs, with a special ID for the active tab", () => {
 		const app = new App();
-		app.editorTabs = [
+		App.editorTabs = [
 			new EditorTab(new MathDocument([], "C:\\folder\\file1.mathdoc"), []),
 			new EditorTab(new MathDocument([], "C:\\folder\\file2.mathdoc"), []),
 		];
-		app.activeTab = app.editorTabs[0];
+		App.activeTab = App.editorTabs[0];
 
 		const result = app.renderTabs();
 		const tab1 = result.children[0];
@@ -93,7 +93,7 @@ describe("App.updateCursors", () => {
 	it("places the cursor in the first word of the next line if the cursor is after a line break", () => {
 		const lineBreak = new LineBreak();
 		const app = new App(new MathDocument([ lineBreak ]));
-		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, lineBreak)];
+		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, lineBreak)];
 		app.renderAndUpdate();
 		app.updateCursors();
 
@@ -110,7 +110,7 @@ describe("App.updateCursors", () => {
 	it("places the cursor after the previous component if the previous component is not a line break", () => {
 		const component = new MathSymbol("A");
 		const app = new App(new MathDocument([ component ]));
-		app.activeTab.cursors = [new Cursor(app.document.componentsGroup, component)];
+		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, component)];
 		app.renderAndUpdate();
 		app.updateCursors();
 

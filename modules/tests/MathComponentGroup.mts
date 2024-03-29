@@ -233,7 +233,7 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 		const app = new App(new MathDocument([
 			symbol = new MathSymbol("A"),
 		]));
-		app.activeTab.cursors = [];
+		App.activeTab.cursors = [];
 		app.renderAndUpdate();
 
 		const cursor1 = new Cursor(app.document.componentsGroup, null);

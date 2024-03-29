@@ -157,9 +157,9 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				const components = app.activeTab.document.componentsGroup.components;
-				app.activeTab.cursors = [new Cursor(
-					app.activeTab.document.componentsGroup,
+				const components = App.activeTab.document.componentsGroup.components;
+				App.activeTab.cursors = [new Cursor(
+					App.activeTab.document.componentsGroup,
 					components[components.length - 1] ?? null,
 					new Selection(components[0], components[components.length - 1]),
 				)];
@@ -195,11 +195,11 @@ export class App {
 					const [[filePath, fileContents]] = resolved;
 					const doc = MathDocument.parse(fileContents);
 					doc.filePath = filePath;
-					app.editorTabs.push(new EditorTab(
+					App.editorTabs.push(new EditorTab(
 						doc,
 						[new Cursor(doc.componentsGroup, null)],
 					));
-					app.activeTab = app.editorTabs[app.editorTabs.length - 1];
+					App.activeTab = App.editorTabs[App.editorTabs.length - 1];
 					app.renderAndUpdate();
 				});
 				stopPropagation();
@@ -219,8 +219,8 @@ export class App {
 			key: "n",
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
-				this.editorTabs.push(EditorTab.createEmpty());
-				this.activeTab = this.editorTabs[this.editorTabs.length - 1];
+				App.editorTabs.push(EditorTab.createEmpty());
+				App.activeTab = App.editorTabs[App.editorTabs.length - 1];
 				stopPropagation();
 			},
 		},
@@ -228,8 +228,8 @@ export class App {
 			key: "Tab",
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
-				const index = this.editorTabs.indexOf(this.activeTab);
-				this.activeTab = this.editorTabs[index + 1] ?? this.editorTabs[0];
+				const index = App.editorTabs.indexOf(App.activeTab);
+				App.activeTab = App.editorTabs[index + 1] ?? App.editorTabs[0];
 				stopPropagation();
 			},
 		},
@@ -238,8 +238,8 @@ export class App {
 			ctrlKey: true,
 			shiftKey: true,
 			handler: (event, stopPropagation) => {
-				const index = this.editorTabs.indexOf(this.activeTab);
-				this.activeTab = this.editorTabs[index - 1] ?? this.editorTabs[this.editorTabs.length - 1];
+				const index = App.editorTabs.indexOf(App.activeTab);
+				App.activeTab = App.editorTabs[index - 1] ?? App.editorTabs[App.editorTabs.length - 1];
 				stopPropagation();
 			},
 		},
@@ -259,32 +259,39 @@ export class App {
 		{
 			key: "Escape",
 			handler: () => {
-				this.activeTab.cursors = [this.cursors[0]];
+				App.activeTab.cursors = [this.cursors[0]];
 				Cursor.resetCursorBlink();
 			},
 		},
 	];
 	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
-	editorTabs: EditorTab[];
-	activeTab: EditorTab;
+	static editorTabs: EditorTab[];
+	static activeTab: EditorTab;
+
+	get document() {
+		return App.activeTab.document;
+	}
+	get cursors() {
+		return App.activeTab.cursors;
+	}
 
 	constructor(document: MathDocument = new MathDocument([])) {
-		this.editorTabs = [new EditorTab(
+		// TEMPORARY - TODO: Remove this! (All properties of the app will be static, not instance properties)
+		App.editorTabs = [new EditorTab(
 			document,
 			[new Cursor(document.componentsGroup, null)],
 		)];
-		this.activeTab = this.editorTabs[0];
-	}
-
-	get document() {
-		return this.activeTab.document;
-	}
-	get cursors() {
-		return this.activeTab.cursors;
+		App.activeTab = App.editorTabs[0];
 	}
 
 	initialize() {
+		const doc = new MathDocument([]);
+		App.activeTab = new EditorTab(
+			doc,
+			[new Cursor(doc.componentsGroup, null)],
+		);
+
 		this.renderAndUpdate();
 		this.initializeListeners();
 		Cursor.initialize();
@@ -315,14 +322,14 @@ export class App {
 	}
 	renderTabs() {
 		const result = document.createElement("div");
-		for(const tab of this.editorTabs) {
+		for(const tab of App.editorTabs) {
 			const renderedTab = tab.document.renderTab(this);
 			result.appendChild(renderedTab);
 			renderedTab.addEventListener("click", () => {
-				this.activeTab = tab;
+				App.activeTab = tab;
 				this.renderAndUpdate();
 			});
-			if(tab === this.activeTab) {
+			if(tab === App.activeTab) {
 				renderedTab.id = "active-tab";
 			}
 		}
@@ -370,7 +377,7 @@ export class App {
 			didRelativeKeyHandlers = this.checkRelativeKeyHandlers(event);
 			this.handleCharacterKeys(event);
 		}
-		this.activeTab.removeDuplicateCursors();
+		App.activeTab.removeDuplicateCursors();
 		if(didSpecialKeyHandlers || didRelativeKeyHandlers) {
 			app.renderAndUpdate();
 		}
@@ -426,25 +433,25 @@ export class App {
 		App.lastMouseDownEvent = event;
 		App.isMousePressed = true;
 
-		this.activeTab.cursors = [Cursor.fromClick(this, event)];
+		App.activeTab.cursors = [Cursor.fromClick(this, event)];
 		Cursor.resetCursorBlink();
 		Autocomplete.close();
 		this.renderAndUpdate();
 	}
 	handleMouseMove(event: MouseEvent) {
 		if(App.isMousePressed) {
-			this.activeTab.cursors = [Cursor.fromDrag(this, App.lastMouseDownEvent!, event)];
+			App.activeTab.cursors = [Cursor.fromDrag(this, App.lastMouseDownEvent!, event)];
 			Cursor.resetCursorBlink();
 			this.updateCursors();
 		}
 	}
 
 	closeTab() {
-		if(this.editorTabs.length === 1) { return; }
-		const index = this.editorTabs.indexOf(this.activeTab);
+		if(App.editorTabs.length === 1) { return; }
+		const index = App.editorTabs.indexOf(App.activeTab);
 		if(index === -1) { throw new Error("Did not find the active tab in the list of tabs."); }
-		this.editorTabs.splice(index, 1);
-		this.activeTab = this.editorTabs[index] ?? this.editorTabs[index - 1];
+		App.editorTabs.splice(index, 1);
+		App.activeTab = App.editorTabs[index] ?? App.editorTabs[index - 1];
 	}
 }
 
