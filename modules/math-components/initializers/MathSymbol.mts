@@ -1,9 +1,9 @@
-import { app, App } from "../../App.mjs";
+import { App } from "../../App.mjs";
 import { Autocomplete } from "../../Autocomplete.mjs";
 import { MathComponent } from "../../MathComponent.mjs";
 import { MathSymbol } from "../MathSymbol.mjs";
 
-app.keyHandlers.push({
+App.keyHandlers.push({
 	key: "*",
 	shiftKey: true,
 	handler: (event, stopPropagation) => {

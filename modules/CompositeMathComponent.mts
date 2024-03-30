@@ -1,12 +1,11 @@
 import { MathComponent } from "./MathComponent.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponentGroup } from "./MathComponentGroup.mjs";
-import { App } from "./App.mjs";
 
 export abstract class CompositeMathComponent extends MathComponent {
 	/* Represents a MathComponent that can contain the user's cursor (e.g. fractions, exponents, subscripts, etc.) */
 	abstract groups(): MathComponentGroup[];
-	abstract render(app: App, ...renderedGroups: HTMLElement[]): HTMLElement;
+	abstract render(...renderedGroups: HTMLElement[]): HTMLElement;
 	deleteAtStart: "always" | "only-when-empty" = "only-when-empty";
 
 	*descendants(): Generator<MathComponent, void, unknown> {
@@ -25,11 +24,11 @@ export abstract class CompositeMathComponent extends MathComponent {
 			yield* group.components;
 		}
 	}
-	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const groupsAndMappings = this.groups().map(g => g.renderWithMapping(app));
+	renderWithMapping(): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const groupsAndMappings = this.groups().map(g => g.renderWithMapping());
 		const groups = groupsAndMappings.map((tuple) => tuple[0]);
 		const maps = groupsAndMappings.map(tuple => tuple[1]);
-		const result = this.render(app, ...groups);
+		const result = this.render(...groups);
 		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		for(const map of maps) {
 			resultMap = new Map([...resultMap, ...map]);

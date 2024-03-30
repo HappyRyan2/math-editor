@@ -83,13 +83,13 @@ describe("MathComponentGroup.getWordGroups", () => {
 describe("MathComponentGroup.addWordBreakAfter", () => {
 	it("breaks the word into two if there is not already a word break at the specified location", () => {
 		let symbol1;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol("A"),
 				new MathSymbol("B"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
@@ -101,13 +101,13 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 	});
 	it("does nothing if there is already a word break at the specified location", () => {
 		let symbol1;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol(" "),
 				new MathSymbol("A"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 
@@ -119,13 +119,13 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 	});
 	it("does nothing if the specified location is at the end of the group", () => {
 		let symbol2;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				new MathSymbol("A"),
 				symbol2 = new MathSymbol("B"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
@@ -140,13 +140,13 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 describe("MathComponentGroup.removeWordBreakAfter", () => {
 	it("merges the two words if there is a word break at the specified location", () => {
 		let symbol1;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol(" "),
 				new MathSymbol("A"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 
@@ -159,13 +159,13 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 	});
 	it("does nothing if there is no word break at the specified location", () => {
 		let symbol1;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol("A"),
 				new MathSymbol("B"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
@@ -178,13 +178,13 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 	});
 	it("does nothing if the specified location is at the end of the group", () => {
 		let symbol2;
-		const app = new App(new MathDocument(
+		new App(new MathDocument(
 			new MathComponentGroup([
 				new MathSymbol("A"),
 				symbol2 = new MathSymbol("B"),
 			]),
 		));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
@@ -215,10 +215,10 @@ describe("MathComponentGroup.isWordBreakAfter", () => {
 describe("MathComponentGroup.deleteEmptyWords", () => {
 	it("removes any empty words adjacent to the component", () => {
 		let symbol;
-		const app = new App(new MathDocument([
+		new App(new MathDocument([
 			symbol = new MathSymbol("A"),
 		]));
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 		const emptyWord1 = MathComponentGroup.createEmptyWord();
 		const emptyWord2 = MathComponentGroup.createEmptyWord();
 		App.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", emptyWord1);
@@ -230,11 +230,11 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 	});
 	it("removes any words containing only cursors and puts the cursors inside the current word", () => {
 		let symbol;
-		const app = new App(new MathDocument([
+		new App(new MathDocument([
 			symbol = new MathSymbol("A"),
 		]));
 		App.activeTab.cursors = [];
-		app.renderAndUpdate();
+		App.renderAndUpdate();
 
 		const cursor1 = new Cursor(App.document.componentsGroup, null);
 		const word1 = MathComponentGroup.createEmptyWord();

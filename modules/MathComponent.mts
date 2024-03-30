@@ -1,4 +1,3 @@
-import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { CompositeMathComponent } from "./CompositeMathComponent.mjs";
 import { LineBreak } from "./math-components/LineBreak.mjs";
@@ -14,7 +13,7 @@ type MathComponentSubclass = typeof Parenthese | typeof Fraction | typeof MathSy
 
 export abstract class MathComponent {
 	relativeKeyHandlers: RelativeKeyHandler[] = [];
-	abstract render(app: App, ...components: HTMLElement[]): HTMLElement; // `components` array is only used for CompositeMathComponents
+	abstract render(...components: HTMLElement[]): HTMLElement; // `components` array is only used for CompositeMathComponents
 	abstract matches(component: MathComponent): boolean;
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onDeletion(preventDeletion: () => void, doc: MathDocument, cursor: Cursor) {}
@@ -51,8 +50,8 @@ export abstract class MathComponent {
 		return {...this, constructorName: this.constructor.name};
 	}
 
-	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const rendered = this.render(app);
+	renderWithMapping(): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const rendered = this.render();
 		return [rendered, new Map([[this, rendered]])];
 	}
 }

@@ -32,11 +32,11 @@ export class MathComponentGroup {
 		return words;
 	}
 
-	render(app: App) {
-		const [rendered] = this.renderWithMapping(app);
+	render() {
+		const [rendered] = this.renderWithMapping();
 		return rendered;
 	}
-	renderWithMapping(app: App): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+	renderWithMapping(): [HTMLElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		const result = document.createElement("span");
 		resultMap.set(this, result);
@@ -47,7 +47,7 @@ export class MathComponentGroup {
 				(cursor.nextComponent() == null && wordIndex === words.length - 1) ||
 				(cursor.nextComponent() != null && word.includes(cursor.nextComponent() as MathComponent))
 			));
-			const [renderedWord, map] = MathComponentGroup.renderWordWithMapping(word, cursors, app);
+			const [renderedWord, map] = MathComponentGroup.renderWordWithMapping(word, cursors);
 			result.appendChild(renderedWord);
 			resultMap = new Map([...resultMap, ...map]);
 		}
@@ -58,12 +58,12 @@ export class MathComponentGroup {
 		result.classList.add("word");
 		return result;
 	}
-	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[], app: App): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+	static renderWordWithMapping(word: MathComponent[], cursors: Cursor[]): [HTMLSpanElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
 		let resultMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 		const result = MathComponentGroup.createEmptyWord();
 		for(const component of MathComponentGroup.componentsAndCursors(word, cursors)) {
 			if(component instanceof MathComponent) {
-				const [renderedComponent, map] = component.renderWithMapping(app);
+				const [renderedComponent, map] = component.renderWithMapping();
 				result.appendChild(renderedComponent);
 				resultMap = new Map([...resultMap, ...map]);
 

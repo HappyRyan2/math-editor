@@ -363,7 +363,7 @@ export class Cursor {
 		}
 	}
 
-	static elementsClicked(app: App, event: MouseEvent) {
+	static elementsClicked(event: MouseEvent) {
 		const rendered = document.getElementById("math-document")!;
 		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
 		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
@@ -377,11 +377,11 @@ export class Cursor {
 		}
 		return elementsClicked;
 	}
-	static fromClick(app: App, event: MouseEvent) {
+	static fromClick(event: MouseEvent) {
 		const getBoundingClientRect = memoize((elem: Element) => elem.getBoundingClientRect());
 		const inverseMap = invertMap(App.renderingMap);
 		const deepestComponent = maxItem(
-			Cursor.elementsClicked(app, event),
+			Cursor.elementsClicked(event),
 			(element: HTMLElement) => {
 				if(element.classList.contains("line")) { return -1; }
 				return App.document.depth(App.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
@@ -413,11 +413,11 @@ export class Cursor {
 			const bottom = Math.max(...line.map((elem => getBoundingClientRect(elem).bottom)));
 			return Math.max(0, top - event.clientY, event.clientY - bottom);
 		});
-		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX, app);
+		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX);
 	}
-	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
-		const cursor1 = Cursor.fromClick(app, dragEnd);
-		const cursor2 = Cursor.fromClick(app, dragStart);
+	static fromDrag(dragStart: MouseEvent, dragEnd: MouseEvent) {
+		const cursor1 = Cursor.fromClick(dragEnd);
+		const cursor2 = Cursor.fromClick(dragStart);
 		return Cursor.selectBetween(cursor1, cursor2, App.document);
 	}
 	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | CompositeMathComponent, Cursor | CompositeMathComponent] {
@@ -462,7 +462,7 @@ export class Cursor {
 		}
 		return result;
 	}
-	static fromClosest(elements: HTMLElement[], xCoord: number, app: App) {
+	static fromClosest(elements: HTMLElement[], xCoord: number) {
 		const inverseMap = invertMap(App.renderingMap);
 		const [closestElement, whichSide] = minItem(
 			elements
@@ -474,7 +474,7 @@ export class Cursor {
 		const closestComponent = inverseMap.get(closestElement) as MathComponent;
 		return Cursor.createAdjacent(closestComponent, whichSide, App.document.containingGroupOf(closestComponent));
 	}
-	renderedPosition(app: App) {
+	renderedPosition() {
 		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === App.document.componentsGroup)) {
 			return 0;
 		}
@@ -483,7 +483,7 @@ export class Cursor {
 		}
 		return App.renderingMap.get(this.container)!.getBoundingClientRect().left;
 	}
-	moveToClosest(components: MathComponent[], app: App, group?: MathComponentGroup) {
+	moveToClosest(components: MathComponent[], group?: MathComponentGroup) {
 		if(components.length === 0) {
 			if(group) {
 				this.moveToStart(group);
@@ -495,8 +495,7 @@ export class Cursor {
 		}
 		this.moveTo(Cursor.fromClosest(
 			components.map(c => App.renderingMap.get(c)!),
-			this.renderedPosition(app),
-			app,
+			this.renderedPosition(),
 		));
 	}
 

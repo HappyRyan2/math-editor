@@ -1,8 +1,8 @@
-import { App, app } from "../../App.mjs";
+import { App } from "../../App.mjs";
 import { MathComponent } from "../../MathComponent.mjs";
 import { Parenthese } from "../Parenthese.mjs";
 
-app.keyHandlers.push({
+App.keyHandlers.push({
 	key: "(",
 	shiftKey: true,
 	handler: (event, stopPropagation) => {
@@ -12,7 +12,7 @@ app.keyHandlers.push({
 		stopPropagation();
 	},
 });
-app.keyHandlers.push({
+App.keyHandlers.push({
 	key: ")",
 	shiftKey: true,
 	handler: (event, stopPropagation) => {

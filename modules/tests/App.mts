@@ -23,20 +23,20 @@ beforeEach(() => {
 describe("App.renderWithMapping", () => {
 	it("returns a rendered app, along with a Map that maps each component to its rendered HTML element", () => {
 		let mock: CompositeMathComponentMock, symbol: MathSymbol;
-		const app = new App(new MathDocument([
+		new App(new MathDocument([
 			mock = new CompositeMathComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
 		]));
-		const [rendered, map] = app.renderWithMapping();
-		assert.equal(rendered.outerHTML, App.document.render(app).outerHTML);
+		const [rendered, map] = App.renderWithMapping();
+		assert.equal(rendered.outerHTML, App.document.render().outerHTML);
 		assert.equal(map.size, 3);
-		assert.equal(map.get(mock)?.outerHTML, mock.render(app).outerHTML);
+		assert.equal(map.get(mock)?.outerHTML, mock.render().outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
-		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
+		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render().outerHTML);
 	});
 	it("works when there are composite components, cursors, and selections", () => {
-		const app = new App();
+		new App();
 		let mock: CompositeMathComponentMock, symbol: MathSymbol;
 		const doc = new MathDocument([
 			mock = new CompositeMathComponentMock(new MathComponentGroup([
@@ -46,27 +46,26 @@ describe("App.renderWithMapping", () => {
 		App.activeTab = new EditorTab(doc, []);
 		App.editorTabs = [App.activeTab];
 		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, mock, new Selection(mock, mock))];
-		const [rendered, map] = app.renderWithMapping();
+		const [rendered, map] = App.renderWithMapping();
 
-		const expectedMock = mock.render(app);
+		const expectedMock = mock.render();
 		expectedMock.classList.add("selected");
-		assert.equal(rendered.outerHTML, App.document.render(app).outerHTML);
+		assert.equal(rendered.outerHTML, App.document.render().outerHTML);
 		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, expectedMock.outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
-		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render(app).outerHTML);
+		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render().outerHTML);
 	});
 });
 describe("App.renderTabs", () => {
 	it("renders the tabs, with a special ID for the active tab", () => {
-		const app = new App();
 		App.editorTabs = [
 			new EditorTab(new MathDocument([], "C:\\folder\\file1.mathdoc"), []),
 			new EditorTab(new MathDocument([], "C:\\folder\\file2.mathdoc"), []),
 		];
 		App.activeTab = App.editorTabs[0];
 
-		const result = app.renderTabs();
+		const result = App.renderTabs();
 		const tab1 = result.children[0];
 		const tab2 = result.children[1];
 		const [text1, button1] = [...tab1.childNodes] as [Text, HTMLDivElement];
@@ -81,9 +80,9 @@ describe("App.renderTabs", () => {
 });
 describe("App.updateCursors", () => {
 	it("places the cursor at the beginning of the first word when the cursor is at the beginning of its container", () => {
-		const app = new App();
-		app.renderAndUpdate();
-		app.updateCursors();
+		new App();
+		App.renderAndUpdate();
+		App.updateCursors();
 
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const word = document.querySelector(".word")!;
@@ -92,10 +91,10 @@ describe("App.updateCursors", () => {
 	});
 	it("places the cursor in the first word of the next line if the cursor is after a line break", () => {
 		const lineBreak = new LineBreak();
-		const app = new App(new MathDocument([ lineBreak ]));
+		new App(new MathDocument([ lineBreak ]));
 		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, lineBreak)];
-		app.renderAndUpdate();
-		app.updateCursors();
+		App.renderAndUpdate();
+		App.updateCursors();
 
 		assert.equal(document.querySelectorAll(".line").length, 2);
 		const [line1, line2] = document.querySelectorAll(".line");
@@ -109,10 +108,10 @@ describe("App.updateCursors", () => {
 	});
 	it("places the cursor after the previous component if the previous component is not a line break", () => {
 		const component = new MathSymbol("A");
-		const app = new App(new MathDocument([ component ]));
+		new App(new MathDocument([ component ]));
 		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, component)];
-		app.renderAndUpdate();
-		app.updateCursors();
+		App.renderAndUpdate();
+		App.updateCursors();
 
 		assert.equal(document.querySelectorAll(".line").length, 1);
 		assert.equal(document.querySelector(".line")!.querySelectorAll(".word").length, 1);

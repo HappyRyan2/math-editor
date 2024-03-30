@@ -14,7 +14,7 @@ export class App {
 	static lastMouseDownEvent: MouseEvent | null = null;
 	static isMousePressed: boolean = false;
 
-	keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void, preventDefault: () => void) => void })[] = [
+	static keyHandlers: ({ key: string, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, handler: (event: KeyboardEvent, stopPropagation: () => void, preventDefault: () => void) => void })[] = [
 		{
 			key: "Enter",
 			handler: (event, stopPropagation) => {
@@ -175,7 +175,7 @@ export class App {
 				if(filePath == null) {
 					electronAPI.sendSaveWithDialog(string, [{ name: "Math Document", extensions: ["mathdoc"] }]).then((savedFilePath) => {
 						App.document.filePath = savedFilePath;
-						app.renderAndUpdate();
+						App.renderAndUpdate();
 					});
 				}
 				else {
@@ -200,7 +200,7 @@ export class App {
 						[new Cursor(doc.componentsGroup, null)],
 					));
 					App.activeTab = App.editorTabs[App.editorTabs.length - 1];
-					app.renderAndUpdate();
+					App.renderAndUpdate();
 				});
 				stopPropagation();
 			},
@@ -209,8 +209,8 @@ export class App {
 			key: "w",
 			ctrlKey: true,
 			handler: (event, stopPropagation, preventDefault) => {
-				this.closeTab();
-				app.renderAndUpdate();
+				App.closeTab();
+				App.renderAndUpdate();
 				stopPropagation();
 				preventDefault();
 			},
@@ -285,7 +285,7 @@ export class App {
 		App.activeTab = App.editorTabs[0];
 	}
 
-	initialize() {
+	static initialize() {
 		const doc = new MathDocument([]);
 		App.activeTab = new EditorTab(
 			doc,
@@ -297,16 +297,16 @@ export class App {
 		Cursor.initialize();
 	}
 
-	initializeListeners() {
+	static initializeListeners() {
 		document.addEventListener("keydown", (event) => this.handleKeyDown(event));
 		document.addEventListener("mouseup", () => this.handleMouseUp());
 		document.addEventListener("mousemove", (event) => this.handleMouseMove(event));
 		this.initializeMathDocumentListeners(document.getElementById("math-document")!);
 	}
-	initializeMathDocumentListeners(element: HTMLElement) {
+	static initializeMathDocumentListeners(element: HTMLElement) {
 		element.addEventListener("mousedown", (event) => this.handleMouseDown(event));
 	}
-	renderAndUpdate() {
+	static renderAndUpdate() {
 		const [div, map] = this.renderWithMapping();
 		const oldDiv = document.getElementById("math-document")!;
 		oldDiv.replaceWith(div);
@@ -316,14 +316,14 @@ export class App {
 		this.initializeMathDocumentListeners(div);
 		return [div, map];
 	}
-	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const [renderedDoc, map] = App.document.renderWithMapping(this);
+	static renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const [renderedDoc, map] = App.document.renderWithMapping();
 		return [renderedDoc, map];
 	}
-	renderTabs() {
+	static renderTabs() {
 		const result = document.createElement("div");
 		for(const tab of App.editorTabs) {
-			const renderedTab = tab.document.renderTab(this);
+			const renderedTab = tab.document.renderTab();
 			result.appendChild(renderedTab);
 			renderedTab.addEventListener("click", () => {
 				App.activeTab = tab;
@@ -336,7 +336,7 @@ export class App {
 		result.id = "tabs-container";
 		return result;
 	}
-	updateCursors() {
+	static updateCursors() {
 		for(const [component, element] of App.renderingMap) {
 			if(component instanceof MathComponent) {
 				if(component.isSelected(App.cursors)) {
@@ -370,7 +370,7 @@ export class App {
 		}
 	}
 
-	handleKeyDown(event: KeyboardEvent) {
+	static handleKeyDown(event: KeyboardEvent) {
 		const didSpecialKeyHandlers = this.handleSpecialKeys(event);
 		let didRelativeKeyHandlers = false;
 		if(!didSpecialKeyHandlers) {
@@ -379,14 +379,14 @@ export class App {
 		}
 		App.activeTab.removeDuplicateCursors();
 		if(didSpecialKeyHandlers || didRelativeKeyHandlers) {
-			app.renderAndUpdate();
+			App.renderAndUpdate();
 		}
 	}
-	handleCharacterKeys(event: KeyboardEvent) {
+	static handleCharacterKeys(event: KeyboardEvent) {
 		for(const cursor of App.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 				const symbol = new MathSymbol(event.key);
-				LiveRenderer.addComponentOrReplaceSelection(cursor, symbol, this);
+				LiveRenderer.addComponentOrReplaceSelection(cursor, symbol);
 			}
 		}
 		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
@@ -395,7 +395,7 @@ export class App {
 			Autocomplete.open(lastCursor);
 		}
 	}
-	handleSpecialKeys(event: KeyboardEvent) {
+	static handleSpecialKeys(event: KeyboardEvent) {
 		let handled = false;
 		const stopPropagation = () => (handled = true);
 		for(const { key, ctrlKey, altKey, shiftKey, handler } of this.keyHandlers) {
@@ -413,40 +413,40 @@ export class App {
 		}
 		return false;
 	}
-	checkRelativeKeyHandlers(event: KeyboardEvent): boolean {
+	static checkRelativeKeyHandlers(event: KeyboardEvent): boolean {
 		let handled = false;
 		for(const cursor of App.cursors) {
 			const handlers = RelativeKeyHandler.getHandlers(cursor, App.document, event.key);
 			if(handlers.length !== 0) {
 				const [handler, component] = handlers[0];
 				handled = true;
-				handler.callback(cursor, component, this);
+				handler.callback(cursor, component);
 			}
 		}
 		return handled;
 	}
 
-	handleMouseUp() {
+	static handleMouseUp() {
 		App.isMousePressed = false;
 	}
-	handleMouseDown(event: MouseEvent) {
+	static handleMouseDown(event: MouseEvent) {
 		App.lastMouseDownEvent = event;
 		App.isMousePressed = true;
 
-		App.activeTab.cursors = [Cursor.fromClick(this, event)];
+		App.activeTab.cursors = [Cursor.fromClick(event)];
 		Cursor.resetCursorBlink();
 		Autocomplete.close();
 		this.renderAndUpdate();
 	}
-	handleMouseMove(event: MouseEvent) {
+	static handleMouseMove(event: MouseEvent) {
 		if(App.isMousePressed) {
-			App.activeTab.cursors = [Cursor.fromDrag(this, App.lastMouseDownEvent!, event)];
+			App.activeTab.cursors = [Cursor.fromDrag(App.lastMouseDownEvent!, event)];
 			Cursor.resetCursorBlink();
 			this.updateCursors();
 		}
 	}
 
-	closeTab() {
+	static closeTab() {
 		if(App.editorTabs.length === 1) { return; }
 		const index = App.editorTabs.indexOf(App.activeTab);
 		if(index === -1) { throw new Error("Did not find the active tab in the list of tabs."); }
