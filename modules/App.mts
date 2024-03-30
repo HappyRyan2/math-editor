@@ -294,6 +294,7 @@ export class App {
 			doc,
 			[new Cursor(doc.componentsGroup, null)],
 		);
+		App.editorTabs = [App.activeTab];
 
 		this.renderAndUpdate();
 		this.initializeListeners();
