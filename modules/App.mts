@@ -276,13 +276,16 @@ export class App {
 		return App.activeTab.cursors;
 	}
 
-	constructor(document: MathDocument = new MathDocument([])) {
-		// TEMPORARY - TODO: Remove this! (All properties of the app will be static, not instance properties)
+	static loadDocument(doc: MathDocument) {
+		// used to load documents for unit testing
 		App.editorTabs = [new EditorTab(
-			document,
-			[new Cursor(document.componentsGroup, null)],
+			doc,
+			[new Cursor(doc.componentsGroup, null)],
 		)];
 		App.activeTab = App.editorTabs[0];
+	}
+	static loadEmptyDocument() {
+		App.loadDocument(new MathDocument([]));
 	}
 
 	static initialize() {
@@ -454,6 +457,3 @@ export class App {
 		App.activeTab = App.editorTabs[index] ?? App.editorTabs[index - 1];
 	}
 }
-
-const app = new App();
-export { app };

@@ -23,7 +23,7 @@ beforeEach(() => {
 describe("App.renderWithMapping", () => {
 	it("returns a rendered app, along with a Map that maps each component to its rendered HTML element", () => {
 		let mock: CompositeMathComponentMock, symbol: MathSymbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			mock = new CompositeMathComponentMock(new MathComponentGroup([
 				symbol = new MathSymbol("A"),
 			])),
@@ -36,7 +36,7 @@ describe("App.renderWithMapping", () => {
 		assert.equal(map.get(mock.componentsGroup)?.outerHTML, mock.componentsGroup.render().outerHTML);
 	});
 	it("works when there are composite components, cursors, and selections", () => {
-		new App();
+		App.loadEmptyDocument();
 		let mock: CompositeMathComponentMock, symbol: MathSymbol;
 		const doc = new MathDocument([
 			mock = new CompositeMathComponentMock(new MathComponentGroup([
@@ -80,7 +80,7 @@ describe("App.renderTabs", () => {
 });
 describe("App.updateCursors", () => {
 	it("places the cursor at the beginning of the first word when the cursor is at the beginning of its container", () => {
-		new App();
+		App.loadEmptyDocument();
 		App.renderAndUpdate();
 		App.updateCursors();
 
@@ -91,7 +91,7 @@ describe("App.updateCursors", () => {
 	});
 	it("places the cursor in the first word of the next line if the cursor is after a line break", () => {
 		const lineBreak = new LineBreak();
-		new App(new MathDocument([ lineBreak ]));
+		App.loadDocument(new MathDocument([ lineBreak ]));
 		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, lineBreak)];
 		App.renderAndUpdate();
 		App.updateCursors();
@@ -108,7 +108,7 @@ describe("App.updateCursors", () => {
 	});
 	it("places the cursor after the previous component if the previous component is not a line break", () => {
 		const component = new MathSymbol("A");
-		new App(new MathDocument([ component ]));
+		App.loadDocument(new MathDocument([ component ]));
 		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, component)];
 		App.renderAndUpdate();
 		App.updateCursors();

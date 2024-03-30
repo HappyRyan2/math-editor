@@ -83,7 +83,7 @@ describe("MathComponentGroup.getWordGroups", () => {
 describe("MathComponentGroup.addWordBreakAfter", () => {
 	it("breaks the word into two if there is not already a word break at the specified location", () => {
 		let symbol1;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol("A"),
 				new MathSymbol("B"),
@@ -101,7 +101,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 	});
 	it("does nothing if there is already a word break at the specified location", () => {
 		let symbol1;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol(" "),
 				new MathSymbol("A"),
@@ -119,7 +119,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 	});
 	it("does nothing if the specified location is at the end of the group", () => {
 		let symbol2;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				new MathSymbol("A"),
 				symbol2 = new MathSymbol("B"),
@@ -140,7 +140,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 describe("MathComponentGroup.removeWordBreakAfter", () => {
 	it("merges the two words if there is a word break at the specified location", () => {
 		let symbol1;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol(" "),
 				new MathSymbol("A"),
@@ -159,7 +159,7 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 	});
 	it("does nothing if there is no word break at the specified location", () => {
 		let symbol1;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				symbol1 = new MathSymbol("A"),
 				new MathSymbol("B"),
@@ -178,7 +178,7 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 	});
 	it("does nothing if the specified location is at the end of the group", () => {
 		let symbol2;
-		new App(new MathDocument(
+		App.loadDocument(new MathDocument(
 			new MathComponentGroup([
 				new MathSymbol("A"),
 				symbol2 = new MathSymbol("B"),
@@ -215,7 +215,7 @@ describe("MathComponentGroup.isWordBreakAfter", () => {
 describe("MathComponentGroup.deleteEmptyWords", () => {
 	it("removes any empty words adjacent to the component", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			symbol = new MathSymbol("A"),
 		]));
 		App.renderAndUpdate();
@@ -230,7 +230,7 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 	});
 	it("removes any words containing only cursors and puts the cursors inside the current word", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			symbol = new MathSymbol("A"),
 		]));
 		App.activeTab.cursors = [];

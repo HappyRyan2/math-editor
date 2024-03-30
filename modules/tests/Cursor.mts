@@ -568,7 +568,7 @@ describe("Cursor.fromClick", () => {
 
 	it("returns a cursor next to the component you clicked on", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			symbol = new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			new MathSymbolMock("C", new DOMRect(20, 0, 10, 10)),
@@ -582,7 +582,7 @@ describe("Cursor.fromClick", () => {
 	});
 	it("returns a cursor at the end of the line, but before the line break, when you click to the right of the last component", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new LineBreak(),
 			symbol = new MathSymbolMock("B", new DOMRect(0, 10, 10, 10)),
@@ -601,7 +601,7 @@ describe("Cursor.fromClick", () => {
 	});
 	it("returns a cursor inside the composite math component when you click on one", () => {
 		let symbol, mock;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			mock = new CompositeMathComponentMock([
 				symbol = new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 				new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
@@ -617,7 +617,7 @@ describe("Cursor.fromClick", () => {
 	});
 	it("returns a cursor on the first line when you click above the first line", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			symbol = new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new MathSymbolMock("B", new DOMRect(10, 0, 10, 10)),
 			new LineBreak(),
@@ -634,7 +634,7 @@ describe("Cursor.fromClick", () => {
 	});
 	it("returns a cursor on the last line when you click below the last line", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new LineBreak(),
 			symbol = new MathSymbolMock("B", new DOMRect(0, 10, 10, 10)),
@@ -650,7 +650,7 @@ describe("Cursor.fromClick", () => {
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("works when you click on an empty line", () => {
-		new App(new MathDocument([]));
+		App.loadEmptyDocument();
 		App.renderAndUpdate();
 
 		const cursor = Cursor.fromClick(new MouseEvent("click", { clientX: 10, clientY: 5 }));
@@ -659,7 +659,7 @@ describe("Cursor.fromClick", () => {
 	});
 	it("works when you click on a line that is broken by word wrapping", () => {
 		let symbol;
-		new App(new MathDocument([
+		App.loadDocument(new MathDocument([
 			new MathSymbolMock("A", new DOMRect(0, 0, 10, 10)),
 			new MathSymbolMock(" ", new DOMRect(10, 0, 10, 10)),
 
