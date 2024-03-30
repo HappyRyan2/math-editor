@@ -42,6 +42,11 @@ test("the user can insert various math components, including using autocomplete"
 		await page.keyboard.press("Shift+ArrowLeft");
 		await page.keyboard.type("xyz");
 		await expect(page).toHaveScreenshot("typing-with-selection.png");
+
+		await page.keyboard.press("Enter");
+		await page.keyboard.press("Shift+(");
+		await page.keyboard.press("Shift+)");
+		await expect(page).toHaveScreenshot("parenthese-pairs.png");
 	}
 	finally {
 		electronApp.close();

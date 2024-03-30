@@ -4,6 +4,7 @@ import { LineBreak } from "./LineBreak.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathComponent } from "../MathComponent.mjs";
+import { LiveRenderer } from "../LiveRenderer.mjs";
 
 const PARENTHESE_TYPES = ["round", "square", "curly", "angle"] as const;
 type ParentheseType = typeof PARENTHESE_TYPES[number];
@@ -94,6 +95,7 @@ export class Parenthese extends CompositeMathComponent {
 			cursor.addComponent(parenthese);
 			cursor.moveToStart(parenthese.components);
 		}
+		LiveRenderer.rerender(parenthese);
 	}
 
 	static parse(input: object) {

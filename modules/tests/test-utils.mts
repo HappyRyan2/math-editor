@@ -50,6 +50,10 @@ export const assertValidRenderedDocument = function() {
 			App.renderingMap.has(componentOrGroup),
 			`The ${componentOrGroup.constructor.name} was missing from the rendering map.`,
 		);
+		assert.isTrue(
+			[...document.querySelectorAll("*")].includes(App.renderingMap.get(componentOrGroup)!),
+			`The ${componentOrGroup.constructor.name} was in the rendering map, but did not appear in the rendered HTML document.`,
+		);
 	}
 	assert.equal(
 		componentsAndGroups.length, App.renderingMap.size,

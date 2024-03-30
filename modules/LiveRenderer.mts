@@ -232,6 +232,13 @@ export class LiveRenderer {
 		App.updateCursors();
 	}
 
+	static rerender(component: MathComponent) {
+		const [rendered, map] = component.renderWithMapping();
+		const previousRendering = App.renderingMap.get(component)!;
+		mergeMaps(App.renderingMap, map);
+		previousRendering!.replaceWith(rendered);
+	}
+
 	static addComponentOrReplaceSelection(cursor: Cursor, component: MathComponent) {
 		for(const selected of cursor.selectedComponents()) {
 			LiveRenderer.delete(selected);

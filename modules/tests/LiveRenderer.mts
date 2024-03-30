@@ -8,7 +8,9 @@ import { LiveRenderer } from "../LiveRenderer.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { Selection } from "../Selection.mjs";
-import { CompositeMathComponentMock } from "./test-utils.mjs";
+import { CompositeMathComponentMock, assertValidRenderedDocument } from "./test-utils.mjs";
+import { Parenthese } from "../math-components/Parenthese.mjs";
+import { MathComponentGroup } from "../MathComponentGroup.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -565,5 +567,24 @@ describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 
 		assert.equal(App.renderingMap.size, 1);
 		assert.isTrue(App.renderingMap.get(newSymbol)?.classList.contains("symbol"));
+	});
+});
+describe("LiveRenderer.rerender", () => {
+	it("rerenders the component and updates the rendering map, including the component's descendants", () => {
+		let parenthese1, parenthese2;
+		App.loadDocument(new MathDocument([
+			parenthese1 = new Parenthese(new MathComponentGroup([
+				parenthese2 = new Parenthese(new MathComponentGroup([]), "round", false),
+			]), "round", false),
+		]));
+		App.activeTab.cursors = [];
+		App.renderAndUpdate();
+		parenthese1.isGrayedOut = true;
+		parenthese2.isGrayedOut = true;
+		LiveRenderer.rerender(parenthese1);
+
+		assert.isTrue(App.renderingMap.get(parenthese1)!.classList.contains("parenthese-grayed-out"));
+		assert.isTrue(App.renderingMap.get(parenthese2)!.classList.contains("parenthese-grayed-out"));
+		assertValidRenderedDocument();
 	});
 });
