@@ -476,6 +476,18 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.predecessor, null);
 		assertValidRenderedDocument();
 	});
+	it("does not remove the cursor from App.cursors", () => {
+		let doc, fraction, cursor;
+		App.loadDocument(doc = new MathDocument([
+			fraction = new Fraction(new MathComponentGroup([]), new MathComponentGroup([])),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(fraction.denominator, null)];
+		App.renderAndUpdate();
+
+		cursor.deletePrevious(doc);
+		assert.sameOrderedMembers(App.cursors, [cursor]);
+		assertValidRenderedDocument();
+	});
 	it("deletes the container and concatenates the groups if the container has deleteOnStart=always", () => {
 		let doc, symbolA, symbolB, parenthese, cursor;
 		App.loadDocument(doc = new MathDocument([

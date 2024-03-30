@@ -317,11 +317,12 @@ export class Cursor {
 			LiveRenderer.delete(component);
 			LiveRenderer.insert(component, "before", containingComponent);
 		}
-		LiveRenderer.delete(containingComponent);
-
 		if(componentsBefore.length !== 0) { this.moveAfter(lastItem(componentsBefore), containingGroup); }
 		else if(previousComponent) { this.moveAfter(previousComponent, containingGroup); }
 		else { this.moveToStart(containingGroup); }
+
+		LiveRenderer.delete(containingComponent);
+		App.updateCursors();
 	}
 	deletePrevious(doc: MathDocument, forceDeletion: boolean = false) {
 		if(this.selection != null) {
