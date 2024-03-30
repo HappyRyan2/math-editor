@@ -1,2 +1,2 @@
-import { app } from "./App.mjs";
-app.initialize();
+import { App } from "./App.mjs";
+App.initialize();

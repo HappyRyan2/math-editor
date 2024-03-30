@@ -12,17 +12,17 @@ export class MathDocument {
 		this.filePath = filePath;
 	}
 
-	render(app: App, renderedComponents = this.componentsGroup.render(app)) {
+	render(renderedComponents = this.componentsGroup.render()) {
 		const div = document.createElement("div");
 		div.id = "math-document";
 		div.append(...renderedComponents.children);
 		this.insertLineBreaks(div);
 		return div;
 	}
-	renderWithMapping(app: App): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const [renderedComponents, map] = this.componentsGroup.renderWithMapping(app);
+	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
+		const [renderedComponents, map] = this.componentsGroup.renderWithMapping();
 		map.delete(this.componentsGroup);
-		return [this.render(app, renderedComponents), map];
+		return [this.render(renderedComponents), map];
 	}
 	insertLineBreaks(renderedDocument: Element) {
 		const lines: HTMLElement[][] = [[]];
@@ -41,7 +41,7 @@ export class MathDocument {
 			renderedDocument.appendChild(lineElement);
 		}
 	}
-	renderTab(app: App) {
+	renderTab() {
 		const result = document.createElement("div");
 		result.classList.add("tab");
 		if(this.filePath) {
@@ -54,13 +54,13 @@ export class MathDocument {
 		closeButton.innerHTML = "×";
 		result.appendChild(closeButton);
 		closeButton.addEventListener("click", (event) => {
-			if(this === app.activeTab.document) {
-				app.closeTab();
+			if(this === App.activeTab.document) {
+				App.closeTab();
 			}
 			else {
-				app.editorTabs = app.editorTabs.filter(e => e.document !== this);
+				App.editorTabs = App.editorTabs.filter(e => e.document !== this);
 			}
-			app.renderAndUpdate();
+			App.renderAndUpdate();
 			event.stopImmediatePropagation();
 		});
 		return result;

@@ -1,4 +1,3 @@
-import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { LineBreak } from "./LineBreak.mjs";
@@ -19,22 +18,22 @@ export class Fraction extends CompositeMathComponent {
 		this.relativeKeyHandlers.push(new RelativeKeyHandler(
 			"ArrowDown",
 			["before", "after", ["inside", 0]],
-			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.denominator.components, app, this.denominator);
+			(cursor: Cursor) => {
+				cursor.moveToClosest(this.denominator.components, this.denominator);
 				Cursor.resetCursorBlink();
 			}),
 		);
 		this.relativeKeyHandlers.push(new RelativeKeyHandler(
 			"ArrowUp",
 			["before", "after", ["inside", 1]],
-			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.numerator.components, app, this.numerator);
+			(cursor: Cursor) => {
+				cursor.moveToClosest(this.numerator.components, this.numerator);
 				Cursor.resetCursorBlink();
 			}),
 		);
 	}
 
-	render(app: App, numerator: HTMLElement = this.numerator.render(app), denominator: HTMLElement = this.denominator.render(app)): HTMLElement {
+	render(numerator: HTMLElement = this.numerator.render(), denominator: HTMLElement = this.denominator.render()): HTMLElement {
 		const fraction = document.createElement("span");
 		fraction.classList.add("fraction");
 

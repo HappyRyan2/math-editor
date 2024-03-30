@@ -1,4 +1,3 @@
-import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
@@ -22,7 +21,7 @@ export class CompositeMathComponentMock extends CompositeMathComponent {
 		super.enterFromRight(cursor);
 		this.enteredFromRight = true;
 	}
-	render(app: App, renderedGroup: HTMLElement = this.componentsGroup.render(app)): HTMLElement {
+	render(renderedGroup: HTMLElement = this.componentsGroup.render()): HTMLElement {
 		const result = document.createElement("span");
 		result.classList.add("composite-math-component-mock");
 		result.appendChild(renderedGroup);

@@ -1,4 +1,3 @@
-import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { LineBreak } from "./LineBreak.mjs";
@@ -33,7 +32,7 @@ export class Parenthese extends CompositeMathComponent {
 	groups() {
 		return [this.components];
 	}
-	render(app: App, components: HTMLElement) {
+	render(components: HTMLElement) {
 		const result = document.createElement("span");
 		result.classList.add("parenthese");
 		result.classList.add(`parenthese-${this.type}`);

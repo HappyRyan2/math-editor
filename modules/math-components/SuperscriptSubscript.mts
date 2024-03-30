@@ -1,4 +1,3 @@
-import { App } from "../App.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
@@ -17,16 +16,16 @@ export class SuperscriptSubscript extends CompositeMathComponent {
 		this.relativeKeyHandlers.push(new RelativeKeyHandler(
 			"ArrowDown",
 			["before", "after", ["inside", 0]],
-			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.subscript.components, app, this.subscript);
+			(cursor: Cursor) => {
+				cursor.moveToClosest(this.subscript.components, this.subscript);
 				Cursor.resetCursorBlink();
 			}),
 		);
 		this.relativeKeyHandlers.push(new RelativeKeyHandler(
 			"ArrowUp",
 			["before", "after", ["inside", 1]],
-			(cursor: Cursor, self: MathComponent, app: App) => {
-				cursor.moveToClosest(this.superscript.components, app, this.superscript);
+			(cursor: Cursor) => {
+				cursor.moveToClosest(this.superscript.components, this.superscript);
 				Cursor.resetCursorBlink();
 			}),
 		);
@@ -35,7 +34,7 @@ export class SuperscriptSubscript extends CompositeMathComponent {
 	groups() {
 		return [this.superscript, this.subscript];
 	}
-	render(app: App, superscript: HTMLElement, subscript: HTMLElement) {
+	render(superscript: HTMLElement, subscript: HTMLElement) {
 		const result = document.createElement("span");
 		result.classList.add("superscript-subscript");
 

@@ -363,7 +363,7 @@ export class Cursor {
 		}
 	}
 
-	static elementsClicked(app: App, event: MouseEvent) {
+	static elementsClicked(event: MouseEvent) {
 		const rendered = document.getElementById("math-document")!;
 		const groupElements = rendered.querySelectorAll(".line, .math-component-group");
 		const elementsClicked = [...groupElements].filter(e => rectContains(e.getBoundingClientRect(), event.clientX, event.clientY)) as HTMLElement[];
@@ -377,14 +377,14 @@ export class Cursor {
 		}
 		return elementsClicked;
 	}
-	static fromClick(app: App, event: MouseEvent) {
+	static fromClick(event: MouseEvent) {
 		const getBoundingClientRect = memoize((elem: Element) => elem.getBoundingClientRect());
-		const inverseMap = invertMap(app.renderingMap);
+		const inverseMap = invertMap(App.renderingMap);
 		const deepestComponent = maxItem(
-			Cursor.elementsClicked(app, event),
+			Cursor.elementsClicked(event),
 			(element: HTMLElement) => {
 				if(element.classList.contains("line")) { return -1; }
-				return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
+				return App.document.depth(App.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
 			},
 		);
 		if(deepestComponent.querySelector(":not(.cursor, .word)") == null) {
@@ -396,8 +396,8 @@ export class Cursor {
 			else {
 				/* deepestComponent is an empty line (with no line break at the end) -> it must be the last line of the document. */
 				return new Cursor(
-					app.document.componentsGroup,
-					app.document.componentsGroup.components[app.document.componentsGroup.components.length - 1],
+					App.document.componentsGroup,
+					App.document.componentsGroup.components[App.document.componentsGroup.components.length - 1],
 				);
 			}
 		}
@@ -413,12 +413,12 @@ export class Cursor {
 			const bottom = Math.max(...line.map((elem => getBoundingClientRect(elem).bottom)));
 			return Math.max(0, top - event.clientY, event.clientY - bottom);
 		});
-		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX, app);
+		return Cursor.fromClosest(closestBrokenLine as HTMLElement[], event.clientX);
 	}
-	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
-		const cursor1 = Cursor.fromClick(app, dragEnd);
-		const cursor2 = Cursor.fromClick(app, dragStart);
-		return Cursor.selectBetween(cursor1, cursor2, app.document);
+	static fromDrag(dragStart: MouseEvent, dragEnd: MouseEvent) {
+		const cursor1 = Cursor.fromClick(dragEnd);
+		const cursor2 = Cursor.fromClick(dragStart);
+		return Cursor.selectBetween(cursor1, cursor2, App.document);
 	}
 	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | CompositeMathComponent, Cursor | CompositeMathComponent] {
 		const index1 = container.components.findIndex(c => c instanceof CompositeMathComponent && [...c.groupDescendants()].includes(cursor1.container));
@@ -462,8 +462,8 @@ export class Cursor {
 		}
 		return result;
 	}
-	static fromClosest(elements: HTMLElement[], xCoord: number, app: App) {
-		const inverseMap = invertMap(app.renderingMap);
+	static fromClosest(elements: HTMLElement[], xCoord: number) {
+		const inverseMap = invertMap(App.renderingMap);
 		const [closestElement, whichSide] = minItem(
 			elements
 				.filter(e => inverseMap.get(e as HTMLElement))
@@ -472,18 +472,18 @@ export class Cursor {
 			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - xCoord),
 		);
 		const closestComponent = inverseMap.get(closestElement) as MathComponent;
-		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
+		return Cursor.createAdjacent(closestComponent, whichSide, App.document.containingGroupOf(closestComponent));
 	}
-	renderedPosition(app: App) {
-		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === app.document.componentsGroup)) {
+	renderedPosition() {
+		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === App.document.componentsGroup)) {
 			return 0;
 		}
 		else if(this.predecessor) {
-			return app.renderingMap.get(this.predecessor)!.getBoundingClientRect().right;
+			return App.renderingMap.get(this.predecessor)!.getBoundingClientRect().right;
 		}
-		return app.renderingMap.get(this.container)!.getBoundingClientRect().left;
+		return App.renderingMap.get(this.container)!.getBoundingClientRect().left;
 	}
-	moveToClosest(components: MathComponent[], app: App, group?: MathComponentGroup) {
+	moveToClosest(components: MathComponent[], group?: MathComponentGroup) {
 		if(components.length === 0) {
 			if(group) {
 				this.moveToStart(group);
@@ -494,9 +494,8 @@ export class Cursor {
 			}
 		}
 		this.moveTo(Cursor.fromClosest(
-			components.map(c => app.renderingMap.get(c)!),
-			this.renderedPosition(app),
-			app,
+			components.map(c => App.renderingMap.get(c)!),
+			this.renderedPosition(),
 		));
 	}
 
