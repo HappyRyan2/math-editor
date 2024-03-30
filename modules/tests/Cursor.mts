@@ -495,6 +495,21 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.predecessor, symbolB);
 		assertValidRenderedDocument();
 	});
+	it("works when the previous component is a line break", () => {
+		let doc, lineBreak, cursor;
+		App.loadDocument(doc = new MathDocument([
+			lineBreak = new LineBreak(),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, lineBreak)];
+		App.renderAndUpdate();
+
+		cursor.deletePrevious(doc);
+		assert.equal(doc.componentsGroup.components.length, 0);
+		assert.equal(cursor.container, doc.componentsGroup);
+		assert.equal(cursor.predecessor, null);
+		assert.equal(cursor.selection, null);
+		assertValidRenderedDocument();
+	});
 });
 describe("Cursor.lastCommonAncestor", () => {
 	it("returns the last common ancestor, along with the two children that contain each cursor", () => {

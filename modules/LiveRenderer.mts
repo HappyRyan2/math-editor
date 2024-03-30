@@ -175,6 +175,7 @@ export class LiveRenderer {
 	static delete(component: MathComponent) {
 		if(component instanceof LineBreak) {
 			LiveRenderer.deleteLineBreak(component);
+			return;
 		}
 		const previousComponent = App.document.getPreviousComponent(component);
 		const nextComponent = App.document.getNextComponent(component);
