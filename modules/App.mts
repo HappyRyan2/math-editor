@@ -264,7 +264,7 @@ export class App {
 			},
 		},
 	];
-	renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
+	static renderingMap: Map<MathComponent | MathComponentGroup, HTMLElement> = new Map();
 
 	static editorTabs: EditorTab[];
 	static activeTab: EditorTab;
@@ -310,7 +310,7 @@ export class App {
 		const [div, map] = this.renderWithMapping();
 		const oldDiv = document.getElementById("math-document")!;
 		oldDiv.replaceWith(div);
-		this.renderingMap = map;
+		App.renderingMap = map;
 
 		document.getElementById("tabs-container")!.replaceWith(this.renderTabs());
 		this.initializeMathDocumentListeners(div);
@@ -337,7 +337,7 @@ export class App {
 		return result;
 	}
 	updateCursors() {
-		for(const [component, element] of this.renderingMap) {
+		for(const [component, element] of App.renderingMap) {
 			if(component instanceof MathComponent) {
 				if(component.isSelected(App.cursors)) {
 					element.classList.add("selected");
@@ -351,13 +351,13 @@ export class App {
 			cursorElement.remove();
 		}
 		for(const cursor of App.cursors) {
-			const containerElement = this.renderingMap.get(cursor.container) ?? document.querySelector(".line")!;
+			const containerElement = App.renderingMap.get(cursor.container) ?? document.querySelector(".line")!;
 			if(cursor.predecessor == null) {
 				const firstWord = containerElement.firstElementChild!;
 				firstWord.insertAdjacentElement("afterbegin", cursor.render());
 			}
 			else {
-				const predecessorElement = this.renderingMap.get(cursor.predecessor)!;
+				const predecessorElement = App.renderingMap.get(cursor.predecessor)!;
 				if(predecessorElement.classList.contains("line-break")) {
 					const nextLine = predecessorElement.parentElement!.parentElement!.nextElementSibling!;
 					const firstWord = nextLine.firstElementChild!;

@@ -379,7 +379,7 @@ export class Cursor {
 	}
 	static fromClick(app: App, event: MouseEvent) {
 		const getBoundingClientRect = memoize((elem: Element) => elem.getBoundingClientRect());
-		const inverseMap = invertMap(app.renderingMap);
+		const inverseMap = invertMap(App.renderingMap);
 		const deepestComponent = maxItem(
 			Cursor.elementsClicked(app, event),
 			(element: HTMLElement) => {
@@ -463,7 +463,7 @@ export class Cursor {
 		return result;
 	}
 	static fromClosest(elements: HTMLElement[], xCoord: number, app: App) {
-		const inverseMap = invertMap(app.renderingMap);
+		const inverseMap = invertMap(App.renderingMap);
 		const [closestElement, whichSide] = minItem(
 			elements
 				.filter(e => inverseMap.get(e as HTMLElement))
@@ -479,9 +479,9 @@ export class Cursor {
 			return 0;
 		}
 		else if(this.predecessor) {
-			return app.renderingMap.get(this.predecessor)!.getBoundingClientRect().right;
+			return App.renderingMap.get(this.predecessor)!.getBoundingClientRect().right;
 		}
-		return app.renderingMap.get(this.container)!.getBoundingClientRect().left;
+		return App.renderingMap.get(this.container)!.getBoundingClientRect().left;
 	}
 	moveToClosest(components: MathComponent[], app: App, group?: MathComponentGroup) {
 		if(components.length === 0) {
@@ -494,7 +494,7 @@ export class Cursor {
 			}
 		}
 		this.moveTo(Cursor.fromClosest(
-			components.map(c => app.renderingMap.get(c)!),
+			components.map(c => App.renderingMap.get(c)!),
 			this.renderedPosition(app),
 			app,
 		));

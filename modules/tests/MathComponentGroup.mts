@@ -93,7 +93,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.addWordBreakAfter(symbol1, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol1, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 		const [word1, word2] = rendered.querySelectorAll(".word");
 		assert.equal(word1.querySelector(".symbol")?.innerHTML, "A");
@@ -111,7 +111,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 
-		MathComponentGroup.addWordBreakAfter(symbol1, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol1, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 		const [word1, word2] = rendered.querySelectorAll(".word");
 		assert.equal(word1.querySelector(".symbol")?.innerHTML, "&nbsp;");
@@ -129,7 +129,7 @@ describe("MathComponentGroup.addWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.addWordBreakAfter(symbol2, app.renderingMap);
+		MathComponentGroup.addWordBreakAfter(symbol2, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 		const [word] = rendered.querySelectorAll(".word");
 		const [renderedSymbol1, renderedSymbol2] = word.querySelectorAll(".symbol");
@@ -150,7 +150,7 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 2);
 
-		MathComponentGroup.removeWordBreakAfter(symbol1, app.renderingMap);
+		MathComponentGroup.removeWordBreakAfter(symbol1, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 		const [word] = rendered.querySelectorAll(".word");
 		const [renderedSymbol1, renderedSymbol2] = word.querySelectorAll(".symbol");
@@ -169,7 +169,7 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.removeWordBreakAfter(symbol1, app.renderingMap);
+		MathComponentGroup.removeWordBreakAfter(symbol1, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 		const [word] = rendered.querySelectorAll(".word");
 		const [renderedSymbol1, renderedSymbol2] = word.querySelectorAll(".symbol");
@@ -188,7 +188,7 @@ describe("MathComponentGroup.removeWordBreakAfter", () => {
 		const rendered = document.getElementById("math-document")!;
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 
-		MathComponentGroup.removeWordBreakAfter(symbol2, app.renderingMap);
+		MathComponentGroup.removeWordBreakAfter(symbol2, App.renderingMap);
 		assert.equal([...rendered.querySelectorAll(".word")].length, 1);
 		const [word] = rendered.querySelectorAll(".word");
 		const [renderedSymbol1, renderedSymbol2] = word.querySelectorAll(".symbol");
@@ -221,11 +221,11 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 		app.renderAndUpdate();
 		const emptyWord1 = MathComponentGroup.createEmptyWord();
 		const emptyWord2 = MathComponentGroup.createEmptyWord();
-		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", emptyWord1);
-		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", emptyWord2);
+		App.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", emptyWord1);
+		App.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", emptyWord2);
 
 		assert.equal([...document.querySelectorAll(".word")].length, 3);
-		App.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		App.document.componentsGroup.deleteEmptyWords(symbol, App.renderingMap);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 	});
 	it("removes any words containing only cursors and puts the cursors inside the current word", () => {
@@ -239,14 +239,14 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 		const cursor1 = new Cursor(App.document.componentsGroup, null);
 		const word1 = MathComponentGroup.createEmptyWord();
 		word1.appendChild(cursor1.render());
-		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", word1);
+		App.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", word1);
 
 		const word2 = MathComponentGroup.createEmptyWord();
 		const cursor2 = new Cursor(App.document.componentsGroup, symbol);
 		word2.appendChild(cursor2.render());
-		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", word2);
+		App.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", word2);
 
-		App.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		App.document.componentsGroup.deleteEmptyWords(symbol, App.renderingMap);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		const word = document.querySelector(".word");
 		const [element1, element2, element3] = word!.children;

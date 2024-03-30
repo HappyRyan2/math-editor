@@ -35,8 +35,8 @@ describe("LiveRenderer.renderAndInsert", () => {
 		const [element1, element2] = word.querySelectorAll(".symbol");
 		assert.equal(element1.innerHTML, "A");
 		assert.equal(element2.innerHTML, "B");
-		assert.equal(app.renderingMap.get(newSymbol), element1);
-		assert.equal(app.renderingMap.get(oldSymbol), element2);
+		assert.equal(App.renderingMap.get(newSymbol), element1);
+		assert.equal(App.renderingMap.get(oldSymbol), element2);
 	});
 	it("inserts it after the predecessor if it is not the first component in its group", () => {
 		let oldSymbol;
@@ -53,8 +53,8 @@ describe("LiveRenderer.renderAndInsert", () => {
 		const [element1, element2] = word!.querySelectorAll(".symbol");
 		assert.equal(element1.innerHTML, "A");
 		assert.equal(element2.innerHTML, "B");
-		assert.equal(app.renderingMap.get(oldSymbol), element1);
-		assert.equal(app.renderingMap.get(newSymbol), element2);
+		assert.equal(App.renderingMap.get(oldSymbol), element1);
+		assert.equal(App.renderingMap.get(newSymbol), element2);
 	});
 	it("inserts it on the next line if the component is directly after a line break", () => {
 		const app = new App(new MathDocument([
@@ -88,13 +88,13 @@ describe("LiveRenderer.delete", () => {
 			new MathSymbol("B"),
 		]));
 		app.renderAndUpdate();
-		assert.equal(app.renderingMap.size, 2);
+		assert.equal(App.renderingMap.size, 2);
 		assert.equal(App.document.componentsGroup.components.length, 2);
 		assert.equal([...document.querySelectorAll(".symbol")].length, 2);
 
 
 		LiveRenderer.delete(symbol, app);
-		assert.equal(app.renderingMap.size, 1);
+		assert.equal(App.renderingMap.size, 1);
 		assert.equal([...document.querySelectorAll(".symbol")].length, 1);
 		assert.equal(App.document.componentsGroup.components.length, 1);
 	});
@@ -133,7 +133,7 @@ describe("LiveRenderer.delete", () => {
 		const components = words[0].querySelectorAll("*");
 		assert.equal(components.length, 0);
 
-		assert.equal(app.renderingMap.size, 0);
+		assert.equal(App.renderingMap.size, 0);
 	});
 	it("works when there are cursors after/inside the component, or including the component in their selection", () => {
 		let composite, composite2, symbol1, symbol2;
@@ -224,9 +224,9 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
 
-		assert.equal(app.renderingMap.size, 1);
+		assert.equal(App.renderingMap.size, 1);
 		LiveRenderer["deleteLineBreak"](lineBreak, app);
-		assert.equal(app.renderingMap.size, 0);
+		assert.equal(App.renderingMap.size, 0);
 	});
 	it("combines the adjacent lines into one line", () => {
 		let symbol1, lineBreak, symbol2;
@@ -242,8 +242,8 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		assert.equal([...document.querySelectorAll(".line")].length, 1);
 		const words = [...document.querySelectorAll(".word")];
 		assert.equal(words.length, 2);
-		assert.sameOrderedMembers([...words[0].children], [app.renderingMap.get(symbol1)]);
-		assert.sameOrderedMembers([...words[1].children], [app.renderingMap.get(symbol2)]);
+		assert.sameOrderedMembers([...words[0].children], [App.renderingMap.get(symbol1)]);
+		assert.sameOrderedMembers([...words[1].children], [App.renderingMap.get(symbol2)]);
 	});
 	it("combines the adjacent words into one word if necessary", () => {
 		let symbol1, lineBreak, symbol2;
@@ -260,7 +260,7 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		assert.sameOrderedMembers(
 			[...document.querySelector(".word")!.children],
-			[app.renderingMap.get(symbol1), app.renderingMap.get(symbol2)],
+			[App.renderingMap.get(symbol1), App.renderingMap.get(symbol2)],
 		);
 	});
 	it("works when there is a cursor after the line break", () => {
@@ -305,7 +305,7 @@ describe("LiveRenderer.insertLineBreak", () => {
 		app.renderAndUpdate();
 		let lineBreak;
 		LiveRenderer.insertLineBreak(lineBreak = new LineBreak(), 0, app);
-		assert.hasAllKeys(app.renderingMap, [lineBreak]);
+		assert.hasAllKeys(App.renderingMap, [lineBreak]);
 	});
 	it("adds the line break to the HTML document and splits the line into two lines", () => {
 		let symbol1, symbol2, lineBreak;
@@ -320,9 +320,9 @@ describe("LiveRenderer.insertLineBreak", () => {
 		assert.equal([...document.querySelectorAll(".line")].length, 2);
 		const [line1, line2] = document.querySelectorAll(".line");
 		assert.equal([...line1.querySelectorAll(".word")].length, 1);
-		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [app.renderingMap.get(symbol1), app.renderingMap.get(lineBreak)]);
+		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [App.renderingMap.get(symbol1), App.renderingMap.get(lineBreak)]);
 		assert.equal([...line2.querySelectorAll(".word")].length, 1);
-		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [app.renderingMap.get(symbol2)]);
+		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [App.renderingMap.get(symbol2)]);
 	});
 	it("adds a new empty line if the previous component is also a LineBreak", () => {
 		let oldLineBreak, newLineBreak, symbol;
@@ -337,11 +337,11 @@ describe("LiveRenderer.insertLineBreak", () => {
 		assert.equal([...document.querySelectorAll(".line")].length, 3);
 		const [line1, line2, line3] = document.querySelectorAll(".line");
 		assert.equal([...line1.querySelectorAll(".word")].length, 1);
-		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [app.renderingMap.get(oldLineBreak)]);
+		assert.sameOrderedMembers([...line1.querySelector(".word")!.children], [App.renderingMap.get(oldLineBreak)]);
 		assert.equal([...line2.querySelectorAll(".word")].length, 1);
-		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [app.renderingMap.get(newLineBreak)]);
+		assert.sameOrderedMembers([...line2.querySelector(".word")!.children], [App.renderingMap.get(newLineBreak)]);
 		assert.equal([...line3.querySelectorAll(".word")].length, 1);
-		assert.sameOrderedMembers([...line3.querySelector(".word")!.children], [app.renderingMap.get(symbol)]);
+		assert.sameOrderedMembers([...line3.querySelector(".word")!.children], [App.renderingMap.get(symbol)]);
 	});
 });
 describe("LiveRenderer.insertAtIndex", () => {
@@ -355,12 +355,12 @@ describe("LiveRenderer.insertAtIndex", () => {
 		LiveRenderer.insertAtIndex(newSymbol = new MathSymbol("B"), App.document.componentsGroup, 1, app);
 
 		assert.sameOrderedMembers(App.document.componentsGroup.components, [oldSymbol, newSymbol]);
-		assert.equal(app.renderingMap.size, 2);
+		assert.equal(App.renderingMap.size, 2);
 		assert.equal([...document.querySelectorAll(".line")].length, 1);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		assert.sameOrderedMembers(
 			[...document.querySelector(".word")!.childNodes],
-			[app.renderingMap.get(oldSymbol), app.renderingMap.get(newSymbol)],
+			[App.renderingMap.get(oldSymbol), App.renderingMap.get(newSymbol)],
 		);
 	});
 	it("correctly handles words adjacent to the inserted component", () => {
@@ -378,11 +378,11 @@ describe("LiveRenderer.insertAtIndex", () => {
 		const [word1, word2] = document.querySelectorAll(".word");
 		assert.sameOrderedMembers(
 			[...word1.childNodes],
-			[app.renderingMap.get(symbol1), app.renderingMap.get(space)],
+			[App.renderingMap.get(symbol1), App.renderingMap.get(space)],
 		);
 		assert.sameOrderedMembers(
 			[...word2.childNodes],
-			[app.renderingMap.get(symbol2)],
+			[App.renderingMap.get(symbol2)],
 		);
 	});
 	it("also adds all of the descendants of the component to the rendering map", () => {
@@ -393,8 +393,8 @@ describe("LiveRenderer.insertAtIndex", () => {
 		const newComponent = new CompositeMathComponentMock([newSymbol]);
 		LiveRenderer.insertAtIndex(newComponent, App.document.componentsGroup, 0, app);
 
-		assert.equal(app.renderingMap.size, 3);
-		assert.containsAllKeys(app.renderingMap, [
+		assert.equal(App.renderingMap.size, 3);
+		assert.containsAllKeys(App.renderingMap, [
 			newComponent,
 			newComponent.componentsGroup,
 			newSymbol,
@@ -413,9 +413,9 @@ describe("LiveRenderer.insertAtIndex", () => {
 		assert.equal([...document.querySelectorAll(".word")].length, 2);
 		const [line1, line2] = document.querySelectorAll(".line");
 		const word1 = line1.querySelector(".word");
-		assert.sameOrderedMembers([...word1!.childNodes], [app.renderingMap.get(lineBreak)]);
+		assert.sameOrderedMembers([...word1!.childNodes], [App.renderingMap.get(lineBreak)]);
 		const word2 = line2.querySelector(".word");
-		assert.sameOrderedMembers([...word2!.childNodes], [app.renderingMap.get(newComponent)]);
+		assert.sameOrderedMembers([...word2!.childNodes], [App.renderingMap.get(newComponent)]);
 	});
 	it("places the component before any cursors at the specified position", () => {
 		const app = new App(new MathDocument([]));
@@ -465,8 +465,8 @@ describe("LiveRenderer.insert", () => {
 
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const [element1, element2, element3] = document.querySelector(".word")!.children;
-		assert.equal(element1, app.renderingMap.get(oldComponent));
-		assert.equal(element2, app.renderingMap.get(newComponent));
+		assert.equal(element1, App.renderingMap.get(oldComponent));
+		assert.equal(element2, App.renderingMap.get(newComponent));
 		assert.isTrue(element3.classList.contains("cursor"));
 		assert.equal(App.cursors[0].predecessor, newComponent);
 
@@ -481,8 +481,8 @@ describe("LiveRenderer.insert", () => {
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const [element1, element2, element3] = document.querySelector(".word")!.children;
 		assert.isTrue(element1.classList.contains("cursor"));
-		assert.equal(element2, app.renderingMap.get(newComponent));
-		assert.equal(element3, app.renderingMap.get(oldComponent));
+		assert.equal(element2, App.renderingMap.get(newComponent));
+		assert.equal(element3, App.renderingMap.get(oldComponent));
 		assert.equal(App.cursors[0].predecessor, null);
 	});
 	it("can insert a component before a cursor", () => {
@@ -548,7 +548,7 @@ describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 		const newSymbol = new MathSymbol("D");
 		LiveRenderer.addComponentOrReplaceSelection(cursor, newSymbol, app);
 
-		assert.equal(app.renderingMap.size, 1);
-		assert.isTrue(app.renderingMap.get(newSymbol)?.classList.contains("symbol"));
+		assert.equal(App.renderingMap.size, 1);
+		assert.isTrue(App.renderingMap.get(newSymbol)?.classList.contains("symbol"));
 	});
 });
