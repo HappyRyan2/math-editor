@@ -4,7 +4,7 @@ import { App } from "../App.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { JSDOM } from "jsdom";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Selection } from "../Selection.mjs";
 import { Cursor } from "../Cursor.mjs";

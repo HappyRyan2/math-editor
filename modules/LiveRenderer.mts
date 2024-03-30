@@ -167,6 +167,9 @@ export class LiveRenderer {
 			currentWordInNewLine?.appendChild(renderedComponent);
 			if(component instanceof LineBreak) { break; }
 		}
+		if(index >= App.document.componentsGroup.components.length - 1) {
+			newLine.appendChild(MathComponentGroup.createEmptyWord());
+		}
 	}
 
 	static delete(component: MathComponent) {
@@ -200,6 +203,7 @@ export class LiveRenderer {
 		if(component instanceof LineBreak) {
 			if(container === App.document.componentsGroup) {
 				LiveRenderer.insertLineBreak(component, index);
+				return;
 			}
 			else {
 				throw new Error("Line breaks can only be inserted in the document's MathComponentGroup.");

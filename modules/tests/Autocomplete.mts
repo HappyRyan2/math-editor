@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import { assert } from "chai";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 import { Autocomplete } from "../Autocomplete.mjs";
 import { Cursor } from "../Cursor.mjs";
 

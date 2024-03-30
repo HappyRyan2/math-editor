@@ -5,6 +5,7 @@ import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
+import { App } from "../App.mjs";
 
 export class Fraction extends CompositeMathComponent {
 	numerator: MathComponentGroup;
@@ -20,6 +21,7 @@ export class Fraction extends CompositeMathComponent {
 			["before", "after", ["inside", 0]],
 			(cursor: Cursor) => {
 				cursor.moveToClosest(this.denominator.components, this.denominator);
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			}),
 		);
@@ -28,6 +30,7 @@ export class Fraction extends CompositeMathComponent {
 			["before", "after", ["inside", 1]],
 			(cursor: Cursor) => {
 				cursor.moveToClosest(this.numerator.components, this.numerator);
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			}),
 		);

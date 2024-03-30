@@ -1,3 +1,4 @@
+import { App } from "./App.mjs";
 import { Cursor } from "./Cursor.mjs";
 import { MathComponent } from "./MathComponent.mjs";
 import { Search } from "./Search.mjs";
@@ -104,7 +105,11 @@ export class Autocomplete {
 		Autocomplete.close();
 	}
 	replaceCompletedWith(...components: MathComponent[]) {
-		this.cursor.container.components.splice(this.cursor.position() - this.searchTerm.length, this.searchTerm.length, ...components);
-		this.cursor.moveAfter(components[components.length - 1], this.cursor.container);
+		for(let i = 0; i < this.searchTerm.length; i ++) {
+			this.cursor.deletePrevious(App.document);
+		}
+		for(const component of components) {
+			this.cursor.addComponent(component);
+		}
 	}
 }

@@ -3,7 +3,7 @@ import { Cursor } from "../Cursor.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { describe, it } from "mocha";

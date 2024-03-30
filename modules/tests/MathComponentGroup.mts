@@ -6,7 +6,7 @@ import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { Parenthese } from "../math-components/Parenthese.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { App } from "../App.mjs";
 

@@ -4,7 +4,7 @@ import { MathDocument } from "../MathDocument.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock, assertValidRenderedDocument } from "./test-utils.mjs";
 import { Selection } from "../Selection.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { JSDOM } from "jsdom";
@@ -12,26 +12,41 @@ import { App } from "../App.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
 import { Parenthese } from "../math-components/Parenthese.mjs";
 
+beforeEach(() => {
+	const dom = new JSDOM(
+		"<html> <body> <div id='tabs-container'> </div> <div id='math-document'></div> </body> </html>",
+		{ url: "http://localhost" },
+	);
+	global.document = dom.window.document;
+	global.HTMLElement = dom.window.HTMLElement;
+});
+
 describe("Cursor.addComponent", () => {
 	it("correctly adds the component when the cursor is at the beginning of its container", () => {
-		const doc = new MathDocument([new MathSymbol("x")]);
-		const cursor = new Cursor(doc.componentsGroup, null);
+		App.loadDocument(new MathDocument([new MathSymbol("x")]));
+		const cursor = new Cursor(App.document.componentsGroup, null);
+		App.activeTab.cursors = [cursor];
+		App.renderAndUpdate();
 		cursor.addComponent(new MathSymbol("y"));
-		assert.deepEqual(doc.componentsGroup.components, [
+		assert.deepEqual(App.document.componentsGroup.components, [
 			new MathSymbol("y"),
 			new MathSymbol("x"),
 		]);
-		assert.equal(cursor.predecessor, doc.componentsGroup.components[0]);
+		assert.equal(cursor.predecessor, App.document.componentsGroup.components[0]);
+		assertValidRenderedDocument();
 	});
 	it("correctly adds the component when the cursor is not at the beginning of its container", () => {
-		const doc = new MathDocument([new MathSymbol("x")]);
-		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
+		App.loadDocument(new MathDocument([new MathSymbol("x")]));
+		const cursor = new Cursor(App.document.componentsGroup, App.document.componentsGroup.components[0]);
+		App.activeTab.cursors = [cursor];
+		App.renderAndUpdate();
 		cursor.addComponent(new MathSymbol("y"));
-		assert.deepEqual(doc.componentsGroup.components, [
+		assert.deepEqual(App.document.componentsGroup.components, [
 			new MathSymbol("x"),
 			new MathSymbol("y"),
 		]);
-		assert.equal(cursor.predecessor, doc.componentsGroup.components[1]);
+		assert.equal(cursor.predecessor, App.document.componentsGroup.components[1]);
+		assertValidRenderedDocument();
 	});
 });
 
@@ -363,98 +378,122 @@ describe("Cursor.selectionPosition", () => {
 });
 describe("Cursor.deletePrevious", () => {
 	it("deletes the previous component if there is one", () => {
-		let symbolA, symbolB: MathSymbol;
-		const doc = new MathDocument([
+		let symbolA, symbolB: MathSymbol, doc: MathDocument;
+		App.loadDocument(doc = new MathDocument([
 			symbolA = new MathSymbol("A"),
 			symbolB = new MathSymbol("B"),
-		]);
+		]));
 		const cursor = new Cursor(doc.componentsGroup, symbolA);
+		App.activeTab.cursors = [cursor];
+		App.renderAndUpdate();
 		cursor.deletePrevious(doc);
 
 		assert.deepEqual(doc.componentsGroup.components, [symbolB]);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("exits the containing component if there is no previous component and the group is nonempty", () => {
-		let mock: CompositeMathComponentMock;
-		const doc = new MathDocument([mock = new CompositeMathComponentMock([new MathSymbol("A")])]);
+		let mock: CompositeMathComponentMock, doc: MathDocument;
+		App.loadDocument(doc = new MathDocument([mock = new CompositeMathComponentMock([new MathSymbol("A")])]));
 		const cursor = new Cursor(mock.componentsGroup, null);
+		App.activeTab.cursors = [cursor];
 		cursor.deletePrevious(doc);
+		App.renderAndUpdate();
 
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
 		assert.deepEqual(mock.componentsGroup.components, [new MathSymbol("A")]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("deletes the selected components if the selection is nonempty", () => {
-		let symbolA, symbolB: MathSymbol;
-		const doc = new MathDocument([
+		let symbolA, symbolB: MathSymbol, doc: MathDocument, cursor: Cursor;
+		App.loadDocument(doc = new MathDocument([
 			symbolA = new MathSymbol("A"),
 			symbolB = new MathSymbol("B"),
-		]);
-		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB));
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB))];
+		App.renderAndUpdate();
 		cursor.deletePrevious(doc);
 
 		assert.deepEqual(doc.componentsGroup.components, []);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("does nothing if the cursor is at the beginning of the document and there is no selection", () => {
-		const doc = new MathDocument([]);
-		const cursor = new Cursor(doc.componentsGroup, null);
-		cursor.deletePrevious(doc);
+		App.loadEmptyDocument();
+		App.renderAndUpdate();
+		App.cursors[0].deletePrevious(App.document);
 
-		assert.deepEqual(doc.componentsGroup.components, []);
-		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.deepEqual(App.document.componentsGroup.components, []);
+		assert.equal(App.cursors[0].container, App.document.componentsGroup);
+		assert.equal(App.cursors[0].predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("deletes the previous CompositeMathComponent if it is empty", () => {
-		let mock;
-		const doc = new MathDocument([
+		let mock, doc, cursor;
+		App.loadDocument(doc = new MathDocument([
 			mock = new CompositeMathComponentMock(),
-		]);
-		const cursor = new Cursor(doc.componentsGroup, mock);
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, mock)];
+		App.renderAndUpdate();
+
 		cursor.deletePrevious(doc);
 		assert.equal(doc.componentsGroup.components.length, 0);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("enters the previous CompositeMathComponent if it is not empty", () => {
-		let mock, symbol;
-		const doc = new MathDocument([
+		let doc, mock, symbol, cursor;
+		App.loadDocument(doc = new MathDocument([
 			mock = new CompositeMathComponentMock([
 				symbol = new MathSymbol("A"),
 			]),
-		]);
-		const cursor = new Cursor(doc.componentsGroup, mock);
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, mock)];
+		App.renderAndUpdate();
 		cursor.deletePrevious(doc);
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
 		assert.deepEqual(mock.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, mock.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
+		assertValidRenderedDocument();
 	});
 	it("deletes the container and concatenates the groups if the group is empty and has deleteOnStart=only-when-empty", () => {
-		let symbol;
-		const fraction = new Fraction(new MathComponentGroup([]), new MathComponentGroup([symbol = new MathSymbol("A")]));
+		let doc, symbol, fraction, cursor;
+		App.loadDocument(doc = new MathDocument([
+			fraction = new Fraction(new MathComponentGroup([]), new MathComponentGroup([symbol = new MathSymbol("A")])),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(fraction.numerator, null)];
+		App.renderAndUpdate();
 		fraction.deleteAtStart = "only-when-empty";
-		const doc = new MathDocument([fraction]);
-		const cursor = new Cursor(fraction.numerator, null);
+
 		cursor.deletePrevious(doc);
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("deletes the container and concatenates the groups if the container has deleteOnStart=always", () => {
-		let symbolA, symbolB;
-		const parenthese = new Parenthese(new MathComponentGroup([
-			symbolA = new MathSymbol("A"),
-		]), "round");
+		let doc, symbolA, symbolB, parenthese, cursor;
+		App.loadDocument(doc = new MathDocument([
+			symbolB = new MathSymbol("B"),
+			parenthese = new Parenthese(
+				new MathComponentGroup([ symbolA = new MathSymbol("A") ]),
+				"round",
+			),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(parenthese.components, null)];
+		App.renderAndUpdate();
 		parenthese.deleteAtStart = "always";
-		const doc = new MathDocument([symbolB = new MathSymbol("B"), parenthese]);
-		const cursor = new Cursor(parenthese.components, null);
+
 		cursor.deletePrevious(doc);
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbolB, symbolA]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, symbolB);
+		assertValidRenderedDocument();
 	});
 });
 describe("Cursor.lastCommonAncestor", () => {

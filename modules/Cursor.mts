@@ -8,6 +8,7 @@ import { invertMap, lastItem, maxItem, memoize, minItem, partitionArray, rectCon
 import { LineBreak } from "./math-components/LineBreak.mjs";
 import { Autocomplete } from "./Autocomplete.mjs";
 import { MathSymbol } from "./math-components/MathSymbol.mjs";
+import { LiveRenderer } from "./LiveRenderer.mjs";
 
 export class Cursor {
 	container: MathComponentGroup;
@@ -47,21 +48,15 @@ export class Cursor {
 	}
 
 	addComponent(component: MathComponent) {
-		this.container.components.splice(this.position(), 0, component);
-		this.predecessor = component;
+		LiveRenderer.insert(component, "before", this);
 	}
 	replaceSelectionWith(...components: MathComponent[]) {
-		if(!this.selection) {
-			throw new Error("Cannot call replaceSelectionWith on a cursor with an empty selection.");
+		for(const selected of this.selectedComponents()) {
+			LiveRenderer.delete(selected);
 		}
-		const previousComponent = this.container.components[this.container.components.indexOf(this.selection.start) - 1] ?? null;
-		this.container.components.splice(
-			this.container.components.indexOf(this.selection.start),
-			this.numSelected(),
-			...components,
-		);
-		this.predecessor = components[components.length - 1] ?? previousComponent;
-		this.selection = null;
+		for(const component of components) {
+			LiveRenderer.insert(component, "before", this);
+		}
 	}
 	addComponentOrReplaceSelection(component: MathComponent) {
 		if(this.selection) {
@@ -314,24 +309,19 @@ export class Cursor {
 	deleteContainer(doc: MathDocument) {
 		const containingComponent = doc.containingComponentOf(this.container) as CompositeMathComponent;
 		const containingGroup = doc.containingGroupOf(containingComponent);
-		const groupIndex = containingComponent.groups().indexOf(this.container);
-		const previousComponent = (
-				lastItem(containingComponent.groups().find((group, index) =>
-					group.components.length !== 0 &&
-					index < groupIndex &&
-					containingComponent.groups().every((g, i) => i <= index || i >= groupIndex || g.components.length === 0),
-				)?.components ?? [])
-				?? containingGroup.components[containingGroup.components.indexOf(containingComponent) - 1]
-				?? null
-			) as MathComponent | null;
-		const replacingComponents = [...containingComponent];
-		containingGroup.components.splice(containingGroup.components.indexOf(containingComponent), 1, ...replacingComponents);
-		if(previousComponent == null) {
-			this.moveToStart(containingGroup);
+		const previousComponent = doc.getPreviousComponent(containingComponent);
+
+		const groups = containingComponent.groups();
+		const componentsBefore = groups.slice(0, groups.indexOf(containingGroup)).map(g => g.components).flat(1);
+		for(const component of containingComponent) {
+			LiveRenderer.delete(component);
+			LiveRenderer.insert(component, "before", containingComponent);
 		}
-		else {
-			this.moveAfter(previousComponent, containingGroup);
-		}
+		LiveRenderer.delete(containingComponent);
+
+		if(componentsBefore.length !== 0) { this.moveAfter(lastItem(componentsBefore), containingGroup); }
+		else if(previousComponent) { this.moveAfter(previousComponent, containingGroup); }
+		else { this.moveToStart(containingGroup); }
 	}
 	deletePrevious(doc: MathDocument, forceDeletion: boolean = false) {
 		if(this.selection != null) {
@@ -347,9 +337,7 @@ export class Cursor {
 				this.predecessor.enterFromRight(this);
 			}
 			else if(shouldDelete) {
-				const newPredecessor = this.container.components[this.position() - 2];
-				this.container.components.splice(this.container.components.indexOf(this.predecessor), 1);
-				this.predecessor = newPredecessor;
+				LiveRenderer.delete(this.predecessor);
 			}
 		}
 		else if(

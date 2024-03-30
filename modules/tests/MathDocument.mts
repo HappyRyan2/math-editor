@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import { assert } from "chai";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathSymbol } from "../math-components/MathSymbol.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { Fraction } from "../math-components/Fraction.mjs";
 import { Parenthese } from "../math-components/Parenthese.mjs";

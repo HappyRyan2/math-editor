@@ -9,15 +9,18 @@ import { Cursor } from "../../Cursor.mjs";
 import { LineBreak } from "../../math-components/LineBreak.mjs";
 import "../../math-components/initializers/all-initializers.mjs";
 import { Parenthese } from "../../math-components/Parenthese.mjs";
+import { App } from "../../App.mjs";
+import { assertValidRenderedDocument } from "../test-utils.mjs";
 
 describe("Fraction.insertFraction", () => {
 	it("puts the selection into a fraction if there is one", () => {
-		let symbolA, symbolB;
-		const doc = new MathDocument([
+		let doc, symbolA, symbolB, cursor;
+		App.loadDocument(doc = new MathDocument([
 			symbolA = new MathSymbol("A"),
 			symbolB = new MathSymbol("B"),
-		]);
-		const cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB));
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, null, new Selection(symbolA, symbolB))];
+		App.renderAndUpdate();
 		const fraction = Fraction.insertFraction(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 1);
@@ -26,13 +29,15 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("puts the previous component into a fraction if there is one", () => {
-		let symbol;
-		const doc = new MathDocument([
+		let doc, symbol, cursor;
+		App.loadDocument(doc = new MathDocument([
 			symbol = new MathSymbol("A"),
-		]);
-		const cursor = new Cursor(doc.componentsGroup, symbol);
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, symbol)];
+		App.renderAndUpdate();
 		const fraction = Fraction.insertFraction(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 1);
@@ -41,23 +46,29 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("creates an empty fraction if there is no selection or previous component", () => {
-		const doc = new MathDocument([]);
-		const cursor = new Cursor(doc.componentsGroup, null);
-		const fraction = Fraction.insertFraction(cursor, doc);
+		App.loadEmptyDocument();
+		App.renderAndUpdate();
+		const cursor = App.cursors[0];
+		const fraction = Fraction.insertFraction(cursor, App.document);
 
-		assert.equal(doc.componentsGroup.components.length, 1);
-		assert.equal(doc.componentsGroup.components[0], fraction);
+		assert.equal(App.document.componentsGroup.components.length, 1);
+		assert.equal(App.document.componentsGroup.components[0], fraction);
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("creates an empty fraction if the previous component is a line break", () => {
-		const lineBreak = new LineBreak();
-		const doc = new MathDocument([lineBreak]);
-		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
+		let doc, lineBreak, cursor;
+		App.loadDocument(doc = new MathDocument([
+			lineBreak = new LineBreak(),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0])];
+		App.renderAndUpdate();
 		const fraction = Fraction.insertFraction(cursor, doc);
 
 		assert.equal(doc.componentsGroup.components.length, 2);
@@ -67,11 +78,15 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 	it("works when the previous component is a composite math component", () => {
-		const parenthese = new Parenthese(new MathComponentGroup([]), "round");
-		const doc = new MathDocument([parenthese]);
-		const cursor = new Cursor(doc.componentsGroup, parenthese);
+		let doc, parenthese, cursor;
+		App.loadDocument(doc = new MathDocument([
+			parenthese = new Parenthese(new MathComponentGroup([]), "round"),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(App.document.componentsGroup, parenthese)];
+		App.renderAndUpdate();
 		const fraction = Fraction.insertFraction(cursor, doc);
 
 		assert.sameOrderedMembers(doc.componentsGroup.components, [fraction]);
@@ -80,6 +95,7 @@ describe("Fraction.insertFraction", () => {
 		assert.sameOrderedMembers(parenthese.components.components, []);
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
+		assertValidRenderedDocument();
 	});
 });
 

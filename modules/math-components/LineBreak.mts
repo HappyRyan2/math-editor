@@ -1,4 +1,5 @@
 import { Cursor } from "../Cursor.mjs";
+import { LiveRenderer } from "../LiveRenderer.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 
@@ -22,12 +23,9 @@ export class LineBreak extends MathComponent {
 		else {
 			const ancestor = (doc.containingComponentOf(cursor.container) as MathComponent).lastComponentAncestor(doc);
 			const lineBreak = new LineBreak();
-			doc.componentsGroup.components.splice(
-				doc.componentsGroup.components.indexOf(ancestor) + 1,
-				0, lineBreak,
-			);
-			cursor.moveAfter(lineBreak, doc.componentsGroup);
+			LiveRenderer.insert(lineBreak, "after", ancestor);
 			cursor.selection = null;
+			cursor.moveAfter(lineBreak, doc.componentsGroup);
 		}
 	}
 

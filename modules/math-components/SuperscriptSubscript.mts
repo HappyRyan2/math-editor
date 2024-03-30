@@ -3,6 +3,7 @@ import { CompositeMathComponent } from "../CompositeMathComponent.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
+import { App } from "../App.mjs";
 
 export class SuperscriptSubscript extends CompositeMathComponent {
 	superscript: MathComponentGroup;
@@ -18,6 +19,7 @@ export class SuperscriptSubscript extends CompositeMathComponent {
 			["before", "after", ["inside", 0]],
 			(cursor: Cursor) => {
 				cursor.moveToClosest(this.subscript.components, this.subscript);
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			}),
 		);
@@ -26,6 +28,7 @@ export class SuperscriptSubscript extends CompositeMathComponent {
 			["before", "after", ["inside", 1]],
 			(cursor: Cursor) => {
 				cursor.moveToClosest(this.superscript.components, this.superscript);
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			}),
 		);

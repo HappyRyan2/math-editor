@@ -8,7 +8,7 @@ import { LiveRenderer } from "../LiveRenderer.mjs";
 import { LineBreak } from "../math-components/LineBreak.mjs";
 import { Cursor } from "../Cursor.mjs";
 import { Selection } from "../Selection.mjs";
-import { CompositeMathComponentMock } from "./CompositeMathComponentMock.mjs";
+import { CompositeMathComponentMock } from "./test-utils.mjs";
 
 beforeEach(() => {
 	const dom = new JSDOM(
@@ -429,6 +429,21 @@ describe("LiveRenderer.insertAtIndex", () => {
 		assert.isTrue(element1.classList.contains("symbol"));
 		assert.isTrue(element2.classList.contains("cursor"));
 		assert.equal(cursor.predecessor, newComponent);
+	});
+	it("can insert a line break", () => {
+		App.loadEmptyDocument();
+		App.activeTab.cursors = [];
+		App.renderAndUpdate();
+		LiveRenderer.insertAtIndex(new LineBreak(), App.document.componentsGroup, 0);
+
+		assert.sameDeepOrderedMembers(App.document.componentsGroup.components, [ new LineBreak() ]);
+		assert.equal(document.querySelectorAll(".line").length, 2);
+		const [line1, line2] = document.querySelectorAll(".line");
+		assert.equal(line1.querySelectorAll(".word").length, 1);
+		assert.equal(line1.querySelector(".word")!.children.length, 1);
+		assert.isTrue(line1.querySelector(".word")!.children[0].classList.contains("line-break"));
+		assert.equal(line2.querySelectorAll(".word").length, 1);
+		assert.equal(line2.querySelector(".word")!.children.length, 0);
 	});
 });
 describe("LiveRenderer.insert", () => {

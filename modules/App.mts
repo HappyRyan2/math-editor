@@ -40,6 +40,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveLeft(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -49,6 +50,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveRight(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -59,6 +61,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectLeft(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -69,6 +72,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectRight(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -77,6 +81,7 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Cursor.resetCursorBlink();
 					Autocomplete.autocomplete.activateSelected();
+					App.updateCursors();
 					stopPropagation();
 				}
 			},
@@ -87,6 +92,7 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Autocomplete.autocomplete.selectPrevious?.();
 					stopPropagation();
+					App.updateCursors();
 				}
 			},
 		},
@@ -96,6 +102,7 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Autocomplete.autocomplete?.selectNext?.();
 					stopPropagation();
+					App.updateCursors();
 				}
 			},
 		},
@@ -107,6 +114,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveWordRight(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -117,6 +125,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveWordLeft(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -128,6 +137,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectWordRight(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -139,6 +149,7 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectWordLeft(App.document));
 				stopPropagation();
+				App.updateCursors();
 			},
 		},
 		{
@@ -163,6 +174,7 @@ export class App {
 					components[components.length - 1] ?? null,
 					new Selection(components[0], components[components.length - 1]),
 				)];
+				App.updateCursors();
 				stopPropagation();
 			},
 		},
@@ -222,6 +234,7 @@ export class App {
 				App.editorTabs.push(EditorTab.createEmpty());
 				App.activeTab = App.editorTabs[App.editorTabs.length - 1];
 				stopPropagation();
+				App.renderAndUpdate();
 			},
 		},
 		{
@@ -231,6 +244,7 @@ export class App {
 				const index = App.editorTabs.indexOf(App.activeTab);
 				App.activeTab = App.editorTabs[index + 1] ?? App.editorTabs[0];
 				stopPropagation();
+				App.renderAndUpdate();
 			},
 		},
 		{
@@ -241,6 +255,7 @@ export class App {
 				const index = App.editorTabs.indexOf(App.activeTab);
 				App.activeTab = App.editorTabs[index - 1] ?? App.editorTabs[App.editorTabs.length - 1];
 				stopPropagation();
+				App.renderAndUpdate();
 			},
 		},
 		{
@@ -253,6 +268,7 @@ export class App {
 					App.cursors.push(newCursor);
 				}
 				stopPropagation();
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			},
 		},
@@ -260,6 +276,7 @@ export class App {
 			key: "Escape",
 			handler: () => {
 				App.activeTab.cursors = [App.cursors[0]];
+				App.updateCursors();
 				Cursor.resetCursorBlink();
 			},
 		},
@@ -376,15 +393,11 @@ export class App {
 
 	static handleKeyDown(event: KeyboardEvent) {
 		const didSpecialKeyHandlers = this.handleSpecialKeys(event);
-		let didRelativeKeyHandlers = false;
 		if(!didSpecialKeyHandlers) {
-			didRelativeKeyHandlers = this.checkRelativeKeyHandlers(event);
+			this.checkRelativeKeyHandlers(event);
 			this.handleCharacterKeys(event);
 		}
 		App.activeTab.removeDuplicateCursors();
-		if(didSpecialKeyHandlers || didRelativeKeyHandlers) {
-			App.renderAndUpdate();
-		}
 	}
 	static handleCharacterKeys(event: KeyboardEvent) {
 		for(const cursor of App.cursors) {
@@ -417,17 +430,14 @@ export class App {
 		}
 		return false;
 	}
-	static checkRelativeKeyHandlers(event: KeyboardEvent): boolean {
-		let handled = false;
+	static checkRelativeKeyHandlers(event: KeyboardEvent) {
 		for(const cursor of App.cursors) {
 			const handlers = RelativeKeyHandler.getHandlers(cursor, App.document, event.key);
 			if(handlers.length !== 0) {
 				const [handler, component] = handlers[0];
-				handled = true;
 				handler.callback(cursor, component);
 			}
 		}
-		return handled;
 	}
 
 	static handleMouseUp() {
