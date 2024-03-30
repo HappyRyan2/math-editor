@@ -19,7 +19,7 @@ export class App {
 			key: "Enter",
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
-				this.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, this.document));
+				App.cursors.forEach(cursor => LineBreak.addLineBreak(cursor, App.document));
 				Autocomplete.close();
 				stopPropagation();
 			},
@@ -28,8 +28,8 @@ export class App {
 			key: "Backspace",
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
-				this.cursors.forEach(cursor => cursor.deletePrevious(this.document));
-				Autocomplete.update(this.cursors[this.cursors.length - 1]);
+				App.cursors.forEach(cursor => cursor.deletePrevious(App.document));
+				Autocomplete.update(App.cursors[App.cursors.length - 1]);
 				stopPropagation();
 			},
 		},
@@ -38,7 +38,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.moveLeft(this.document));
+				App.cursors.forEach(c => c.moveLeft(App.document));
 				stopPropagation();
 			},
 		},
@@ -47,7 +47,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.moveRight(this.document));
+				App.cursors.forEach(c => c.moveRight(App.document));
 				stopPropagation();
 			},
 		},
@@ -57,7 +57,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.selectLeft(this.document));
+				App.cursors.forEach(c => c.selectLeft(App.document));
 				stopPropagation();
 			},
 		},
@@ -67,7 +67,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.selectRight(this.document));
+				App.cursors.forEach(c => c.selectRight(App.document));
 				stopPropagation();
 			},
 		},
@@ -105,7 +105,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.moveWordRight(this.document));
+				App.cursors.forEach(c => c.moveWordRight(App.document));
 				stopPropagation();
 			},
 		},
@@ -115,7 +115,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.moveWordLeft(this.document));
+				App.cursors.forEach(c => c.moveWordLeft(App.document));
 				stopPropagation();
 			},
 		},
@@ -126,7 +126,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.selectWordRight(this.document));
+				App.cursors.forEach(c => c.selectWordRight(App.document));
 				stopPropagation();
 			},
 		},
@@ -137,7 +137,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.selectWordLeft(this.document));
+				App.cursors.forEach(c => c.selectWordLeft(App.document));
 				stopPropagation();
 			},
 		},
@@ -147,7 +147,7 @@ export class App {
 			handler: (event, stopPropagation) => {
 				Cursor.resetCursorBlink();
 				Autocomplete.close();
-				this.cursors.forEach(c => c.deleteWord(this.document));
+				App.cursors.forEach(c => c.deleteWord(App.document));
 				stopPropagation();
 			},
 		},
@@ -170,11 +170,11 @@ export class App {
 			key: "s",
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
-				const string = JSON.stringify(this.document);
-				const filePath = this.document.filePath;
+				const string = JSON.stringify(App.document);
+				const filePath = App.document.filePath;
 				if(filePath == null) {
 					electronAPI.sendSaveWithDialog(string, [{ name: "Math Document", extensions: ["mathdoc"] }]).then((savedFilePath) => {
-						this.document.filePath = savedFilePath;
+						App.document.filePath = savedFilePath;
 						app.renderAndUpdate();
 					});
 				}
@@ -247,10 +247,10 @@ export class App {
 			key: "d",
 			ctrlKey: true,
 			handler: (event, stopPropagation) => {
-				const cursor = this.cursors[this.cursors.length - 1];
-				const newCursor = cursor.createCursorFromSelection(this.document);
-				if(newCursor != null && !this.cursors.some(c => c.hasSamePosition(newCursor))) {
-					this.cursors.push(newCursor);
+				const cursor = App.cursors[App.cursors.length - 1];
+				const newCursor = cursor.createCursorFromSelection(App.document);
+				if(newCursor != null && !App.cursors.some(c => c.hasSamePosition(newCursor))) {
+					App.cursors.push(newCursor);
 				}
 				stopPropagation();
 				Cursor.resetCursorBlink();
@@ -259,7 +259,7 @@ export class App {
 		{
 			key: "Escape",
 			handler: () => {
-				App.activeTab.cursors = [this.cursors[0]];
+				App.activeTab.cursors = [App.cursors[0]];
 				Cursor.resetCursorBlink();
 			},
 		},
@@ -269,10 +269,10 @@ export class App {
 	static editorTabs: EditorTab[];
 	static activeTab: EditorTab;
 
-	get document() {
+	static get document() {
 		return App.activeTab.document;
 	}
-	get cursors() {
+	static get cursors() {
 		return App.activeTab.cursors;
 	}
 
@@ -317,7 +317,7 @@ export class App {
 		return [div, map];
 	}
 	renderWithMapping(): [HTMLDivElement, Map<MathComponent | MathComponentGroup, HTMLElement>] {
-		const [renderedDoc, map] = this.document.renderWithMapping(this);
+		const [renderedDoc, map] = App.document.renderWithMapping(this);
 		return [renderedDoc, map];
 	}
 	renderTabs() {
@@ -339,7 +339,7 @@ export class App {
 	updateCursors() {
 		for(const [component, element] of this.renderingMap) {
 			if(component instanceof MathComponent) {
-				if(component.isSelected(this.cursors)) {
+				if(component.isSelected(App.cursors)) {
 					element.classList.add("selected");
 				}
 				else {
@@ -350,7 +350,7 @@ export class App {
 		for(const cursorElement of document.getElementsByClassName("cursor")) {
 			cursorElement.remove();
 		}
-		for(const cursor of this.cursors) {
+		for(const cursor of App.cursors) {
 			const containerElement = this.renderingMap.get(cursor.container) ?? document.querySelector(".line")!;
 			if(cursor.predecessor == null) {
 				const firstWord = containerElement.firstElementChild!;
@@ -383,7 +383,7 @@ export class App {
 		}
 	}
 	handleCharacterKeys(event: KeyboardEvent) {
-		for(const cursor of this.cursors) {
+		for(const cursor of App.cursors) {
 			if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 				const symbol = new MathSymbol(event.key);
 				LiveRenderer.addComponentOrReplaceSelection(cursor, symbol, this);
@@ -391,7 +391,7 @@ export class App {
 		}
 		if(event.key.length === 1 && !event.ctrlKey && !event.altKey) {
 			Cursor.resetCursorBlink();
-			const lastCursor = this.cursors[this.cursors.length - 1];
+			const lastCursor = App.cursors[App.cursors.length - 1];
 			Autocomplete.open(lastCursor);
 		}
 	}
@@ -415,8 +415,8 @@ export class App {
 	}
 	checkRelativeKeyHandlers(event: KeyboardEvent): boolean {
 		let handled = false;
-		for(const cursor of this.cursors) {
-			const handlers = RelativeKeyHandler.getHandlers(cursor, this.document, event.key);
+		for(const cursor of App.cursors) {
+			const handlers = RelativeKeyHandler.getHandlers(cursor, App.document, event.key);
 			if(handlers.length !== 0) {
 				const [handler, component] = handlers[0];
 				handled = true;

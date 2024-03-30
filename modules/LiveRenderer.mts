@@ -12,11 +12,11 @@ import { mergeMaps } from "./utils/utils.mjs";
 
 export class LiveRenderer {
 	private static disconnectCursors(component: MathComponent, app: App) {
-		const previousComponent = app.document.getPreviousComponent(component);
-		const nextComponent = app.document.getNextComponent(component);
+		const previousComponent = App.document.getPreviousComponent(component);
+		const nextComponent = App.document.getNextComponent(component);
 
-		App.activeTab.cursors = App.activeTab.cursors.filter(c => !app.document.isDescendantOf(c.container, component));
-		for(const cursor of app.cursors) {
+		App.activeTab.cursors = App.activeTab.cursors.filter(c => !App.document.isDescendantOf(c.container, component));
+		for(const cursor of App.cursors) {
 			if(cursor.predecessor === component) {
 				cursor.predecessor = previousComponent;
 			}
@@ -35,14 +35,14 @@ export class LiveRenderer {
 	}
 
 	private static renderAndInsert(component: MathComponent, app: App) {
-		const containingGroup = app.document.containingGroupOf(component);
+		const containingGroup = App.document.containingGroupOf(component);
 		const [rendered, map] = component.renderWithMapping(app);
 		mergeMaps(app.renderingMap, map);
-		if(containingGroup.components.indexOf(component) === 0 && containingGroup === app.document.componentsGroup) {
+		if(containingGroup.components.indexOf(component) === 0 && containingGroup === App.document.componentsGroup) {
 			const firstWord = document.querySelector(".word");
 			firstWord?.insertAdjacentElement("afterbegin", rendered);
 		}
-		else if(containingGroup.components.indexOf(component) === 0 && containingGroup !== app.document.componentsGroup){
+		else if(containingGroup.components.indexOf(component) === 0 && containingGroup !== App.document.componentsGroup){
 			const container = app.renderingMap.get(containingGroup);
 			const firstWord = container!.querySelector(".word");
 			firstWord!.insertAdjacentElement("afterbegin", rendered);
@@ -68,19 +68,19 @@ export class LiveRenderer {
 		}
 	}
 	private static insertRelativeToComponent(component: MathComponent, position: "before" | "after", target: MathComponent, app: App) {
-		const container = app.document.containingGroupOf(target);
+		const container = App.document.containingGroupOf(target);
 		LiveRenderer.insertAtIndex(
 			component, container,
 			container.components.indexOf(target) + (position === "before" ? 0 : 1),
 			app,
 		);
 		if(position === "before") {
-			for(const cursor of app.cursors.filter(c => c.container === container && c.predecessor === component)) {
+			for(const cursor of App.cursors.filter(c => c.container === container && c.predecessor === component)) {
 				cursor.moveBefore(component, container);
 			}
 		}
 		else {
-			for(const cursor of app.cursors.filter(c => c.container === container && c.nextComponent() === component)) {
+			for(const cursor of App.cursors.filter(c => c.container === container && c.nextComponent() === component)) {
 				cursor.predecessor = component;
 			}
 		}
@@ -92,12 +92,12 @@ export class LiveRenderer {
 			app,
 		);
 		if(position === "beginning") {
-			for(const cursor of app.cursors.filter(c => c.container === group && c.predecessor === null)) {
+			for(const cursor of App.cursors.filter(c => c.container === group && c.predecessor === null)) {
 				cursor.predecessor = component;
 			}
 		}
 		else {
-			for(const cursor of app.cursors.filter(c => c.container === group && c.predecessor === component)) {
+			for(const cursor of App.cursors.filter(c => c.container === group && c.predecessor === component)) {
 				cursor.moveBefore(component, group);
 			}
 		}
@@ -125,12 +125,12 @@ export class LiveRenderer {
 	static deleteLineBreak(lineBreak: LineBreak, app: App) {
 		const renderedLine = app.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
 		const renderedNextLine = renderedLine.nextElementSibling;
-		const previousComponent = app.document.getPreviousComponent(lineBreak);
-		const nextComponent = app.document.getPreviousComponent(lineBreak);
+		const previousComponent = App.document.getPreviousComponent(lineBreak);
+		const nextComponent = App.document.getPreviousComponent(lineBreak);
 		app.renderingMap.get(lineBreak)!.remove();
 		app.renderingMap.delete(lineBreak);
 		LiveRenderer.disconnectCursors(lineBreak, app);
-		app.document.componentsGroup.components = app.document.componentsGroup.components.filter(c => c !== lineBreak);
+		App.document.componentsGroup.components = App.document.componentsGroup.components.filter(c => c !== lineBreak);
 		if(renderedNextLine) {
 			for(const element of renderedNextLine.children) {
 				renderedLine.appendChild(element);
@@ -138,10 +138,10 @@ export class LiveRenderer {
 			renderedNextLine.remove();
 		}
 		if(previousComponent) {
-			app.document.componentsGroup.checkWordBreaks(previousComponent, app.renderingMap);
+			App.document.componentsGroup.checkWordBreaks(previousComponent, app.renderingMap);
 		}
 		else if(nextComponent) {
-			app.document.componentsGroup.checkWordBreaks(nextComponent, app.renderingMap);
+			App.document.componentsGroup.checkWordBreaks(nextComponent, app.renderingMap);
 		}
 		else {
 			const [word1, word2] = renderedLine.children;
@@ -152,7 +152,7 @@ export class LiveRenderer {
 		}
 	}
 	static insertLineBreak(lineBreak: LineBreak, index: number, app: App) {
-		app.document.componentsGroup.components.splice(index, 0, lineBreak);
+		App.document.componentsGroup.components.splice(index, 0, lineBreak);
 		LiveRenderer.renderAndInsert(lineBreak, app);
 		const previousLine = app.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
 		const newLine = document.createElement("div");
@@ -160,7 +160,7 @@ export class LiveRenderer {
 		previousLine.insertAdjacentElement("afterend", newLine);
 		let currentWordInPreviousLine = null;
 		let currentWordInNewLine = null;
-		for(const component of app.document.componentsGroup.components.slice(index + 1)) {
+		for(const component of App.document.componentsGroup.components.slice(index + 1)) {
 			const renderedComponent = app.renderingMap.get(component)!;
 			if(renderedComponent.parentElement !== currentWordInPreviousLine) {
 				currentWordInPreviousLine = renderedComponent.parentElement;
@@ -175,8 +175,8 @@ export class LiveRenderer {
 		if(component instanceof LineBreak) {
 			LiveRenderer.deleteLineBreak(component, app);
 		}
-		const previousComponent = app.document.getPreviousComponent(component);
-		const nextComponent = app.document.getNextComponent(component);
+		const previousComponent = App.document.getPreviousComponent(component);
+		const nextComponent = App.document.getNextComponent(component);
 
 		app.renderingMap.get(component)?.remove();
 		app.renderingMap.delete(component);
@@ -188,7 +188,7 @@ export class LiveRenderer {
 
 		LiveRenderer.disconnectCursors(component, app);
 
-		const container = app.document.containingGroupOf(component);
+		const container = App.document.containingGroupOf(component);
 		container.components = container.components.filter(c => c !== component);
 
 		if(previousComponent != null) {
@@ -200,7 +200,7 @@ export class LiveRenderer {
 	}
 	static insertAtIndex(component: MathComponent, container: MathComponentGroup, index: number, app: App) {
 		if(component instanceof LineBreak) {
-			if(container === app.document.componentsGroup) {
+			if(container === App.document.componentsGroup) {
 				LiveRenderer.insertLineBreak(component, index, app);
 			}
 			else {
@@ -210,7 +210,7 @@ export class LiveRenderer {
 		container.components.splice(index, 0, component);
 		LiveRenderer.renderAndInsert(component, app);
 		container.checkWordBreaks(component, app.renderingMap);
-		for(const cursor of app.cursors.filter(c => c.nextComponent() === component)) {
+		for(const cursor of App.cursors.filter(c => c.nextComponent() === component)) {
 			cursor.predecessor = component;
 		}
 	}

@@ -225,7 +225,7 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", emptyWord2);
 
 		assert.equal([...document.querySelectorAll(".word")].length, 3);
-		app.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		App.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 	});
 	it("removes any words containing only cursors and puts the cursors inside the current word", () => {
@@ -236,17 +236,17 @@ describe("MathComponentGroup.deleteEmptyWords", () => {
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
 
-		const cursor1 = new Cursor(app.document.componentsGroup, null);
+		const cursor1 = new Cursor(App.document.componentsGroup, null);
 		const word1 = MathComponentGroup.createEmptyWord();
 		word1.appendChild(cursor1.render());
 		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("beforebegin", word1);
 
 		const word2 = MathComponentGroup.createEmptyWord();
-		const cursor2 = new Cursor(app.document.componentsGroup, symbol);
+		const cursor2 = new Cursor(App.document.componentsGroup, symbol);
 		word2.appendChild(cursor2.render());
 		app.renderingMap.get(symbol)?.parentElement?.insertAdjacentElement("afterend", word2);
 
-		app.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
+		App.document.componentsGroup.deleteEmptyWords(symbol, app.renderingMap);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		const word = document.querySelector(".word");
 		const [element1, element2, element3] = word!.children;

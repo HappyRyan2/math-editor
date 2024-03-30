@@ -577,7 +577,7 @@ describe("Cursor.fromClick", () => {
 		document.querySelector(".line")!.getBoundingClientRect = () => new DOMRect(0, 0, 30, 10);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 20, clientY: 5 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor at the end of the line, but before the line break, when you click to the right of the last component", () => {
@@ -596,7 +596,7 @@ describe("Cursor.fromClick", () => {
 		lines[2].getBoundingClientRect = () => new DOMRect(0, 20, 10, 10);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 100, clientY: 15 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor inside the composite math component when you click on one", () => {
@@ -629,7 +629,7 @@ describe("Cursor.fromClick", () => {
 		lines[1].getBoundingClientRect = () => new DOMRect(0, 10, 10, 10);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: -100 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("returns a cursor on the last line when you click below the last line", () => {
@@ -646,7 +646,7 @@ describe("Cursor.fromClick", () => {
 		lines[1].getBoundingClientRect = () => new DOMRect(0, 10, 20, 10);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 100 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 	it("works when you click on an empty line", () => {
@@ -654,7 +654,7 @@ describe("Cursor.fromClick", () => {
 		app.renderAndUpdate();
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 5 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 	});
 	it("works when you click on a line that is broken by word wrapping", () => {
@@ -674,7 +674,7 @@ describe("Cursor.fromClick", () => {
 		line!.getBoundingClientRect = () => new DOMRect(0, 0, 20, 30);
 
 		const cursor = Cursor.fromClick(app, new MouseEvent("click", { clientX: 10, clientY: 15 }));
-		assert.equal(cursor.container, app.document.componentsGroup);
+		assert.equal(cursor.container, App.document.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
 	});
 });

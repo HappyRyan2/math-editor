@@ -29,7 +29,7 @@ describe("App.renderWithMapping", () => {
 			])),
 		]));
 		const [rendered, map] = app.renderWithMapping();
-		assert.equal(rendered.outerHTML, app.document.render(app).outerHTML);
+		assert.equal(rendered.outerHTML, App.document.render(app).outerHTML);
 		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, mock.render(app).outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
@@ -45,12 +45,12 @@ describe("App.renderWithMapping", () => {
 		]);
 		App.activeTab = new EditorTab(doc, []);
 		App.editorTabs = [App.activeTab];
-		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, mock, new Selection(mock, mock))];
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, mock, new Selection(mock, mock))];
 		const [rendered, map] = app.renderWithMapping();
 
 		const expectedMock = mock.render(app);
 		expectedMock.classList.add("selected");
-		assert.equal(rendered.outerHTML, app.document.render(app).outerHTML);
+		assert.equal(rendered.outerHTML, App.document.render(app).outerHTML);
 		assert.equal(map.size, 3);
 		assert.equal(map.get(mock)?.outerHTML, expectedMock.outerHTML);
 		assert.equal(map.get(symbol)?.outerHTML, symbol.render().outerHTML);
@@ -93,7 +93,7 @@ describe("App.updateCursors", () => {
 	it("places the cursor in the first word of the next line if the cursor is after a line break", () => {
 		const lineBreak = new LineBreak();
 		const app = new App(new MathDocument([ lineBreak ]));
-		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, lineBreak)];
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, lineBreak)];
 		app.renderAndUpdate();
 		app.updateCursors();
 
@@ -110,7 +110,7 @@ describe("App.updateCursors", () => {
 	it("places the cursor after the previous component if the previous component is not a line break", () => {
 		const component = new MathSymbol("A");
 		const app = new App(new MathDocument([ component ]));
-		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, component)];
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, component)];
 		app.renderAndUpdate();
 		app.updateCursors();
 

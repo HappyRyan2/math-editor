@@ -43,7 +43,7 @@ export class MathComponentGroup {
 		result.classList.add("math-component-group");
 		const words = this.getWordGroups();
 		for(const [wordIndex, word] of words.entries()) {
-			const cursors = app.cursors.filter(cursor => cursor.container === this && (
+			const cursors = App.cursors.filter(cursor => cursor.container === this && (
 				(cursor.nextComponent() == null && wordIndex === words.length - 1) ||
 				(cursor.nextComponent() != null && word.includes(cursor.nextComponent() as MathComponent))
 			));
@@ -67,7 +67,7 @@ export class MathComponentGroup {
 				result.appendChild(renderedComponent);
 				resultMap = new Map([...resultMap, ...map]);
 
-				if(component.isSelected(app.cursors)) {
+				if(component.isSelected(App.cursors)) {
 					renderedComponent.classList.add("selected");
 				}
 			}

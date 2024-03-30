@@ -28,8 +28,8 @@ describe("LiveRenderer.renderAndInsert", () => {
 		]));
 		app.renderAndUpdate();
 
-		app.document.componentsGroup.components.unshift(newSymbol = new MathSymbol("A"));
-		LiveRenderer["renderAndInsert"](app.document.componentsGroup.components[0], app);
+		App.document.componentsGroup.components.unshift(newSymbol = new MathSymbol("A"));
+		LiveRenderer["renderAndInsert"](App.document.componentsGroup.components[0], app);
 
 		const word = document.querySelector(".word")!;
 		const [element1, element2] = word.querySelectorAll(".symbol");
@@ -46,7 +46,7 @@ describe("LiveRenderer.renderAndInsert", () => {
 		app.renderAndUpdate();
 
 		const newSymbol = new MathSymbol("B");
-		app.document.componentsGroup.components.push(newSymbol);
+		App.document.componentsGroup.components.push(newSymbol);
 		LiveRenderer["renderAndInsert"](newSymbol, app);
 
 		const word = document.querySelector(".word");
@@ -64,7 +64,7 @@ describe("LiveRenderer.renderAndInsert", () => {
 		app.renderAndUpdate();
 
 		const newSymbol = new MathSymbol("A");
-		app.document.componentsGroup.components.push(newSymbol);
+		App.document.componentsGroup.components.push(newSymbol);
 		LiveRenderer["renderAndInsert"](newSymbol, app);
 
 		const [line1, line2] = document.querySelectorAll(".line");
@@ -89,14 +89,14 @@ describe("LiveRenderer.delete", () => {
 		]));
 		app.renderAndUpdate();
 		assert.equal(app.renderingMap.size, 2);
-		assert.equal(app.document.componentsGroup.components.length, 2);
+		assert.equal(App.document.componentsGroup.components.length, 2);
 		assert.equal([...document.querySelectorAll(".symbol")].length, 2);
 
 
 		LiveRenderer.delete(symbol, app);
 		assert.equal(app.renderingMap.size, 1);
 		assert.equal([...document.querySelectorAll(".symbol")].length, 1);
-		assert.equal(app.document.componentsGroup.components.length, 1);
+		assert.equal(App.document.componentsGroup.components.length, 1);
 	});
 	it("works when deleting the component results in two words combining into one", () => {
 		let space;
@@ -145,32 +145,32 @@ describe("LiveRenderer.delete", () => {
 			symbol2 = new MathSymbol("2"),
 		]));
 		const cursor1 = new Cursor(composite.componentsGroup, null);
-		const cursor2 = new Cursor(app.document.componentsGroup, composite);
-		const cursor3 = new Cursor(app.document.componentsGroup, composite, new Selection(composite, composite));
-		const cursor4 = new Cursor(app.document.componentsGroup, null, new Selection(symbol1, composite));
-		const cursor5 = new Cursor(app.document.componentsGroup, symbol1, new Selection(composite, symbol2));
+		const cursor2 = new Cursor(App.document.componentsGroup, composite);
+		const cursor3 = new Cursor(App.document.componentsGroup, composite, new Selection(composite, composite));
+		const cursor4 = new Cursor(App.document.componentsGroup, null, new Selection(symbol1, composite));
+		const cursor5 = new Cursor(App.document.componentsGroup, symbol1, new Selection(composite, symbol2));
 		const cursor6 = new Cursor(composite2.componentsGroup, null);
 		App.activeTab.cursors = [cursor1, cursor2, cursor3, cursor4, cursor5, cursor6];
 		app.renderAndUpdate();
 		LiveRenderer.delete(composite, app);
 
 
-		assert.sameOrderedMembers(app.cursors, [cursor2, cursor3, cursor4, cursor5]);
+		assert.sameOrderedMembers(App.cursors, [cursor2, cursor3, cursor4, cursor5]);
 
-		assert.equal(cursor2.container, app.document.componentsGroup);
+		assert.equal(cursor2.container, App.document.componentsGroup);
 		assert.equal(cursor2.predecessor, symbol1);
 		assert.equal(cursor2.selection, null);
 
-		assert.equal(cursor3.container, app.document.componentsGroup);
+		assert.equal(cursor3.container, App.document.componentsGroup);
 		assert.equal(cursor3.predecessor, symbol1);
 		assert.equal(cursor3.selection, null);
 
-		assert.equal(cursor4.container, app.document.componentsGroup);
+		assert.equal(cursor4.container, App.document.componentsGroup);
 		assert.equal(cursor4.predecessor, null);
 		assert.equal(cursor4.selection?.start, symbol1);
 		assert.equal(cursor4.selection?.end, symbol1);
 
-		assert.equal(cursor5.container, app.document.componentsGroup);
+		assert.equal(cursor5.container, App.document.componentsGroup);
 		assert.equal(cursor5.predecessor, symbol1);
 		assert.equal(cursor5.selection?.start, symbol2);
 		assert.equal(cursor5.selection?.end, symbol2);
@@ -204,9 +204,9 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
 
-		assert.equal(app.document.componentsGroup.components.length, 1);
+		assert.equal(App.document.componentsGroup.components.length, 1);
 		LiveRenderer["deleteLineBreak"](lineBreak, app);
-		assert.equal(app.document.componentsGroup.components.length, 0);
+		assert.equal(App.document.componentsGroup.components.length, 0);
 	});
 	it("removes the line break from the HTML document", () => {
 		let lineBreak;
@@ -266,7 +266,7 @@ describe("LiveRenderer.deleteLineBreak", () => {
 	it("works when there is a cursor after the line break", () => {
 		let lineBreak;
 		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
-		const cursor = new Cursor(app.document.componentsGroup, lineBreak);
+		const cursor = new Cursor(App.document.componentsGroup, lineBreak);
 		App.activeTab.cursors = [cursor];
 		app.renderAndUpdate();
 
@@ -280,7 +280,7 @@ describe("LiveRenderer.deleteLineBreak", () => {
 	it("works when there is a cursor before the line break", () => {
 		let lineBreak;
 		const app = new App(new MathDocument([ lineBreak = new LineBreak() ]));
-		const cursor = new Cursor(app.document.componentsGroup, null);
+		const cursor = new Cursor(App.document.componentsGroup, null);
 		App.activeTab.cursors = [cursor];
 		app.renderAndUpdate();
 
@@ -298,7 +298,7 @@ describe("LiveRenderer.insertLineBreak", () => {
 		app.renderAndUpdate();
 		let lineBreak;
 		LiveRenderer.insertLineBreak(lineBreak = new LineBreak(), 0, app);
-		assert.sameOrderedMembers(app.document.componentsGroup.components, [lineBreak]);
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [lineBreak]);
 	});
 	it("adds the line break to the rendering map", () => {
 		const app = new App(new MathDocument([]));
@@ -352,9 +352,9 @@ describe("LiveRenderer.insertAtIndex", () => {
 		]));
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
-		LiveRenderer.insertAtIndex(newSymbol = new MathSymbol("B"), app.document.componentsGroup, 1, app);
+		LiveRenderer.insertAtIndex(newSymbol = new MathSymbol("B"), App.document.componentsGroup, 1, app);
 
-		assert.sameOrderedMembers(app.document.componentsGroup.components, [oldSymbol, newSymbol]);
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [oldSymbol, newSymbol]);
 		assert.equal(app.renderingMap.size, 2);
 		assert.equal([...document.querySelectorAll(".line")].length, 1);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
@@ -372,7 +372,7 @@ describe("LiveRenderer.insertAtIndex", () => {
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
 		const space = new MathSymbol(" ");
-		LiveRenderer.insertAtIndex(space, app.document.componentsGroup, 1, app);
+		LiveRenderer.insertAtIndex(space, App.document.componentsGroup, 1, app);
 
 		assert.equal([...document.querySelectorAll(".word")].length, 2);
 		const [word1, word2] = document.querySelectorAll(".word");
@@ -391,7 +391,7 @@ describe("LiveRenderer.insertAtIndex", () => {
 		app.renderAndUpdate();
 		const newSymbol = new MathSymbol("A");
 		const newComponent = new CompositeMathComponentMock([newSymbol]);
-		LiveRenderer.insertAtIndex(newComponent, app.document.componentsGroup, 0, app);
+		LiveRenderer.insertAtIndex(newComponent, App.document.componentsGroup, 0, app);
 
 		assert.equal(app.renderingMap.size, 3);
 		assert.containsAllKeys(app.renderingMap, [
@@ -407,7 +407,7 @@ describe("LiveRenderer.insertAtIndex", () => {
 		]));
 		App.activeTab.cursors = [];
 		app.renderAndUpdate();
-		LiveRenderer.insertAtIndex(newComponent = new MathSymbol("A"), app.document.componentsGroup, 1, app);
+		LiveRenderer.insertAtIndex(newComponent = new MathSymbol("A"), App.document.componentsGroup, 1, app);
 
 		assert.equal([...document.querySelectorAll(".line")].length, 2);
 		assert.equal([...document.querySelectorAll(".word")].length, 2);
@@ -419,10 +419,10 @@ describe("LiveRenderer.insertAtIndex", () => {
 	});
 	it("places the component before any cursors at the specified position", () => {
 		const app = new App(new MathDocument([]));
-		const cursor = app.cursors[0];
+		const cursor = App.cursors[0];
 		app.renderAndUpdate();
 		const newComponent = new MathSymbol("A");
-		LiveRenderer.insertAtIndex(newComponent, app.document.componentsGroup, 0, app);
+		LiveRenderer.insertAtIndex(newComponent, App.document.componentsGroup, 0, app);
 
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const [element1, element2] = document.querySelector(".word")!.children;
@@ -436,30 +436,30 @@ describe("LiveRenderer.insert", () => {
 		const app = new App(new MathDocument([]));
 		const component = new MathSymbol("A");
 		app.renderAndUpdate();
-		LiveRenderer.insert(component, "beginning", app.document.componentsGroup, app);
+		LiveRenderer.insert(component, "beginning", App.document.componentsGroup, app);
 
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const [element1, element2] = document.querySelector(".word")!.children;
 		assert.isTrue(element1.classList.contains("symbol"));
 		assert.isTrue(element2.classList.contains("cursor"));
-		assert.equal(app.cursors[0].predecessor, component);
+		assert.equal(App.cursors[0].predecessor, component);
 	});
 	it("places the component after any cursors if it is placed at the end of a group", () => {
 		const app = new App(new MathDocument([]));
 		const component = new MathSymbol("A");
 		app.renderAndUpdate();
-		LiveRenderer.insert(component, "end", app.document.componentsGroup, app);
+		LiveRenderer.insert(component, "end", App.document.componentsGroup, app);
 
 		assert.equal(document.querySelectorAll(".word").length, 1);
 		const [element1, element2] = document.querySelector(".word")!.children;
 		assert.isTrue(element1.classList.contains("cursor"));
 		assert.isTrue(element2.classList.contains("symbol"));
-		assert.equal(app.cursors[0].predecessor, null);
+		assert.equal(App.cursors[0].predecessor, null);
 	});
 	it("places the component before any cursors if it is placed after a component", () => {
 		let oldComponent, newComponent;
 		const app = new App(new MathDocument([ oldComponent = new MathSymbol("A")] ));
-		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, oldComponent)];
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, oldComponent)];
 		app.renderAndUpdate();
 		LiveRenderer.insert(newComponent = new MathSymbol("B"), "after", oldComponent, app);
 
@@ -468,13 +468,13 @@ describe("LiveRenderer.insert", () => {
 		assert.equal(element1, app.renderingMap.get(oldComponent));
 		assert.equal(element2, app.renderingMap.get(newComponent));
 		assert.isTrue(element3.classList.contains("cursor"));
-		assert.equal(app.cursors[0].predecessor, newComponent);
+		assert.equal(App.cursors[0].predecessor, newComponent);
 
 	});
 	it("places the component after any cursors if it is placed before a component", () => {
 		let oldComponent, newComponent;
 		const app = new App(new MathDocument([ oldComponent = new MathSymbol("B")] ));
-		App.activeTab.cursors = [new Cursor(app.document.componentsGroup, null)];
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, null)];
 		app.renderAndUpdate();
 		LiveRenderer.insert(newComponent = new MathSymbol("A"), "before", oldComponent, app);
 
@@ -483,11 +483,11 @@ describe("LiveRenderer.insert", () => {
 		assert.isTrue(element1.classList.contains("cursor"));
 		assert.equal(element2, app.renderingMap.get(newComponent));
 		assert.equal(element3, app.renderingMap.get(oldComponent));
-		assert.equal(app.cursors[0].predecessor, null);
+		assert.equal(App.cursors[0].predecessor, null);
 	});
 	it("can insert a component before a cursor", () => {
 		const app = new App(new MathDocument([]));
-		const cursor = app.cursors[0];
+		const cursor = App.cursors[0];
 		app.renderAndUpdate();
 
 		const component = new MathSymbol("A");
@@ -500,7 +500,7 @@ describe("LiveRenderer.insert", () => {
 	});
 	it("can insert a component after a cursor", () => {
 		const app = new App(new MathDocument([]));
-		const cursor = app.cursors[0];
+		const cursor = App.cursors[0];
 		app.renderAndUpdate();
 
 		const component = new MathSymbol("A");
@@ -521,7 +521,7 @@ describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 			lastSymbol = new MathSymbol("C"),
 		]));
 		app.renderAndUpdate();
-		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		const cursor = new Cursor(App.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
 		App.activeTab.cursors = [cursor];
 		LiveRenderer.addComponentOrReplaceSelection(cursor, new MathSymbol("D"), app);
 
@@ -543,7 +543,7 @@ describe("LiveRenderer.addComponentOrReplaceSelection", () => {
 			lastSymbol = new MathSymbol("C"),
 		]));
 		app.renderAndUpdate();
-		const cursor = new Cursor(app.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
+		const cursor = new Cursor(App.document.componentsGroup, lastSymbol, new Selection(firstSymbol, lastSymbol));
 		App.activeTab.cursors = [cursor];
 		const newSymbol = new MathSymbol("D");
 		LiveRenderer.addComponentOrReplaceSelection(cursor, newSymbol, app);

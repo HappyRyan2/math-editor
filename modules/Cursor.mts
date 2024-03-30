@@ -384,7 +384,7 @@ export class Cursor {
 			Cursor.elementsClicked(app, event),
 			(element: HTMLElement) => {
 				if(element.classList.contains("line")) { return -1; }
-				return app.document.depth(app.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
+				return App.document.depth(App.document.containingComponentOf(inverseMap.get(element) as MathComponentGroup) as MathComponent);
 			},
 		);
 		if(deepestComponent.querySelector(":not(.cursor, .word)") == null) {
@@ -396,8 +396,8 @@ export class Cursor {
 			else {
 				/* deepestComponent is an empty line (with no line break at the end) -> it must be the last line of the document. */
 				return new Cursor(
-					app.document.componentsGroup,
-					app.document.componentsGroup.components[app.document.componentsGroup.components.length - 1],
+					App.document.componentsGroup,
+					App.document.componentsGroup.components[App.document.componentsGroup.components.length - 1],
 				);
 			}
 		}
@@ -418,7 +418,7 @@ export class Cursor {
 	static fromDrag(app: App, dragStart: MouseEvent, dragEnd: MouseEvent) {
 		const cursor1 = Cursor.fromClick(app, dragEnd);
 		const cursor2 = Cursor.fromClick(app, dragStart);
-		return Cursor.selectBetween(cursor1, cursor2, app.document);
+		return Cursor.selectBetween(cursor1, cursor2, App.document);
 	}
 	static lastCommonAncestor(cursor1: Cursor, cursor2: Cursor, container: MathComponentGroup): [MathComponentGroup, Cursor | CompositeMathComponent, Cursor | CompositeMathComponent] {
 		const index1 = container.components.findIndex(c => c instanceof CompositeMathComponent && [...c.groupDescendants()].includes(cursor1.container));
@@ -472,10 +472,10 @@ export class Cursor {
 			([element, whichSide]: [HTMLElement, "left" | "right"]) => Math.abs(element.getBoundingClientRect()[whichSide] - xCoord),
 		);
 		const closestComponent = inverseMap.get(closestElement) as MathComponent;
-		return Cursor.createAdjacent(closestComponent, whichSide, app.document.containingGroupOf(closestComponent));
+		return Cursor.createAdjacent(closestComponent, whichSide, App.document.containingGroupOf(closestComponent));
 	}
 	renderedPosition(app: App) {
-		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === app.document.componentsGroup)) {
+		if(this.predecessor instanceof LineBreak || (!this.predecessor && this.container === App.document.componentsGroup)) {
 			return 0;
 		}
 		else if(this.predecessor) {

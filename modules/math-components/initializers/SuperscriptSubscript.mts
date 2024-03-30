@@ -1,4 +1,4 @@
-import { app } from "../../App.mjs";
+import { App, app } from "../../App.mjs";
 import { Autocomplete } from "../../Autocomplete.mjs";
 import { MathComponent } from "../../MathComponent.mjs";
 import { SuperscriptSubscript } from "../SuperscriptSubscript.mjs";
@@ -7,7 +7,7 @@ app.keyHandlers.push({
 	key: "^",
 	shiftKey: true,
 	handler: (event, stopPropagation) => {
-		app.cursors.forEach(cursor => SuperscriptSubscript.insert(cursor, "superscript"));
+		App.cursors.forEach(cursor => SuperscriptSubscript.insert(cursor, "superscript"));
 		stopPropagation();
 		Autocomplete.close();
 	},
@@ -18,7 +18,7 @@ app.keyHandlers.push({
 	handler: (event, stopPropagation) => {
 		Autocomplete.close();
 		stopPropagation();
-		app.cursors.forEach(cursor => SuperscriptSubscript.insert(cursor, "subscript"));
+		App.cursors.forEach(cursor => SuperscriptSubscript.insert(cursor, "subscript"));
 	},
 });
 
