@@ -386,7 +386,7 @@ export class Cursor {
 				/* deepestComponent is an empty line (with no line break at the end) -> it must be the last line of the document. */
 				return new Cursor(
 					App.document.componentsGroup,
-					App.document.componentsGroup.components[App.document.componentsGroup.components.length - 1],
+					App.document.componentsGroup.components[App.document.componentsGroup.components.length - 1] ?? null,
 				);
 			}
 		}

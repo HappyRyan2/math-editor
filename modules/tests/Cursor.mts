@@ -80,7 +80,7 @@ describe("Cursor.moveRight", () => {
 		const cursor = new Cursor(doc.componentsGroup, null);
 		cursor.moveRight(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("clears the selection when the cursor is at the end of its selection", () => {
 		let symbolA;
@@ -113,7 +113,7 @@ describe("Cursor.moveLeft", () => {
 		const cursor = new Cursor(doc.componentsGroup, doc.componentsGroup.components[0]);
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("moves into the previous component if the previous component is a composite component", () => {
 		let mock: CompositeMathComponentMock;
@@ -129,14 +129,14 @@ describe("Cursor.moveLeft", () => {
 		const cursor = new Cursor(mock.componentsGroup, null);
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("does nothing when the cursor is at the beginning of the doc", () => {
 		const doc = new MathDocument([]);
 		const cursor = new Cursor(doc.componentsGroup, null);
 		cursor.moveLeft(doc);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("clears the selection when the cursor is at the beginning of its selection", () => {
 		let symbolA, symbolB;
@@ -270,7 +270,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.selection!.start, symbol);
 		assert.equal(cursor.selection!.end, symbol);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("selects the previous component if there is one and the current selection is nonempty", () => {
 		const symbolA = new MathSymbol("A");
@@ -283,7 +283,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.selection!.start, symbolA);
 		assert.equal(cursor.selection!.end, symbolB);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("does nothing if it is at the beginning of the document and the current selection is empty", () => {
 		const symbol = new MathSymbol("A");
@@ -293,7 +293,7 @@ describe("Cursor.selectLeft", () => {
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("does nothing if it is at the beginning of the document and the current selection is nonempty", () => {
 		const symbolA = new MathSymbol("A");
@@ -305,7 +305,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.selection!.start, symbolA);
 		assert.equal(cursor.selection!.end, symbolA);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("selects the containing component if there is no previous component and the current selection is empty", () => {
 		const mock = new CompositeMathComponentMock();
@@ -317,7 +317,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.selection!.start, mock);
 		assert.equal(cursor.selection!.end, mock);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("selects the containing component if there is no previous component and the current selection is nonempty", () => {
 		const symbol = new MathSymbol("A");
@@ -330,7 +330,7 @@ describe("Cursor.selectLeft", () => {
 		assert.equal(cursor.selection!.start, mock);
 		assert.equal(cursor.selection!.end, mock);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("deselects the previous component if the previous component is selected, possibly resulting in an empty selection", () => {
 		const symbol = new MathSymbol("A");
@@ -340,7 +340,7 @@ describe("Cursor.selectLeft", () => {
 
 		assert.isNull(cursor.selection);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("deselects the previous component if the previous component is selected, possibly resulting in a nonempty selection", () => {
 		const symbolA = new MathSymbol("A");
@@ -389,7 +389,7 @@ describe("Cursor.deletePrevious", () => {
 		cursor.deletePrevious(doc);
 
 		assert.deepEqual(doc.componentsGroup.components, [symbolB]);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("exits the containing component if there is no previous component and the group is nonempty", () => {
@@ -403,7 +403,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
 		assert.deepEqual(mock.componentsGroup.components, [new MathSymbol("A")]);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("deletes the selected components if the selection is nonempty", () => {
@@ -418,7 +418,7 @@ describe("Cursor.deletePrevious", () => {
 
 		assert.deepEqual(doc.componentsGroup.components, []);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("does nothing if the cursor is at the beginning of the document and there is no selection", () => {
@@ -442,7 +442,7 @@ describe("Cursor.deletePrevious", () => {
 		cursor.deletePrevious(doc);
 		assert.equal(doc.componentsGroup.components.length, 0);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("enters the previous CompositeMathComponent if it is not empty", () => {
@@ -473,7 +473,7 @@ describe("Cursor.deletePrevious", () => {
 		cursor.deletePrevious(doc);
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("does not remove the cursor from App.cursors", () => {
@@ -518,7 +518,7 @@ describe("Cursor.deletePrevious", () => {
 		cursor.deletePrevious(doc);
 		assert.equal(doc.componentsGroup.components.length, 0);
 		assert.equal(cursor.container, doc.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assert.equal(cursor.selection, null);
 		assertValidRenderedDocument(false);
 	});
@@ -721,7 +721,7 @@ describe("Cursor.fromClick", () => {
 
 		const cursor = Cursor.fromClick(new MouseEvent("click", { clientX: 10, clientY: 5 }));
 		assert.equal(cursor.container, App.document.componentsGroup);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 	it("works when you click on a line that is broken by word wrapping", () => {
 		let symbol;

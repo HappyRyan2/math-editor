@@ -273,7 +273,7 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		App.renderAndUpdate();
 
 		LiveRenderer["deleteLineBreak"](lineBreak);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assert.equal([...document.querySelectorAll(".line")].length, 1);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		assert.equal([...document.querySelector(".word")!.children].length, 1);
@@ -287,7 +287,7 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		App.renderAndUpdate();
 
 		LiveRenderer["deleteLineBreak"](lineBreak);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assert.equal([...document.querySelectorAll(".line")].length, 1);
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		assert.equal([...document.querySelector(".word")!.children].length, 1);
@@ -526,7 +526,7 @@ describe("LiveRenderer.insert", () => {
 		const [element1, element2] = document.querySelector(".word")!.children;
 		assert.isTrue(element1.classList.contains("cursor"));
 		assert.isTrue(element2.classList.contains("symbol"));
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 	});
 });
 describe("LiveRenderer.addComponentOrReplaceSelection", () => {

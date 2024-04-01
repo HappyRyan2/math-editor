@@ -5,6 +5,5 @@
 - If you select a 1-word line that is broken over multiple lines by dragging your cursor from right to left, the line moves down slightly.
 - If you select multiple lines and try to parenthesize them or put them in a fraction, weird things happen.
 - In `LiveRenderer.deleteLineBreak`, there is a line that says `const nextComponent = App.document.getPreviousComponent(lineBreak)`. (Note that the method called is `getPreviousComponent`, which is not correct, and probably causes bugs in rare circumstances). Instead of getting the previous component, it should get the next component.
-- If you open the app, click on the document (but below the first line), and then press "(", it throws an error in the console.
 - If you press Backspace to delete the end of a parenthese, it doesn't update the rendered view.
 - Pressing Ctrl-Backspace seems to do nothing when at the beginning of a container.

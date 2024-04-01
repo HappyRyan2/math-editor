@@ -28,7 +28,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([symbolA, symbolB]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("puts the previous component into a fraction if there is one", () => {
@@ -45,7 +45,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([symbol]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("creates an empty fraction if there is no selection or previous component", () => {
@@ -59,7 +59,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("creates an empty fraction if the previous component is a line break", () => {
@@ -77,7 +77,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.numerator, new MathComponentGroup([]));
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 	it("works when the previous component is a composite math component", () => {
@@ -94,7 +94,7 @@ describe("Fraction.insertFraction", () => {
 		assert.sameOrderedMembers(fraction.denominator.components, []);
 		assert.sameOrderedMembers(parenthese.components.components, []);
 		assert.equal(cursor.container, fraction.denominator);
-		assert.equal(cursor.predecessor, null);
+		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
 });
