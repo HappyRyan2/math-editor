@@ -8,6 +8,7 @@ import { LineBreak } from "../../math-components/LineBreak.mjs";
 import { Cursor } from "../../Cursor.mjs";
 import { App } from "../../App.mjs";
 import { assertValidRenderedDocument } from "../test-utils.mjs";
+import { Selection } from "../../Selection.mjs";
 
 describe("Parenthese.parse", () => {
 	it("correctly parses the parenthese", () => {
@@ -56,6 +57,26 @@ describe("Parenthese.insertParenthese", () => {
 			new Parenthese(new MathComponentGroup([]), "round", true),
 			new LineBreak(),
 			new MathSymbol("C"),
+		]);
+		assertValidRenderedDocument(false);
+	});
+	it("parenthesizes the selection when the cursor has a selection", () => {
+		let symbol1, symbol2, cursor;
+		App.loadDocument(new MathDocument([
+			symbol1 = new MathSymbol("1"),
+			symbol2 = new MathSymbol("2"),
+			new MathSymbol("3"),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(App.document.componentsGroup, null, new Selection(symbol1, symbol2))];
+		App.renderAndUpdate();
+
+		Parenthese.insertParenthese(cursor, App.document);
+		assert.deepEqual(App.document.componentsGroup.components, [
+			new Parenthese(new MathComponentGroup([
+				new MathSymbol("1"),
+				new MathSymbol("2"),
+			]), "round"),
+			new MathSymbol("3"),
 		]);
 		assertValidRenderedDocument(false);
 	});
