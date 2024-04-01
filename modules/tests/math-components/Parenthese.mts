@@ -37,7 +37,7 @@ describe("Parenthese.insertParenthese", () => {
 			]), "round", true),
 			new LineBreak(),
 		]);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("works when there is a line break immediately after the cursor", () => {
 		let doc, symbol, cursor;
@@ -57,6 +57,6 @@ describe("Parenthese.insertParenthese", () => {
 			new LineBreak(),
 			new MathSymbol("C"),
 		]);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 });

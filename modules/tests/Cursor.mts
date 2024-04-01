@@ -33,7 +33,7 @@ describe("Cursor.addComponent", () => {
 			new MathSymbol("x"),
 		]);
 		assert.equal(cursor.predecessor, App.document.componentsGroup.components[0]);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(true);
 	});
 	it("correctly adds the component when the cursor is not at the beginning of its container", () => {
 		App.loadDocument(new MathDocument([new MathSymbol("x")]));
@@ -46,7 +46,7 @@ describe("Cursor.addComponent", () => {
 			new MathSymbol("y"),
 		]);
 		assert.equal(cursor.predecessor, App.document.componentsGroup.components[1]);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(true);
 	});
 });
 
@@ -390,21 +390,21 @@ describe("Cursor.deletePrevious", () => {
 
 		assert.deepEqual(doc.componentsGroup.components, [symbolB]);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("exits the containing component if there is no previous component and the group is nonempty", () => {
 		let mock: CompositeMathComponentMock, doc: MathDocument;
 		App.loadDocument(doc = new MathDocument([mock = new CompositeMathComponentMock([new MathSymbol("A")])]));
 		const cursor = new Cursor(mock.componentsGroup, null);
 		App.activeTab.cursors = [cursor];
-		cursor.deletePrevious(doc);
 		App.renderAndUpdate();
+		cursor.deletePrevious(doc);
 
 		assert.deepEqual(doc.componentsGroup.components, [mock]);
 		assert.deepEqual(mock.componentsGroup.components, [new MathSymbol("A")]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("deletes the selected components if the selection is nonempty", () => {
 		let symbolA, symbolB: MathSymbol, doc: MathDocument, cursor: Cursor;
@@ -419,7 +419,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(doc.componentsGroup.components, []);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("does nothing if the cursor is at the beginning of the document and there is no selection", () => {
 		App.loadEmptyDocument();
@@ -429,7 +429,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(App.document.componentsGroup.components, []);
 		assert.equal(App.cursors[0].container, App.document.componentsGroup);
 		assert.equal(App.cursors[0].predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("deletes the previous CompositeMathComponent if it is empty", () => {
 		let mock, doc, cursor;
@@ -443,7 +443,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(doc.componentsGroup.components.length, 0);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("enters the previous CompositeMathComponent if it is not empty", () => {
 		let doc, mock, symbol, cursor;
@@ -459,7 +459,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.deepEqual(mock.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, mock.componentsGroup);
 		assert.equal(cursor.predecessor, symbol);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("deletes the container and concatenates the groups if the group is empty and has deleteOnStart=only-when-empty", () => {
 		let doc, symbol, fraction, cursor;
@@ -474,7 +474,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbol]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("does not remove the cursor from App.cursors", () => {
 		let doc, fraction, cursor;
@@ -486,7 +486,7 @@ describe("Cursor.deletePrevious", () => {
 
 		cursor.deletePrevious(doc);
 		assert.sameOrderedMembers(App.cursors, [cursor]);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("deletes the container and concatenates the groups if the container has deleteOnStart=always", () => {
 		let doc, symbolA, symbolB, parenthese, cursor;
@@ -505,7 +505,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.sameOrderedMembers(doc.componentsGroup.components, [symbolB, symbolA]);
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, symbolB);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("works when the previous component is a line break", () => {
 		let doc, lineBreak, cursor;
@@ -520,7 +520,7 @@ describe("Cursor.deletePrevious", () => {
 		assert.equal(cursor.container, doc.componentsGroup);
 		assert.equal(cursor.predecessor, null);
 		assert.equal(cursor.selection, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 });
 describe("Cursor.lastCommonAncestor", () => {

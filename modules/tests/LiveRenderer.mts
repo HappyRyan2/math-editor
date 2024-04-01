@@ -585,6 +585,6 @@ describe("LiveRenderer.rerender", () => {
 
 		assert.isTrue(App.renderingMap.get(parenthese1)!.classList.contains("parenthese-grayed-out"));
 		assert.isTrue(App.renderingMap.get(parenthese2)!.classList.contains("parenthese-grayed-out"));
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(true);
 	});
 });

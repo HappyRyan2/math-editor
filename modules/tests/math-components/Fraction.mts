@@ -29,7 +29,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("puts the previous component into a fraction if there is one", () => {
 		let doc, symbol, cursor;
@@ -46,7 +46,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("creates an empty fraction if there is no selection or previous component", () => {
 		App.loadEmptyDocument();
@@ -60,7 +60,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("creates an empty fraction if the previous component is a line break", () => {
 		let doc, lineBreak, cursor;
@@ -78,7 +78,7 @@ describe("Fraction.insertFraction", () => {
 		assert.deepEqual(fraction.denominator, new MathComponentGroup([]));
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("works when the previous component is a composite math component", () => {
 		let doc, parenthese, cursor;
@@ -95,7 +95,7 @@ describe("Fraction.insertFraction", () => {
 		assert.sameOrderedMembers(parenthese.components.components, []);
 		assert.equal(cursor.container, fraction.denominator);
 		assert.equal(cursor.predecessor, null);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 });
 

@@ -18,7 +18,7 @@ describe("LineBreak.addLineBreak", () => {
 		assert.equal(App.document.componentsGroup.components.length, 1);
 		assert.instanceOf(App.document.componentsGroup.components[0], LineBreak);
 		assert.instanceOf(App.cursors[0].predecessor, LineBreak);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("adds a line break after the containing component's last ancestor and moves the cursor after the line break", () => {
 		let doc: MathDocument, component1: CompositeMathComponentMock, component2: CompositeMathComponentMock;
@@ -36,7 +36,7 @@ describe("LineBreak.addLineBreak", () => {
 		assert.equal(doc.componentsGroup.components[0], component1);
 		assert.instanceOf(doc.componentsGroup.components[1], LineBreak);
 		assert.instanceOf(cursor.predecessor, LineBreak);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("replaces the selected components with a linebreak if the components are top-level", () => {
 		let doc, symbol, cursor;
@@ -48,7 +48,7 @@ describe("LineBreak.addLineBreak", () => {
 		assert.equal(doc.componentsGroup.components.length, 1);
 		assert.instanceOf(doc.componentsGroup.components[0], LineBreak);
 		assert.instanceOf(cursor.predecessor, LineBreak);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 	it("adds a line break after the containing component's last ancestor even if the user has a nonempty selection", () => {
 		let doc: MathDocument, container: CompositeMathComponentMock, symbol: MathSymbol, cursor: Cursor;
@@ -65,6 +65,6 @@ describe("LineBreak.addLineBreak", () => {
 		assert.equal(doc.componentsGroup.components[0], container);
 		assert.instanceOf(doc.componentsGroup.components[1], LineBreak);
 		assert.instanceOf(cursor.predecessor, LineBreak);
-		assertValidRenderedDocument();
+		assertValidRenderedDocument(false);
 	});
 });
