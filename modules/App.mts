@@ -40,7 +40,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveLeft(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -50,7 +49,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveRight(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -61,7 +59,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectLeft(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -72,7 +69,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectRight(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -81,7 +77,6 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Cursor.resetCursorBlink();
 					Autocomplete.autocomplete.activateSelected();
-					App.updateCursors();
 					stopPropagation();
 				}
 			},
@@ -92,7 +87,6 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Autocomplete.autocomplete.selectPrevious?.();
 					stopPropagation();
-					App.updateCursors();
 				}
 			},
 		},
@@ -102,7 +96,6 @@ export class App {
 				if(Autocomplete.autocomplete) {
 					Autocomplete.autocomplete?.selectNext?.();
 					stopPropagation();
-					App.updateCursors();
 				}
 			},
 		},
@@ -114,7 +107,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveWordRight(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -125,7 +117,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.moveWordLeft(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -137,7 +128,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectWordRight(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -149,7 +139,6 @@ export class App {
 				Autocomplete.close();
 				App.cursors.forEach(c => c.selectWordLeft(App.document));
 				stopPropagation();
-				App.updateCursors();
 			},
 		},
 		{
@@ -174,7 +163,6 @@ export class App {
 					components[components.length - 1] ?? null,
 					new Selection(components[0], components[components.length - 1]),
 				)];
-				App.updateCursors();
 				stopPropagation();
 			},
 		},
@@ -268,7 +256,6 @@ export class App {
 					App.cursors.push(newCursor);
 				}
 				stopPropagation();
-				App.updateCursors();
 				Cursor.resetCursorBlink();
 			},
 		},
@@ -276,7 +263,6 @@ export class App {
 			key: "Escape",
 			handler: () => {
 				App.activeTab.cursors = [App.cursors[0]];
-				App.updateCursors();
 				Cursor.resetCursorBlink();
 			},
 		},
@@ -398,6 +384,7 @@ export class App {
 			this.handleCharacterKeys(event);
 		}
 		App.activeTab.removeDuplicateCursors();
+		App.updateCursors();
 	}
 	static handleCharacterKeys(event: KeyboardEvent) {
 		for(const cursor of App.cursors) {

@@ -8,4 +8,3 @@
 - If you open the app, click on the document (but below the first line), and then press "(", it throws an error in the console.
 - If you press Backspace to delete the end of a parenthese, it doesn't update the rendered view.
 - Pressing Ctrl-Backspace seems to do nothing when at the beginning of a container.
-- The autocomplete isn't updated at the correct times (unless you add a call to `App.updateCursors` at the end of `App.handleKeyDown`).
