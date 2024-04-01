@@ -80,4 +80,22 @@ describe("Parenthese.insertParenthese", () => {
 		]);
 		assertValidRenderedDocument(false);
 	});
+	it("deletes any selected line breaks, replacing them with spaces", () => {
+		let lineBreak1, lineBreak2, cursor;
+		App.loadDocument(new MathDocument([
+			lineBreak1 = new LineBreak(),
+			lineBreak2 = new LineBreak(),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(App.document.componentsGroup, null, new Selection(lineBreak1, lineBreak2))];
+		App.renderAndUpdate();
+
+		Parenthese.insertParenthese(cursor, App.document);
+		assert.deepEqual(App.document.componentsGroup.components, [
+			new Parenthese(new MathComponentGroup([
+				new MathSymbol(" "),
+				new MathSymbol(" "),
+			]), "round"),
+		]);
+		assertValidRenderedDocument(false);
+	});
 });

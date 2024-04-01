@@ -5,6 +5,7 @@ import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { MathComponent } from "../MathComponent.mjs";
 import { LiveRenderer } from "../LiveRenderer.mjs";
+import { MathSymbol } from "./MathSymbol.mjs";
 
 const PARENTHESE_TYPES = ["round", "square", "curly", "angle"] as const;
 type ParentheseType = typeof PARENTHESE_TYPES[number];
@@ -61,8 +62,15 @@ export class Parenthese extends CompositeMathComponent {
 		}
 	}
 	static parenthesizeSelection(cursor: Cursor, type: ParentheseType) {
+		const newComponents = [];
+		for(const selected of cursor.selectedComponents()) {
+			if(selected instanceof LineBreak) {
+				newComponents.push(new MathSymbol(" "));
+			}
+			else { newComponents.push(selected); }
+		}
 		const parenthese = new Parenthese(
-			new MathComponentGroup(cursor.selectedComponents()),
+			new MathComponentGroup(newComponents),
 			type, false,
 		);
 		cursor.replaceSelectionWith(parenthese);
