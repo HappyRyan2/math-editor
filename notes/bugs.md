@@ -7,3 +7,5 @@
 - In `LiveRenderer.deleteLineBreak`, there is a line that says `const nextComponent = App.document.getPreviousComponent(lineBreak)`. (Note that the method called is `getPreviousComponent`, which is not correct, and probably causes bugs in rare circumstances). Instead of getting the previous component, it should get the next component.
 - If you press Backspace to delete the end of a parenthese, it doesn't update the rendered view.
 - Pressing Ctrl-Backspace seems to do nothing when at the beginning of a container.
+- If you click at the end of a line vs. if you drag to the end of the line, the app is inconsistent as to where your cursor gets displayed (at the end of the current line vs. at the beginning of the next line).
+- If you type a closing parenthese (e.g. in an empty document), it throws an error in the console.
