@@ -51,6 +51,12 @@ test("the user can insert various math components, including using autocomplete"
 		await page.keyboard.press("Enter");
 		await page.keyboard.press("a");
 		await expect(page).toHaveScreenshot("autocomplete-ui.png");
+
+		await page.keyboard.press("Enter");
+		await page.keyboard.press("Enter");
+		await page.keyboard.press("Enter");
+		await page.keyboard.press("+");
+		await expect(page).toHaveScreenshot("operator-after-empty-lines.png"); // regression test
 	}
 	finally {
 		electronApp.close();
