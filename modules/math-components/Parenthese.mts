@@ -54,12 +54,11 @@ export class Parenthese extends CompositeMathComponent {
 	expand(doc: MathDocument) {
 		const containingGroup = doc.containingGroupOf(this);
 		const index = containingGroup.components.indexOf(this) + 1;
-		const nextLineBreak = containingGroup.components.findIndex((c, i) => c instanceof LineBreak && i >= index);
-		const itemsAfter = containingGroup.components.splice(
-			index,
-			nextLineBreak === -1 ? containingGroup.components.length - index : nextLineBreak - index,
-		);
-		this.components.components.push(...itemsAfter);
+		for(const componentAfter of containingGroup.components.slice(index)) {
+			if(componentAfter instanceof LineBreak) { break; }
+			LiveRenderer.delete(componentAfter);
+			LiveRenderer.insert(componentAfter, "end", this.components);
+		}
 	}
 	static parenthesizeSelection(cursor: Cursor, type: ParentheseType) {
 		const parenthese = new Parenthese(
