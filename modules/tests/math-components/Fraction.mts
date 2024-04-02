@@ -97,6 +97,26 @@ describe("Fraction.insertFraction", () => {
 		assert.strictEqual(cursor.predecessor, null);
 		assertValidRenderedDocument(false);
 	});
+	it("replaces any selected line breaks with spaces", () => {
+		let lineBreak1, lineBreak2, cursor;
+		App.loadDocument(new MathDocument([
+			lineBreak1 = new LineBreak(),
+			lineBreak2 = new LineBreak(),
+		]));
+		App.activeTab.cursors = [cursor = new Cursor(App.document.componentsGroup, null, new Selection(lineBreak1, lineBreak2))];
+		App.renderAndUpdate();
+
+		Fraction.insertFraction(cursor, App.document);
+		assert.equal(App.document.componentsGroup.components.length, 1);
+		assert.instanceOf(App.document.componentsGroup.components[0], Fraction);
+		const fraction = App.document.componentsGroup.components[0] as Fraction;
+		assert.sameDeepOrderedMembers(fraction.numerator.components, [new MathSymbol(" "), new MathSymbol(" ")]);
+		assert.sameDeepOrderedMembers(fraction.denominator.components, []);
+		assert.equal(cursor.container, fraction.denominator);
+		assert.equal(cursor.predecessor, null);
+		assert.equal(cursor.selection, null);
+		assertValidRenderedDocument(false);
+	});
 });
 
 describe("Fraction.parse()", () => {

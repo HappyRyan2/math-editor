@@ -6,6 +6,7 @@ import { MathComponentGroup } from "../MathComponentGroup.mjs";
 import { MathDocument } from "../MathDocument.mjs";
 import { RelativeKeyHandler } from "../RelativeKeyHandler.mjs";
 import { App } from "../App.mjs";
+import { MathSymbol } from "./MathSymbol.mjs";
 
 export class Fraction extends CompositeMathComponent {
 	numerator: MathComponentGroup;
@@ -56,7 +57,7 @@ export class Fraction extends CompositeMathComponent {
 		let fraction;
 		if(cursor.selection != null) {
 			fraction = new Fraction(
-				new MathComponentGroup(cursor.selectedComponents()),
+				new MathComponentGroup(cursor.selectedComponents().map(c => (c instanceof LineBreak) ? new MathSymbol(" ") : c)),
 				new MathComponentGroup([]),
 			);
 			cursor.replaceSelectionWith(fraction);
