@@ -265,6 +265,21 @@ describe("LiveRenderer.deleteLineBreak", () => {
 			[App.renderingMap.get(symbol1), App.renderingMap.get(symbol2)],
 		);
 	});
+	it("does not combine the adjacent words when it is not necessary", () => {
+		let symbol1, lineBreak, symbol2;
+		App.loadDocument(new MathDocument([
+			lineBreak = new LineBreak(),
+			symbol1 = new MathSymbol("1"),
+			symbol2 = new MathSymbol(" "),
+		]));
+		App.activeTab.cursors = [];
+		App.renderAndUpdate();
+
+		debugger;
+		LiveRenderer.deleteLineBreak(lineBreak);
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [symbol1, symbol2]);
+		assertValidRenderedDocument(true);
+	});
 	it("works when there is a cursor after the line break", () => {
 		let lineBreak;
 		App.loadDocument(new MathDocument([ lineBreak = new LineBreak() ]));
@@ -292,6 +307,45 @@ describe("LiveRenderer.deleteLineBreak", () => {
 		assert.equal([...document.querySelectorAll(".word")].length, 1);
 		assert.equal([...document.querySelector(".word")!.children].length, 1);
 		assert.isTrue(document.querySelector(".word")!.firstElementChild!.classList.contains("cursor"));
+	});
+	it("works when there is a component before the line break but not after it", () => {
+		let symbol, lineBreak;
+		App.loadDocument(new MathDocument([
+			symbol = new MathSymbol("1"),
+			lineBreak = new LineBreak(),
+		]));
+		App.renderAndUpdate();
+		LiveRenderer.deleteLineBreak(lineBreak);
+
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [symbol]);
+		assertValidRenderedDocument(true);
+	});
+	it("works when there is a component after the line break but not before it", () => {
+		let symbol, lineBreak;
+		App.loadDocument(new MathDocument([
+			lineBreak = new LineBreak(),
+			symbol = new MathSymbol("1"),
+		]));
+		App.activeTab.cursors = [];
+		App.renderAndUpdate();
+		LiveRenderer.deleteLineBreak(lineBreak);
+
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [symbol]);
+		assertValidRenderedDocument(true);
+	});
+	it("works when there is a component after the line break but not before it, and the cursor is on a different line", () => {
+		let symbol, lineBreak, lineBreak2;
+		App.loadDocument(new MathDocument([
+			lineBreak = new LineBreak(),
+			symbol = new MathSymbol("1"),
+			lineBreak2 = new LineBreak(),
+		]));
+		App.activeTab.cursors = [new Cursor(App.document.componentsGroup, lineBreak2)];
+		App.renderAndUpdate();
+		LiveRenderer.deleteLineBreak(lineBreak);
+
+		assert.sameOrderedMembers(App.document.componentsGroup.components, [symbol, lineBreak2]);
+		assertValidRenderedDocument(true);
 	});
 });
 describe("LiveRenderer.insertLineBreak", () => {

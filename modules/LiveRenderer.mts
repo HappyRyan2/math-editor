@@ -124,7 +124,6 @@ export class LiveRenderer {
 		const renderedLine = App.renderingMap.get(lineBreak)!.parentElement!.parentElement!;
 		const renderedNextLine = renderedLine.nextElementSibling;
 		const previousComponent = App.document.getPreviousComponent(lineBreak);
-		const nextComponent = App.document.getPreviousComponent(lineBreak);
 		App.renderingMap.get(lineBreak)!.remove();
 		App.renderingMap.delete(lineBreak);
 		LiveRenderer.disconnectCursors(lineBreak);
@@ -138,10 +137,8 @@ export class LiveRenderer {
 		if(previousComponent) {
 			App.document.componentsGroup.checkWordBreaks(previousComponent, App.renderingMap);
 		}
-		else if(nextComponent) {
-			App.document.componentsGroup.checkWordBreaks(nextComponent, App.renderingMap);
-		}
 		else {
+			// no previous component -> it's the first line in the document, and the line is empty -> combine the empty word (and any cursors it contains) and the first word.
 			const [word1, word2] = renderedLine.children;
 			for(const element of word1.children) {
 				word2.insertAdjacentElement("afterbegin", element);
